@@ -60,8 +60,14 @@ function saveStore(d) {
 
 // ── Carregar renderer ─────────────────────────────────────────────────────────
 function loadRenderer(win, route = '') {
-  if (isDev) win.loadURL(RENDERER_DEV_URL + (route ? `#${route}` : ''));
-  else win.loadFile(RENDERER_PROD_FILE, { hash: route });
+  if (isDev) {
+    win.loadURL(RENDERER_DEV_URL + (route ? `#${route}` : ''));
+  } else {
+    // Electron 31: loadFile com a opcao { hash } falha (ERR_FILE_NOT_FOUND) para
+    // arquivos dentro do app.asar — por isso montamos a URL file:// manualmente.
+    const fileUrl = encodeURI('file:///' + RENDERER_PROD_FILE.replace(/\\/g, '/')) + (route ? `#${route}` : '');
+    win.loadURL(fileUrl);
+  }
 }
 
 // ── Splash ────────────────────────────────────────────────────────────────────
