@@ -55,6 +55,9 @@
       "dist/**/*",
       "!**/*.map"
     ],
+    "asarUnpack": [
+      "dist/**/*"
+    ],
     "extraResources": [
       {
         "from": "mod  obrigatorio",

@@ -27,7 +27,12 @@ autoUpdater.autoDownload = true;
 
 const isDev = process.env.NODE_ENV === 'development';
 const RENDERER_DEV_URL = 'http://localhost:5173';
-const RENDERER_PROD_FILE = path.join(__dirname, '..', 'dist', 'index.html');
+// Em build de release o dist/ fica FORA do asar (asarUnpack): o Electron 31 não
+// carrega URLs file:// de dentro do próprio app.asar. Usamos o caminho real.
+const UNPACKED_RENDERER = path.join(process.resourcesPath || '', 'app.asar.unpacked', 'dist', 'index.html');
+const RENDERER_PROD_FILE = (!isDev && fs.existsSync(UNPACKED_RENDERER))
+  ? UNPACKED_RENDERER
+  : path.join(__dirname, '..', 'dist', 'index.html');
 
 let splashWindow = null;
 let mainWindow = null;
