@@ -56,7 +56,7 @@ const S = {
 
   // ── TopBar ────────────────────────────────────────────────────────────
   'topbar.online': ['online do servidor', 'online do servidor'],
-  'topbar.pass': ['Passe: adquirido', 'Passe: adquirido'],
+  'topbar.pass': ['VIP: cobre, ferro, diamante, rubi', 'VIP: cobre, ferro, diamante, rubi'],
   'topbar.lang': ['Idioma: {name} — clique para alternar', 'Idioma: {name} — clique para alternar'],
   'topbar.themeDark': ['Mudar para Modo Escuro', 'Mudar para Modo Escuro'],
   'topbar.themeLight': ['Mudar para Modo Claro', 'Mudar para Modo Claro'],

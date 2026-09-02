@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import CRTOverlay from './components/CRTOverlay.jsx';
 import UpdateModal from './components/UpdateModal.jsx';
+import VipModal from './components/VipModal.jsx';
 import { useI18n } from './i18n/index.jsx';
 import HomeTab from './tabs/HomeTab.jsx';
 import ProfileTab from './tabs/ProfileTab.jsx';
@@ -21,6 +22,7 @@ export default function App() {
   const [hydrated, setHydrated] = useState(false);
   const [theme, setTheme] = useState('dark');
   const [activeSkin, setActiveSkin] = useState('');
+  const [vipModalOpen, setVipModalOpen] = useState(false);
 
   // Launch state (without overlay)
   const [launchError, setLaunchError] = useState('');
@@ -201,6 +203,7 @@ export default function App() {
           theme={theme}
           onToggleTheme={handleToggleTheme}
           activeSkin={activeSkin}
+          onOpenVipModal={() => setVipModalOpen(true)}
         />
 
         <main className="app-body">
@@ -229,6 +232,13 @@ export default function App() {
           </div>
         </main>
       </div>
+
+      {/* ── 4 VIP Tiers Modal (Cobre, Ferro, Diamante, Rubi) ── */}
+      <VipModal
+        isOpen={vipModalOpen}
+        onClose={() => setVipModalOpen(false)}
+        currentRole={profile?.role}
+      />
 
       {update?.info && (
         <UpdateModal

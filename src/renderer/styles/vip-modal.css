@@ -1,0 +1,318 @@
+/* ===========================================================
+   Éden Launcher - VIP Plans Modal Styles (4 VIP Tiers)
+   =========================================================== */
+
+.eden-vip-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(4, 9, 14, 0.82);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.eden-vip-modal-dialog {
+  width: 100%;
+  max-width: 740px;
+  background: var(--eden-card, #111d28);
+  border: 1.5px solid var(--vip-border, rgba(82, 183, 136, 0.3));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px var(--vip-glow, rgba(82, 183, 136, 0.2));
+  border-radius: 24px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: eden-modal-pop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes eden-modal-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── Modal Head ── */
+.eden-vip-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eden-vip-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.eden-vip-crown-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.eden-vip-subtitle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--vip-color, #52b788);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.eden-vip-modal-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--eden-text, #ffffff);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.eden-vip-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--eden-input-bg, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--eden-border-light, rgba(255, 255, 255, 0.1));
+  color: var(--eden-text-dim, #9ca3af);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eden-vip-close-btn:hover {
+  color: #ffffff;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: rotate(90deg);
+}
+
+/* ── 4 VIP Tier Cards Grid ── */
+.eden-vip-tiers-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.eden-vip-tier-card {
+  background: var(--eden-input-bg, rgba(0, 0, 0, 0.25));
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 12px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.22s ease;
+  user-select: none;
+}
+
+.eden-vip-tier-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-color);
+  box-shadow: 0 8px 24px var(--card-glow);
+}
+
+.eden-vip-tier-card.is-selected {
+  background: var(--card-bg);
+  border-color: var(--card-color);
+  box-shadow: 0 0 20px var(--card-glow);
+  transform: translateY(-2px);
+}
+
+.eden-vip-tier-badge {
+  position: absolute;
+  top: -9px;
+  font-family: var(--font-heading);
+  font-size: 8.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.eden-vip-tier-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1.5px solid;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.eden-vip-tier-name {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--eden-text, #ffffff);
+  margin: 0;
+}
+
+.eden-vip-tier-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.eden-vip-vp {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--card-color);
+}
+
+.eden-vip-brl {
+  font-size: 10px;
+  color: var(--eden-text-dim, #9ca3af);
+}
+
+.eden-vip-tag-preview {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+/* ── Selected Tier Detail & Perks ── */
+.eden-vip-detail-panel {
+  border: 1px solid;
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.eden-vip-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.eden-vip-detail-duration {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--eden-text-dim, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.eden-vip-detail-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 900;
+  margin: 2px 0 0 0;
+}
+
+.eden-vip-detail-pricing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.eden-vip-big-price {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--vip-color);
+}
+
+.eden-vip-sub-price {
+  font-size: 11px;
+  color: var(--eden-text-dim, #9ca3af);
+}
+
+/* ── Perks Grid ── */
+.eden-vip-perks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;
+}
+
+.eden-vip-perk-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--eden-text, #ffffff);
+  line-height: 1.3;
+}
+
+.eden-vip-check-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Buy Action ── */
+.eden-vip-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.eden-vip-buy-btn {
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.eden-vip-buy-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}

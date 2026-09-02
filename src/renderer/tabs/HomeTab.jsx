@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Play, RotateCw, Sparkles, Tag, Gift, Award, Compass, Flame, ShieldAlert, Check, Trash2 } from 'lucide-react';
+import { Play, RotateCw, Sparkles, Tag, Gift, Award, Compass, Flame, ShieldAlert, Check, Trash2, Crown } from 'lucide-react';
 import { getValue } from '../lib/store.js';
 import { useI18n } from '../i18n/index.jsx';
 import '../styles/home.css';
@@ -17,7 +17,7 @@ const PROMO_CARDS = [
   { id: 'p1', badgeKey: 'promo.p1.badge', badgeColor: '#52b788', titleKey: 'promo.p1.title', subKey: 'promo.p1.sub', timeKey: 'promo.p1.time', imageType: 'cupom' },
   { id: 'p2', badgeKey: 'promo.p2.badge', badgeColor: '#e9c46a', titleKey: 'promo.p2.title', subKey: 'promo.p2.sub', timeKey: 'promo.p2.time', imageType: 'evento' },
   { id: 'p3', badgeKey: 'promo.p3.badge', badgeColor: '#40916c', titleKey: 'promo.p3.title', subKey: 'promo.p3.sub', timeKey: 'promo.p3.time', imageType: 'update' },
-  { id: 'p4', badgeKey: 'promo.p4.badge', badgeColor: '#e76f51', titleKey: 'promo.p4.title', subKey: 'promo.p4.sub', timeKey: 'promo.p4.time', imageType: 'passe' },
+  { id: 'p4', badgeKey: 'promo.p4.badge', badgeColor: '#00f5d4', titleKey: 'promo.p4.title', subKey: 'promo.p4.sub', timeKey: 'promo.p4.time', imageType: 'vip' },
 ];
 
 export default function HomeTab({ profile, onLaunch }) {
@@ -238,7 +238,7 @@ export default function HomeTab({ profile, onLaunch }) {
                   {card.imageType === 'cupom' && <Gift size={28} />}
                   {card.imageType === 'evento' && <Flame size={28} />}
                   {card.imageType === 'update' && <Compass size={28} />}
-                  {card.imageType === 'passe' && <Award size={28} />}
+                  {(card.imageType === 'vip' || card.imageType === 'passe') && <Crown size={28} />}
                 </div>
                 <div className="eden-promo-badge-tag" style={{ color: card.badgeColor }}>
                   {t(card.badgeKey)}

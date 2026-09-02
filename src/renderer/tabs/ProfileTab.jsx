@@ -3,6 +3,7 @@ import { Plus, Crown } from 'lucide-react';
 import SkinViewer3D from '../components/SkinViewer.jsx';
 import PlayerHead from '../components/PlayerHead.jsx';
 import RoleTag from '../components/RoleTag.jsx';
+import VipModal from '../components/VipModal.jsx';
 import { getValue, setValue } from '../lib/store.js';
 import { useI18n } from '../i18n/index.jsx';
 import '../styles/profile.css';
@@ -17,6 +18,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
   const [skinModel, setSkinModel] = useState('auto');
   const [savedSkins, setSavedSkins] = useState(DEFAULT_SAVED_SKINS);
   const [skinsLoaded, setSkinsLoaded] = useState(false);
+  const [vipModalOpen, setVipModalOpen] = useState(false);
 
   const nick = profile?.nickname || t('user.defaultNick');
   const isMicrosoft = profile?.type === 'microsoft';
@@ -157,14 +159,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
             <button
               type="button"
               className="eden-profile-btn eden-profile-btn--primary eden-profile-vip-btn"
-              onClick={() => {
-                const url = 'https://discord.gg/XE5SsTurP5';
-                if (window.eden?.shell?.openExternal) {
-                  window.eden.shell.openExternal(url);
-                } else {
-                  window.open(url, '_blank');
-                }
-              }}
+              onClick={() => setVipModalOpen(true)}
             >
               <Crown size={16} />
               <span>{t('profile.buyVip')}</span>
@@ -214,6 +209,12 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
         </div>
       </div>
 
+      {/* ── 4 VIP Tiers Modal (Cobre, Ferro, Diamante, Rubi) ── */}
+      <VipModal
+        isOpen={vipModalOpen}
+        onClose={() => setVipModalOpen(false)}
+        currentRole={profile?.role}
+      />
     </div>
   );
 }
