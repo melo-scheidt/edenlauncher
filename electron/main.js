@@ -191,13 +191,8 @@ ipcMain.handle('auth:register', async (_e, nick, pass, email) => {
   try   { return { ok: true,  session: await auth.registerAccount(nick, pass, email) }; }
   catch (e) { return { ok: false, error: e.message }; }
 });
-ipcMain.handle('auth:mode', () => auth.getAuthMode());
 ipcMain.handle('auth:current', () => auth.loadSession());
 ipcMain.handle('auth:logout',  () => { auth.clearSession(); return true; });
-ipcMain.handle('auth:set-role', async (_e, nick, role) => {
-  try   { return { ok: true, result: auth.setRole(nick, role) }; }
-  catch (e) { return { ok: false, error: e.message }; }
-});
 
 // ── IPC: Modpack ──────────────────────────────────────────────────────────────
 ipcMain.handle('modpack:fetch-manifest', async () => {

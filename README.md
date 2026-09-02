@@ -14,7 +14,7 @@ eden-launcher/
 │   ├── config.js             # Endpoints e constantes
 │   └── services/
 │       ├── paths.js          # Diretórios canônicos
-│       ├── auth.js           # Microsoft OAuth2 + Offline
+│       ├── auth.js           # Supabase — contas centrais (e-mail + senha)
 │       ├── modpack.js        # Download + verificação SHA-256
 │       ├── anticheat.js      # Varredura anti-cheat pré-launch
 │       ├── sessionToken.js   # Handshake com API Éden

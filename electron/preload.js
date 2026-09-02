@@ -31,12 +31,10 @@ contextBridge.exposeInMainWorld('eden', {
   },
 
   auth: {
-    mode:     ()                    => ipcRenderer.invoke('auth:mode'),
     login:    (nick, pass, email)   => ipcRenderer.invoke('auth:login',    nick, pass, email),
     register: (nick, pass, email)   => ipcRenderer.invoke('auth:register', nick, pass, email),
     current:  ()           => ipcRenderer.invoke('auth:current'),
     logout:   ()           => ipcRenderer.invoke('auth:logout'),
-    setRole:  (nick, role) => ipcRenderer.invoke('auth:set-role', nick, role),
   },
 
   modpack: {

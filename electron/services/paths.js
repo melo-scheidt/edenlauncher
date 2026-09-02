@@ -23,5 +23,4 @@ module.exports = {
   logsDir:          () => ensure(path.join(app.getPath('userData'), 'logs')),
   manifestFile:     () => path.join(root(), 'modpack-manifest.json'),
   authFile:         () => path.join(root(), 'auth.json'),
-  offlineAccountsFile: () => path.join(root(), 'offline_accounts.json'),
 };

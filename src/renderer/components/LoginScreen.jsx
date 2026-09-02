@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ChevronRight, Sparkles, User, Lock, Mail, AlertCircle, CheckCircle } from 'lucide-react';
 import EdenLogo from './EdenLogo.jsx';
 import '../styles/login.css';
 
 export default function LoginScreen({ onLogin }) {
   const [tab, setTab] = useState('login'); // 'login' | 'register'
-  const [mode, setMode] = useState('local'); // 'local' | 'central'
   const [nick, setNick] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
@@ -20,11 +19,6 @@ export default function LoginScreen({ onLogin }) {
     setSuccess('');
   };
 
-  useEffect(() => {
-    window.eden?.auth?.mode?.().then((m) => setMode(m || 'local')).catch(() => {});
-  }, []);
-
-  const central = mode === 'central';
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const handleSubmit = async (e) => {
@@ -32,24 +26,18 @@ export default function LoginScreen({ onLogin }) {
     setError('');
     setSuccess('');
 
-    if (central && !emailOk) {
+    if (!emailOk) {
       setError('Informe um e-mail válido');
       return;
     }
 
-    if (!central && !nick.trim()) {
-      setError('Informe seu nickname');
-      return;
-    }
-
-    if (central && tab === 'register' && !/^[A-Za-z0-9_]{3,16}$/.test(nick.trim())) {
+    if (tab === 'register' && !/^[A-Za-z0-9_]{3,16}$/.test(nick.trim())) {
       setError('Nickname: 3–16 caracteres (letras, números ou _)');
       return;
     }
 
-    const minPass = central ? 6 : 4;
-    if (pass.length < minPass) {
-      setError(`A senha deve conter no mínimo ${minPass} caracteres`);
+    if (pass.length < 6) {
+      setError('A senha deve conter no mínimo 6 caracteres');
       return;
     }
 
@@ -76,7 +64,7 @@ export default function LoginScreen({ onLogin }) {
         return;
       }
 
-      const res = await fn(nick.trim(), pass, central ? email.trim() : undefined);
+      const res = await fn(nick.trim(), pass, email.trim());
       if (res?.ok) {
         if (tab === 'register') {
           setSuccess('Conta criada com sucesso! Entrando...');
@@ -94,11 +82,10 @@ export default function LoginScreen({ onLogin }) {
     }
   };
 
-  const canSubmit = !loading && (central
-    ? emailOk && pass.length >= 6
-      && (tab === 'login' || /^[A-Za-z0-9_]{3,16}$/.test(nick.trim()))
-      && (tab === 'login' || pass === passConf)
-    : nick.trim().length >= 3 && pass.length >= 4 && (tab === 'login' || pass === passConf));
+  const canSubmit = !loading
+    && emailOk && pass.length >= 6
+    && (tab === 'login' || /^[A-Za-z0-9_]{3,16}$/.test(nick.trim()))
+    && (tab === 'login' || pass === passConf);
 
   return (
     <div className="eden-login-wrapper">
@@ -140,27 +127,25 @@ export default function LoginScreen({ onLogin }) {
 
           {/* Form */}
           <form className="eden-auth-form" onSubmit={handleSubmit}>
-            {central && (
-              <div className="eden-input-group">
-                <label htmlFor="auth-email" className="eden-input-label">
-                  E-mail
-                </label>
-                <div className="eden-input-field-wrap">
-                  <input
-                    id="auth-email"
-                    type="email"
-                    className="eden-auth-input"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoComplete="email"
-                    autoFocus
-                  />
-                </div>
+            <div className="eden-input-group">
+              <label htmlFor="auth-email" className="eden-input-label">
+                E-mail
+              </label>
+              <div className="eden-input-field-wrap">
+                <input
+                  id="auth-email"
+                  type="email"
+                  className="eden-auth-input"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  autoFocus
+                />
               </div>
-            )}
+            </div>
 
-            {(!central || tab === 'register') && (
+            {tab === 'register' && (
               <div className="eden-input-group">
                 <label htmlFor="auth-nick" className="eden-input-label">
                   Nickname
@@ -174,7 +159,6 @@ export default function LoginScreen({ onLogin }) {
                     value={nick}
                     onChange={(e) => setNick(e.target.value)}
                     maxLength={16}
-                    autoFocus={!central}
                     autoComplete="username"
                   />
                 </div>

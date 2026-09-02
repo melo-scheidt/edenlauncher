@@ -1,14 +1,15 @@
 // electron/services/auth.js
-// Autenticação do launcher Éden.
-// - Central: Supabase (e-mail + senha) quando EDEN_SUPABASE_URL/ANON_KEY estão no .env.
-// - Local:   contas offline por máquina (fallback, 100% offline).
+// Autenticação central do launcher Éden — Supabase (e-mail + senha).
+// Senhas ficam com hash bcrypt no servidor; o launcher nunca guarda senhas.
 
 const fs     = require('fs');
 const crypto = require('crypto');
 const paths  = require('./paths');
 const { SUPABASE_URL, SUPABASE_ANON_KEY } = require('../config');
 
-// ── Supabase (opcional) ───────────────────────────────────────────────────────
+const CONFIG_ERROR = 'Login central não configurado — preencha EDEN_SUPABASE_URL e EDEN_SUPABASE_ANON_KEY no .env';
+
+// ── Supabase ──────────────────────────────────────────────────────────────────
 let supabase = null;
 let supabaseTried = false;
 
@@ -25,14 +26,10 @@ function getSupabase() {
     const { createClient } = require('@supabase/supabase-js');
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } catch (e) {
-    console.warn('[auth] Falha ao iniciar Supabase, usando contas locais:', e.message);
+    console.warn('[auth] Falha ao iniciar Supabase:', e.message);
     return null;
   }
   return supabase;
-}
-
-function getAuthMode() {
-  return getSupabase() ? 'central' : 'local';
 }
 
 // ── Utilitários ───────────────────────────────────────────────────────────────
@@ -44,7 +41,6 @@ function offlineUuid(nick) {
   return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 }
 
-function hashPassword(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim()); }
 
 function mapSupabaseError(msg) {
@@ -61,10 +57,6 @@ function saveSession(s)  { fs.mkdirSync(require('path').dirname(paths.authFile()
 function loadSession()   {
   try {
     const s = JSON.parse(fs.readFileSync(paths.authFile(), 'utf-8'));
-    if (s && s.type === 'offline' && (!s.accessToken || s.accessToken === '0')) {
-      s.accessToken = crypto.randomBytes(32).toString('hex');
-      saveSession(s);
-    }
     if (s && !s.role) {
       s.role = 'player';
       saveSession(s);
@@ -73,34 +65,16 @@ function loadSession()   {
   } catch { return null; }
 }
 function clearSession()  { try { fs.unlinkSync(paths.authFile()); } catch {} }
-function loadAccounts()  { try { return JSON.parse(fs.readFileSync(paths.offlineAccountsFile(), 'utf-8')); } catch { return {}; } }
-function saveAccounts(d) { fs.mkdirSync(require('path').dirname(paths.offlineAccountsFile()), { recursive: true }); fs.writeFileSync(paths.offlineAccountsFile(), JSON.stringify(d, null, 2)); }
-
-const VALID_ROLES = ['player', 'mod', 'admin'];
 
 // ── Registrar conta ───────────────────────────────────────────────────────────
 async function registerAccount(nickname, password, email) {
+  const sb = getSupabase();
+  if (!sb) throw new Error(CONFIG_ERROR);
+
   const nick = (nickname || '').trim();
   if (!/^[A-Za-z0-9_]{3,16}$/.test(nick)) throw new Error('Nickname: 3–16 caracteres (letras, números ou _)');
-
-  const sb = getSupabase();
-
-  if (!sb) {
-    // Modo local — contas ficam salvas nesta máquina
-    if (!password || password.length < 4) throw new Error('Senha deve ter pelo menos 4 caracteres');
-
-    const accounts = loadAccounts();
-    const key = nick.toLowerCase();
-    if (accounts[key]) throw new Error('Nickname já cadastrado. Faça login.');
-
-    accounts[key] = { nickname: nick, passwordHash: hashPassword(password), role: 'player' };
-    saveAccounts(accounts);
-    return _buildSession(nick, 'player');
-  }
-
-  // Modo central — senha validada no servidor (hash gerenciado pelo Supabase)
-  if (!isValidEmail(email))          throw new Error('Informe um e-mail válido');
-  if (!password || password.length < 6) throw new Error('A senha deve ter no mínimo 6 caracteres');
+  if (!isValidEmail(email))                throw new Error('Informe um e-mail válido');
+  if (!password || password.length < 6)    throw new Error('A senha deve ter no mínimo 6 caracteres');
 
   const { data, error } = await sb.auth.signUp({
     email: email.trim(),
@@ -117,48 +91,18 @@ async function registerAccount(nickname, password, email) {
   return _buildSession(nick, 'player', data.session.access_token);
 }
 
-// ── Atribuir tag (player | mod | admin) — somente modo local ──────────────────
-function setRole(nickname, role) {
-  const nick = (nickname || '').trim();
-  if (!VALID_ROLES.includes(role)) throw new Error('Tag inválida. Use: player, mod ou admin');
-
-  const accounts = loadAccounts();
-  const account = accounts[nick.toLowerCase()];
-  if (!account) throw new Error('Conta não encontrada');
-
-  account.role = role;
-  saveAccounts(accounts);
-  return { nickname: account.nickname, role };
-}
-
 // ── Login ─────────────────────────────────────────────────────────────────────
 async function loginAccount(nickname, password, email) {
   const sb = getSupabase();
+  if (!sb) throw new Error(CONFIG_ERROR);
 
-  if (!sb) {
-    // Modo local
-    const nick = (nickname || '').trim();
-    if (!nick)     throw new Error('Nickname não informado');
-    if (!password) throw new Error('Senha não informada');
-
-    const accounts = loadAccounts();
-    const account  = accounts[nick.toLowerCase()];
-
-    if (!account)                                        throw new Error('Conta não encontrada. Crie sua conta primeiro.');
-    if (account.passwordHash !== hashPassword(password)) throw new Error('Senha incorreta');
-
-    return _buildSession(account.nickname, account.role || 'player');
-  }
-
-  // Modo central
   if (!isValidEmail(email)) throw new Error('Informe um e-mail válido');
   if (!password)            throw new Error('Senha não informada');
 
   const { data, error } = await sb.auth.signInWithPassword({ email: email.trim(), password });
   if (error) throw new Error(mapSupabaseError(error.message));
 
-  const user = data?.user;
-  const meta = user?.user_metadata || {};
+  const meta = data?.user?.user_metadata || {};
   const nick = meta.nickname || (nickname || '').trim() || (email || '').split('@')[0] || 'Jogador';
 
   // accessToken = JWT do Supabase (pode ser validado pelo plugin do servidor)
@@ -180,4 +124,4 @@ function _buildSession(nick, role, accessToken = null) {
   return session;
 }
 
-module.exports = { registerAccount, loginAccount, loadSession, clearSession, offlineUuid, setRole, getAuthMode };
+module.exports = { registerAccount, loginAccount, loadSession, clearSession, offlineUuid };
