@@ -1,0 +1,329 @@
+/* ===========================================================
+   Éden Launcher - Profile & Account Tab Styles (Screenshot 3 Match)
+   =========================================================== */
+
+.eden-profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* ================== TOP GRID ================== */
+.eden-profile-top-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr 280px;
+  gap: 16px;
+  min-height: 320px;
+}
+
+/* Left Profile Card */
+.eden-profile-card {
+  background: var(--eden-panel);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--eden-border);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: var(--eden-shadow-card);
+}
+
+.eden-profile-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.eden-profile-user-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eden-profile-head-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--eden-green-bright);
+  background: var(--eden-input-bg);
+  box-shadow: 0 0 10px var(--eden-green-glow);
+}
+
+.eden-profile-head-avatar img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  display: block;
+}
+
+.eden-profile-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eden-user-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eden-role-badge {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: rgba(231, 111, 81, 0.2);
+  color: #ff8a65;
+  border: 1px solid rgba(231, 111, 81, 0.4);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.eden-pass-status-text {
+  font-size: 10px;
+  color: var(--eden-text-mute);
+}
+
+.eden-user-display-name {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--eden-text);
+  margin: 0;
+}
+
+/* Balance Col */
+.eden-balance-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.eden-balance-label {
+  font-size: 10px;
+  color: var(--eden-text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.eden-balance-amount {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--eden-green-bright);
+}
+
+/* Stats Grid */
+.eden-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border-light);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.eden-stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eden-stat-label {
+  font-size: 9px;
+  color: var(--eden-text-mute);
+  letter-spacing: 0.02em;
+}
+
+.eden-stat-val {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--eden-text);
+}
+
+/* Profile Buttons */
+.eden-profile-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.eden-profile-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.eden-profile-btn--primary {
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #ffffff;
+  border: 1px solid var(--eden-border-strong);
+  box-shadow: var(--eden-shadow-button);
+}
+
+.eden-profile-btn--primary:hover {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  transform: translateY(-1px);
+}
+
+.eden-profile-btn--secondary {
+  background: var(--eden-card);
+  color: var(--eden-text);
+  border: 1px solid var(--eden-border);
+}
+
+.eden-profile-btn--secondary:hover {
+  background: var(--eden-panel-strong);
+  border-color: var(--eden-border-strong);
+}
+
+/* ================== CENTER 3D SKIN VIEWER ================== */
+.eden-skin-viewer-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.eden-skin-nick-badge {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--eden-text);
+  background: var(--eden-card);
+  border: 1px solid var(--eden-border);
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  backdrop-filter: blur(8px);
+}
+
+.eden-skin-3d-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+}
+
+/* ================== RIGHT SAVED SKINS ================== */
+.eden-saved-skins-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eden-skins-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--eden-text-dim);
+  margin: 0;
+}
+
+.eden-skins-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eden-add-skin-btn {
+  width: 76px;
+  height: 96px;
+  border-radius: 14px;
+  border: 1.5px dashed var(--eden-border-strong);
+  background: var(--eden-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--eden-text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eden-add-skin-btn span {
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.eden-add-skin-btn:hover {
+  border-color: var(--eden-green-bright);
+  color: var(--eden-green-bright);
+  background: var(--eden-panel-strong);
+  transform: translateY(-2px);
+}
+
+.eden-skin-item-card {
+  width: 76px;
+  height: 96px;
+  border-radius: 14px;
+  border: 1.5px solid var(--eden-border);
+  background: var(--eden-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  padding: 6px;
+}
+
+.eden-skin-item-card:hover {
+  border-color: var(--eden-border-strong);
+  transform: translateY(-2px);
+}
+
+.eden-skin-item-card.is-active {
+  border-color: var(--eden-green-bright);
+  box-shadow: 0 0 14px var(--eden-green-glow);
+}
+
+.eden-skin-thumb-preview {
+  width: 48px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eden-skin-thumb-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.eden-skin-active-tag {
+  position: absolute;
+  bottom: 4px;
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--eden-green-bright);
+  background: rgba(45, 106, 79, 0.3);
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}

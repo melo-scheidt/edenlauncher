@@ -1,0 +1,378 @@
+/* ===========================================================
+   Éden Launcher - Design System & Global Theme
+   Paletas:
+     - Modo Escuro: Preto/Cinza (#0c0f0d, #141815) + Verde Escuro (#1b4332, #2d6a4f, #52b788)
+     - Modo Claro:  Creme (#f7f4ec, #ede7d7) + Verde Escuro (#1b4332, #2d6a4f)
+   =========================================================== */
+
+:root,
+[data-theme="dark"] {
+  --theme-mode: 'dark';
+
+  /* Fundo e Superfícies (Escuro: Cinza Elegante / Slate Gray) */
+  --eden-bg: #1c1e22;
+  --eden-bg-alt: #22252a;
+  --eden-sidebar: rgba(28, 31, 36, 0.92);
+  --eden-topbar: rgba(30, 34, 40, 0.85);
+  --eden-panel: rgba(36, 40, 48, 0.78);
+  --eden-panel-solid: #22262e;
+  --eden-panel-strong: #2a2f38;
+  --eden-card: rgba(38, 43, 51, 0.75);
+  --eden-input-bg: rgba(22, 25, 30, 0.7);
+
+  /* Bordas */
+  --eden-border: rgba(46, 125, 50, 0.22);
+  --eden-border-light: rgba(255, 255, 255, 0.08);
+  --eden-border-strong: rgba(82, 183, 136, 0.35);
+
+  /* Tons de Verde Escuro / Floresta / Esmeralda */
+  --eden-green-deep: #081c15;
+  --eden-green-dark: #1b4332;
+  --eden-green-primary: #2d6a4f;
+  --eden-green-medium: #40916c;
+  --eden-green-bright: #52b788;
+  --eden-green-light: #74c69d;
+  --eden-green-glow: rgba(82, 183, 136, 0.35);
+
+  /* Textos */
+  --eden-text: #f0f4f1;
+  --eden-text-dim: #b4c6bc;
+  --eden-text-mute: #6f8277;
+
+  /* Estados */
+  --eden-success: #52b788;
+  --eden-warn: #e9c46a;
+  --eden-error: #e76f51;
+
+  /* Sombras & Glows */
+  --eden-shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --eden-shadow-glow: 0 0 24px rgba(82, 183, 136, 0.25);
+  --eden-shadow-button: 0 4px 16px rgba(45, 106, 79, 0.4);
+}
+
+[data-theme="light"] {
+  --theme-mode: 'light';
+
+  /* Fundo e Superfícies (Claro: Creme / Bege / Verde Escuro) */
+  --eden-bg: #f7f4ec;
+  --eden-bg-alt: #ede7d7;
+  --eden-sidebar: rgba(244, 238, 226, 0.94);
+  --eden-topbar: rgba(248, 244, 235, 0.9);
+  --eden-panel: rgba(255, 255, 255, 0.85);
+  --eden-panel-solid: #ffffff;
+  --eden-panel-strong: #f3ede0;
+  --eden-card: rgba(255, 255, 255, 0.92);
+  --eden-input-bg: rgba(255, 255, 255, 0.85);
+
+  /* Bordas */
+  --eden-border: rgba(27, 67, 50, 0.16);
+  --eden-border-light: rgba(27, 67, 50, 0.08);
+  --eden-border-strong: rgba(27, 67, 50, 0.3);
+
+  /* Tons de Verde Escuro no modo claro */
+  --eden-green-deep: #081c15;
+  --eden-green-dark: #1b4332;
+  --eden-green-primary: #2d6a4f;
+  --eden-green-medium: #1b4332;
+  --eden-green-bright: #2d6a4f;
+  --eden-green-light: #40916c;
+  --eden-green-glow: rgba(45, 106, 79, 0.18);
+
+  /* Textos */
+  --eden-text: #142018;
+  --eden-text-dim: #3a4d41;
+  --eden-text-mute: #677b6f;
+
+  /* Estados */
+  --eden-success: #2d6a4f;
+  --eden-warn: #b07d18;
+  --eden-error: #c84b31;
+
+  /* Sombras & Glows */
+  --eden-shadow-card: 0 8px 24px rgba(27, 67, 50, 0.08);
+  --eden-shadow-glow: 0 0 20px rgba(45, 106, 79, 0.15);
+  --eden-shadow-button: 0 4px 14px rgba(27, 67, 50, 0.25);
+}
+
+/* Tipografia e Base */
+:root {
+  --font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--eden-bg);
+  color: var(--eden-text);
+  font-family: var(--font-body);
+  overflow: hidden;
+  user-select: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+button {
+  font-family: var(--font-heading);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:focus,
+button:focus-visible,
+button:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input,
+select,
+textarea,
+.text-input {
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border);
+  border-radius: 10px;
+  padding: 11px 16px;
+  color: var(--eden-text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.text-input:focus {
+  outline: none;
+  border-color: var(--eden-green-bright);
+  background: var(--eden-input-bg);
+  box-shadow: 0 0 0 2px var(--eden-green-glow);
+}
+
+input::placeholder {
+  color: var(--eden-text-mute);
+}
+
+a {
+  color: var(--eden-green-bright);
+  text-decoration: none;
+}
+
+/* Scrollbar estilizada */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--eden-green-primary);
+  border-radius: 6px;
+  opacity: 0.7;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--eden-green-bright);
+}
+
+/* Componentes reutilizáveis & Painéis */
+.eden-panel {
+  background: var(--eden-panel);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--eden-border);
+  border-radius: 16px;
+  box-shadow: var(--eden-shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.eden-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.eden-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--eden-border);
+  background: rgba(45, 106, 79, 0.15);
+  color: var(--eden-text);
+}
+
+/* Botões Globais */
+.btn-primary {
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #ffffff;
+  padding: 11px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--eden-border-strong);
+  box-shadow: var(--eden-shadow-button);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--eden-green-glow);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  color: var(--eden-text-dim);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid var(--eden-border-light);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.btn-ghost:hover {
+  background: var(--eden-panel-strong);
+  color: var(--eden-text);
+  border-color: var(--eden-border);
+}
+
+/* Switch / Toggle */
+.toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 14px;
+  background: rgba(120, 140, 130, 0.25);
+  border: 1px solid var(--eden-border) !important;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle.on {
+  background: var(--eden-green-primary);
+  box-shadow: 0 0 12px var(--eden-green-glow);
+}
+
+.toggle.on::before {
+  transform: translateX(20px);
+}
+
+/* Logo Global Styles */
+.eden-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eden-crest-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--eden-green-bright);
+  filter: drop-shadow(0 0 8px var(--eden-green-glow));
+}
+
+.eden-crest-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.eden-brand-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+.eden-beta-tag-row {
+  margin-bottom: 2px;
+}
+
+.eden-beta-pill {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(82, 183, 136, 0.18);
+  border: 1px solid var(--eden-green-bright);
+  color: var(--eden-green-bright);
+  text-transform: uppercase;
+}
+
+.eden-brand-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--eden-text);
+  text-transform: uppercase;
+}
+
+/* Animações */
+@keyframes eden-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eden-fade-in,
+.eden-fade-in {
+  animation: eden-fade-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}

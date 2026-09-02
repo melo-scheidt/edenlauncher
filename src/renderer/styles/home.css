@@ -1,0 +1,425 @@
+/* ===========================================================
+   Éden Launcher - Home Play Tab Styles (Screenshot 2 Match)
+   =========================================================== */
+
+.eden-home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 24px;
+}
+
+/* ================== HERO TOP ================== */
+.eden-home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 24px 0 24px;
+}
+
+.eden-hero-branding {
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eden-hero-title {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: var(--eden-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.eden-hero-plus {
+  color: var(--eden-green-bright);
+  font-weight: 800;
+}
+
+/* Badges Row */
+.eden-hero-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.eden-pill-tag {
+  background: var(--eden-card);
+  border: 1px solid var(--eden-border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--eden-text-dim);
+  backdrop-filter: blur(10px);
+}
+
+.eden-hero-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--eden-text-dim);
+  margin: 0;
+  max-width: 520px;
+}
+
+/* Action Row (Play + Refresh) */
+.eden-play-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.eden-btn-play {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #ffffff;
+  border: 1px solid var(--eden-border-strong);
+  border-radius: 999px;
+  padding: 14px 38px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: var(--eden-shadow-button);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eden-btn-play:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--eden-green-glow);
+}
+
+.eden-btn-play:active {
+  transform: translateY(0);
+}
+
+.eden-btn-play:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.eden-play-btn-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eden-btn-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: width 0.2s linear;
+  z-index: 1;
+}
+
+.eden-btn-uninstall {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(231, 111, 81, 0.15);
+  color: var(--eden-error);
+  border: 1px solid rgba(231, 111, 81, 0.35);
+  border-radius: 999px;
+  padding: 14px 38px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(10px);
+}
+
+.eden-btn-uninstall:hover:not(:disabled) {
+  background: rgba(231, 111, 81, 0.28);
+  border-color: var(--eden-error);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(231, 111, 81, 0.35);
+}
+
+.eden-btn-uninstall:active {
+  transform: translateY(0);
+}
+
+.eden-btn-uninstall:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.eden-btn-refresh {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--eden-card);
+  border: 1px solid var(--eden-border);
+  color: var(--eden-text-dim);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.eden-btn-refresh:hover {
+  background: var(--eden-panel-strong);
+  color: var(--eden-green-bright);
+  border-color: var(--eden-border-strong);
+  transform: rotate(45deg);
+}
+
+/* ================== BOTTOM CAROUSEL SECTION ================== */
+.eden-home-carousel-section {
+  background: var(--eden-panel);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--eden-border);
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: var(--eden-shadow-card);
+  flex-shrink: 0;
+}
+
+.eden-carousel-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.eden-promo-card {
+  background: var(--eden-card);
+  border: 1px solid var(--eden-border-light);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.eden-promo-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--eden-border-strong);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.eden-promo-thumb {
+  height: 90px;
+  background: var(--eden-input-bg);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.eden-thumb-art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.eden-promo-card:hover .eden-thumb-art {
+  transform: scale(1.08);
+}
+
+.eden-thumb-art--cupom {
+  background: linear-gradient(135deg, rgba(82, 183, 136, 0.25), rgba(27, 67, 50, 0.4));
+  color: var(--eden-green-bright);
+}
+
+.eden-thumb-art--evento {
+  background: linear-gradient(135deg, rgba(233, 196, 106, 0.25), rgba(45, 106, 79, 0.4));
+  color: #e9c46a;
+}
+
+.eden-thumb-art--update {
+  background: linear-gradient(135deg, rgba(45, 106, 79, 0.3), rgba(8, 28, 21, 0.5));
+  color: var(--eden-green-bright);
+}
+
+.eden-thumb-art--passe {
+  background: linear-gradient(135deg, rgba(231, 111, 81, 0.25), rgba(45, 106, 79, 0.4));
+  color: #ff8a65;
+}
+
+.eden-promo-badge-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.eden-promo-info {
+  padding: 12px 14px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eden-promo-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--eden-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eden-promo-desc {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--eden-text-mute);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 31px;
+}
+
+.eden-promo-time {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--eden-text-mute);
+  opacity: 0.8;
+}
+
+/* ================== FULLSCREEN / RESPONSIVE SCALING ================== */
+@media (min-width: 1200px), (min-height: 750px) {
+  .eden-hero-branding {
+    max-width: 720px;
+    gap: 20px;
+  }
+
+  .eden-hero-title {
+    font-size: 68px;
+    gap: 12px;
+  }
+
+  .eden-pill-tag {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .eden-hero-description {
+    font-size: 16px;
+    max-width: 620px;
+    line-height: 1.6;
+  }
+
+  .eden-play-row {
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .eden-btn-play,
+  .eden-btn-uninstall {
+    padding: 16px 48px;
+    font-size: 16px;
+  }
+
+  .eden-btn-play svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .eden-btn-refresh {
+    width: 52px;
+    height: 52px;
+  }
+
+  .eden-btn-refresh svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (min-width: 1500px), (min-height: 900px) {
+  .eden-hero-branding {
+    max-width: 860px;
+    gap: 24px;
+  }
+
+  .eden-hero-title {
+    font-size: 82px;
+  }
+
+  .eden-pill-tag {
+    padding: 9px 18px;
+    font-size: 13px;
+  }
+
+  .eden-hero-description {
+    font-size: 18px;
+    max-width: 720px;
+  }
+
+  .eden-btn-play,
+  .eden-btn-uninstall {
+    padding: 18px 56px;
+    font-size: 18px;
+  }
+
+  .eden-btn-play svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .eden-btn-refresh {
+    width: 58px;
+    height: 58px;
+  }
+
+  .eden-btn-refresh svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .eden-promo-thumb {
+    height: 110px;
+  }
+
+  .eden-promo-title {
+    font-size: 14px;
+  }
+
+  .eden-promo-desc {
+    font-size: 12px;
+  }
+}
+

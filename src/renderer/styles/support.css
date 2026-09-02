@@ -1,0 +1,153 @@
+.support-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.support-panel {
+  padding: 22px 22px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.support-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.support-link {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(10, 5, 18, 0.55);
+  border: 1px solid var(--eden-border);
+  color: inherit;
+  text-align: left;
+  transition: all 200ms ease;
+}
+
+.support-link:hover {
+  border-color: var(--accent);
+  background: rgba(15, 10, 25, 0.7);
+  box-shadow: 0 4px 24px color-mix(in oklab, var(--accent) 30%, transparent);
+  transform: translateX(2px);
+}
+
+.support-link-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+.support-link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.support-link-text strong {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+}
+
+.support-link-text span {
+  font-size: 12px;
+  color: var(--eden-text-dim);
+}
+
+.support-link-text code {
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.support-link-arrow {
+  font-size: 20px;
+  color: var(--eden-text-mute);
+  transition: all 180ms ease;
+}
+
+.support-link:hover .support-link-arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+  text-shadow: 0 0 8px var(--accent);
+}
+
+/* Logs */
+.logs-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.logs-viewer-wrap {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid var(--eden-border);
+  background: rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.logs-viewer-wrap::before {
+  content: 'LOG · LIVE';
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 1;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--eden-cyan);
+  background: rgba(0, 229, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  pointer-events: none;
+}
+
+.logs-viewer {
+  width: 100%;
+  min-height: 260px;
+  max-height: 360px;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  resize: vertical;
+  outline: none;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #c8e9ff;
+}
+
+.logs-viewer:focus {
+  box-shadow: inset 0 0 0 1px var(--eden-cyan);
+}
+
+.logs-error {
+  padding: 14px;
+  color: var(--eden-error);
+  font-family: var(--font-heading);
+}
+
+@media (max-width: 1100px) {
+  .support-grid { grid-template-columns: 1fr; }
+}

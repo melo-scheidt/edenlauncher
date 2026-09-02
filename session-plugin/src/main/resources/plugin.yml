@@ -1,0 +1,7 @@
+name: EdenSession
+version: 1.0.0
+main: net.eden.session.EdenSessionPlugin
+api-version: '1.20'
+load: STARTUP
+description: Valida sessões do Éden Launcher e bloqueia conexões diretas.
+authors: [EdenStudios]

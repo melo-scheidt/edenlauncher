@@ -1,0 +1,251 @@
+/* ===========================================================
+   Éden Launcher - Map Tab Styles (Screenshot 5 Match)
+   =========================================================== */
+
+.eden-map-view-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0d1b2a;
+  border: 1px solid var(--eden-border);
+  box-shadow: var(--eden-shadow-card);
+}
+
+.eden-map-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.eden-map-canvas-transformer {
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+  width: 1200px;
+  height: 700px;
+  position: relative;
+}
+
+.eden-map-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Controls Top Left */
+.eden-map-controls-tl {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.eden-map-ctrl-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--eden-panel);
+  border: 1px solid var(--eden-border);
+  color: var(--eden-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.eden-map-ctrl-btn:hover {
+  background: var(--eden-green-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Time Center Badge */
+.eden-map-time-badge {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--eden-panel);
+  border: 1px solid var(--eden-border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--eden-text);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.eden-map-sun-icon {
+  color: #e9c46a;
+}
+
+/* Tools Top Right */
+.eden-map-tools-tr {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.eden-map-tool-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--eden-panel);
+  border: 1px solid var(--eden-border);
+  color: var(--eden-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.eden-map-tool-btn:hover {
+  background: var(--eden-green-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Player Pin */
+.eden-map-player-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.eden-pin-glow {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(82, 183, 136, 0.4);
+  animation: pulse-pin 1.8s infinite;
+}
+
+.eden-pin-point {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #52b788;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 0 10px #52b788;
+  position: relative;
+  z-index: 2;
+}
+
+.eden-pin-label {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* POI Pins */
+.eden-map-poi-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.eden-poi-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.eden-poi-label {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--eden-text);
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+@keyframes pulse-pin {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Coordinates Pill Bottom Left */
+.eden-map-coords-pill {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: var(--eden-panel);
+  border: 1px solid var(--eden-border);
+  border-radius: 12px;
+  padding: 6px 14px 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(14px);
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.eden-coords-copy-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--eden-text-dim);
+  transition: all 0.15s ease;
+}
+
+.eden-coords-copy-btn:hover {
+  color: var(--eden-green-bright);
+  border-color: var(--eden-green-bright);
+}
+
+.eden-coords-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.eden-coords-sub {
+  font-size: 9px;
+  color: var(--eden-text-mute);
+  text-transform: uppercase;
+}
+
+.eden-coords-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--eden-text);
+}

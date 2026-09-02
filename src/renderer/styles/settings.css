@@ -1,0 +1,349 @@
+/* ===========================================================
+   Éden Launcher - Settings Tab Styles (Screenshot 4 Match)
+   =========================================================== */
+
+.eden-settings-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.eden-settings-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eden-settings-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--eden-text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.eden-settings-subtitle {
+  font-size: 13px;
+  color: var(--eden-text-mute);
+  margin: 0;
+}
+
+/* ================== BODY GRID ================== */
+.eden-settings-body-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  min-height: 0;
+}
+
+/* Left Sub-nav */
+.eden-settings-nav-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.eden-subtab-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--eden-text-dim);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.eden-subtab-btn:hover {
+  background: var(--eden-card);
+  color: var(--eden-text);
+}
+
+.eden-subtab-btn.active {
+  background: rgba(45, 106, 79, 0.25);
+  border-color: var(--eden-border-strong);
+  color: var(--eden-green-bright);
+  box-shadow: 0 0 14px var(--eden-green-glow);
+}
+
+.eden-settings-footer-info {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--eden-card);
+  border: 1px solid var(--eden-border-light);
+}
+
+.eden-footer-app-name {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--eden-text-dim);
+}
+
+.eden-footer-os-info {
+  font-size: 10px;
+  color: var(--eden-text-mute);
+}
+
+/* Right Content Card */
+.eden-settings-content-card {
+  background: var(--eden-panel);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--eden-border);
+  border-radius: 20px;
+  padding: 24px 28px;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--eden-shadow-card);
+}
+
+.eden-settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.eden-setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eden-setting-row-toggle,
+.eden-setting-row-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--eden-border-light);
+}
+
+.eden-setting-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eden-item-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--eden-text);
+  margin: 0;
+}
+
+.eden-item-desc {
+  font-size: 12px;
+  color: var(--eden-text-mute);
+  margin: 0;
+}
+
+.eden-setting-num-input {
+  width: 140px;
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--eden-text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.eden-setting-text-input {
+  width: 100%;
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--eden-text);
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.eden-java-path-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Theme Picker Cards */
+.eden-theme-pickers-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.eden-theme-card {
+  background: var(--eden-card);
+  border: 1.5px solid var(--eden-border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: relative;
+}
+
+.eden-theme-card:hover {
+  border-color: var(--eden-border-strong);
+  transform: translateY(-2px);
+}
+
+.eden-theme-card.is-selected {
+  border-color: var(--eden-green-bright);
+  box-shadow: 0 0 16px var(--eden-green-glow);
+  background: rgba(45, 106, 79, 0.15);
+}
+
+.eden-theme-preview {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--eden-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.eden-theme-preview--dark {
+  background: #1c1e22;
+}
+
+.eden-theme-preview--light {
+  background: #f7f4ec;
+}
+
+.eden-theme-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.eden-theme-dot--black {
+  background: #2a2f38;
+}
+.eden-theme-dot--green {
+  background: #52b788;
+}
+.eden-theme-dot--cream {
+  background: #ede7d7;
+}
+.eden-theme-dot--green-dark {
+  background: #1b4332;
+}
+
+.eden-theme-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eden-theme-card-info strong {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--eden-text);
+}
+
+.eden-theme-card-info span {
+  font-size: 11px;
+  color: var(--eden-text-mute);
+}
+
+.eden-theme-check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: var(--eden-green-bright);
+}
+
+/* RAM Slider */
+.eden-ram-control-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--eden-card);
+  border: 1px solid var(--eden-border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.eden-ram-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.eden-range-slider {
+  flex: 1;
+  accent-color: var(--eden-green-bright);
+  height: 6px;
+  cursor: pointer;
+}
+
+.eden-ram-badge {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--eden-green-bright);
+  background: rgba(45, 106, 79, 0.2);
+  border: 1px solid var(--eden-border-strong);
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+
+.eden-ram-ticks-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--eden-text-mute);
+  padding: 0 4px;
+}
+
+.eden-action-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+}
+
+/* Toast */
+.eden-saved-toast {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: var(--eden-green-primary);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  animation: eden-fade-in 0.2s ease;
+}

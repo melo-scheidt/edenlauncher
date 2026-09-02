@@ -1,0 +1,331 @@
+/* ===========================================================
+   Éden Launcher - App Shell, Sidebar & TopBar Styles
+   =========================================================== */
+
+.app-shell {
+  position: relative;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--eden-bg);
+  padding: 16px;
+  gap: 16px;
+}
+
+/* ================== SIDEBAR (FLOATING PILL) ================== */
+.eden-sidebar-pill {
+  width: 76px;
+  background: var(--eden-sidebar);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--eden-border);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 8px 16px 8px;
+  box-shadow: var(--eden-shadow-card);
+  z-index: 30;
+  flex-shrink: 0;
+}
+
+.eden-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  flex: 1;
+}
+
+.eden-nav-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px 8px 4px;
+  border-radius: 14px;
+  color: var(--eden-text-mute);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  background: transparent;
+  gap: 4px;
+}
+
+.eden-nav-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.eden-nav-label {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--eden-text-mute);
+  transition: color 0.2s ease;
+}
+
+.eden-nav-item:hover {
+  color: var(--eden-text);
+}
+
+.eden-nav-item:hover .eden-nav-icon-wrap {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--eden-text);
+}
+
+.eden-nav-item:hover .eden-nav-label {
+  color: var(--eden-text);
+}
+
+/* Active tab state */
+.eden-nav-item.active {
+  color: var(--eden-green-bright);
+}
+
+.eden-nav-item.active .eden-nav-icon-wrap {
+  background: rgba(45, 106, 79, 0.25);
+  color: var(--eden-green-bright);
+  box-shadow: 0 0 14px var(--eden-green-glow);
+  border: 1px solid var(--eden-border-strong);
+}
+
+.eden-nav-item.active .eden-nav-label {
+  color: var(--eden-green-bright);
+  font-weight: 800;
+}
+
+.eden-sidebar-bottom {
+  margin-top: auto;
+  width: 100%;
+}
+
+.eden-nav-item--logout:hover {
+  color: var(--eden-error);
+}
+.eden-nav-item--logout:hover .eden-nav-icon-wrap {
+  background: rgba(231, 111, 81, 0.15);
+  color: var(--eden-error);
+}
+
+/* ================== MAIN CONTENT SHELL ================== */
+.app-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  gap: 14px;
+  z-index: 3; /* acima do CRT overlay (2) */
+}
+
+/* ================== TOPBAR ================== */
+.eden-topbar {
+  height: 60px;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.eden-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.eden-time-display {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--eden-text-dim);
+  padding: 0 6px;
+  letter-spacing: 0.04em;
+}
+
+/* Status diamond pill */
+.eden-server-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border);
+  border-radius: 12px;
+  padding: 5px 12px 5px 6px;
+}
+
+.eden-status-diamond {
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  border: 1px solid var(--eden-border-strong);
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: baseline;
+  box-shadow: 0 0 10px var(--eden-green-glow);
+}
+
+.eden-diamond-sub {
+  font-size: 9px;
+  opacity: 0.75;
+}
+
+.eden-status-progress-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eden-status-bar {
+  width: 90px;
+  height: 4px;
+  background: rgba(120, 140, 130, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.eden-status-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--eden-green-primary), var(--eden-green-bright));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.eden-status-text {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--eden-text-mute);
+  text-transform: lowercase;
+}
+
+/* Center Social */
+.eden-topbar-center {
+  display: flex;
+  align-items: center;
+}
+
+.eden-social-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eden-social-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--eden-text-dim);
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border-light);
+  transition: all 0.2s ease;
+}
+
+.eden-social-btn:hover {
+  color: var(--eden-green-bright);
+  border-color: var(--eden-border);
+  background: var(--eden-panel-strong);
+  transform: translateY(-1px);
+}
+
+.eden-theme-toggle-btn {
+  color: var(--eden-green-bright);
+  border-color: var(--eden-border);
+}
+
+/* Right Player Pill */
+.eden-topbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.eden-player-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eden-pass-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--eden-text-dim);
+  background: rgba(45, 106, 79, 0.12);
+  border: 1px solid var(--eden-border);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.eden-pass-icon {
+  color: var(--eden-green-bright);
+}
+
+.eden-pass-badge strong {
+  color: var(--eden-green-bright);
+  font-weight: 700;
+}
+
+.eden-player-name {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--eden-text);
+  letter-spacing: 0.02em;
+}
+
+.eden-player-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--eden-green-bright);
+  box-shadow: 0 0 8px var(--eden-green-glow);
+  background: var(--eden-input-bg);
+}
+
+.eden-player-avatar img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  display: block;
+}
+
+/* ================== APP BODY ================== */
+.app-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 18px;
+  position: relative;
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  flex: 1;
+}

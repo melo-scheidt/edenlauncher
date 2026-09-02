@@ -1,0 +1,41 @@
+/* ==================== BACKGROUND IMAGE ==================== */
+.eden-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.eden-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Dark mode overlay: light gray-dark tint + gentle blur */
+.eden-blur-overlay--dark {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 22, 26, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Light mode overlay: light cream tint + gentle blur */
+.eden-blur-overlay--light {
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 238, 220, 0.60);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+

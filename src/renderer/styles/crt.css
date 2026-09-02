@@ -1,0 +1,145 @@
+/* ===========================================================
+   Éden Launcher — CRT / Tubo de TV Effect
+   
+   Hierarquia de z-index (dentro do app-shell):
+     canvas.eden-canvas  → position: fixed, z-index: 0
+     .crt-overlay          → position: fixed, z-index: 2
+     conteúdo / cards      → fluxo normal (stacking context auto)
+     .eden-topbar           → z-index: 20
+     .eden-sidebar-pill     → z-index: 30
+     .eden-launch-overlay   → z-index: 100
+
+   A chave: o app-shell NÃO tem z-index explícito, então
+   elementos com backdrop-filter vivem no stacking context
+   do documento. O CRT com z-index:2 fica acima do canvas (0)
+   mas abaixo dos panels/cards que têm z-index auto (≥ 2 na
+   ordem do documento → ficam na frente por serem irmãos sem z-index
+   explícito, exceto sidebar/topbar).
+
+   NOTA: por isso usamos mix-blend-mode nos filhos para que o
+   efeito apareça mesmo sob os painéis glassmorphism.
+   =========================================================== */
+
+/* ── Container Principal ─────────────────────────────────── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Noise / Grain (SVG) ─────────────────────────────────── */
+.crt-noise-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  animation: crt-noise-shift 0.12s steps(1) infinite;
+}
+
+@keyframes crt-noise-shift {
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-1px, 1px); }
+  20%  { transform: translate(1px, -1px); }
+  30%  { transform: translate(-2px, 0); }
+  40%  { transform: translate(0, 2px); }
+  50%  { transform: translate(2px, -2px); }
+  60%  { transform: translate(-1px, -1px); }
+  70%  { transform: translate(1px, 0); }
+  80%  { transform: translate(0, -2px); }
+  90%  { transform: translate(-2px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Scanlines ───────────────────────────────────────────── */
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.10) 2px,
+    rgba(0, 0, 0, 0.10) 4px
+  );
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  animation: crt-scanline-scroll 8s linear infinite;
+}
+
+@keyframes crt-scanline-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100vh; }
+}
+
+/* ── Vignette ────────────────────────────────────────────── */
+.crt-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.50) 100%
+  );
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* ── Glitch Bar (aberração cromática) ───────────────────── */
+.crt-glitch-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(82, 183, 136, 0.4) 30%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(82, 183, 136, 0.4) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: crt-glitch-scan 6s linear infinite;
+}
+
+@keyframes crt-glitch-scan {
+  0%   { top: -2px; opacity: 0; }
+  2%   { opacity: 0.8; }
+  10%  { top: 15%; opacity: 0.5; }
+  20%  { top: 30%; opacity: 0.3; }
+  35%  { top: 50%; opacity: 0.6; }
+  50%  { top: 70%; opacity: 0.4; }
+  65%  { top: 85%; opacity: 0.2; }
+  80%  { top: 100%; opacity: 0; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── Flicker ─────────────────────────────────────────────── */
+.crt-flicker {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: crt-flicker-anim 0.15s steps(1) infinite;
+  background: transparent;
+}
+
+@keyframes crt-flicker-anim {
+  0%   { opacity: 1; }
+  92%  { opacity: 1; }
+  93%  { opacity: 0.97; }
+  94%  { opacity: 1; }
+  96%  { opacity: 0.98; }
+  97%  { opacity: 1; }
+  99%  { opacity: 0.96; }
+  100% { opacity: 1; }
+}
+
+/* ── Curvatura de tela (borda arredondada com máscara) ──── */
+/* A vigneta no .crt-vignette cobre o efeito de borda escura */

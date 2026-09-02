@@ -1,0 +1,78 @@
+/* ===========================================================
+   Éden Launcher - Splash Screen Styles
+   =========================================================== */
+
+.splash-root {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--eden-bg);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.splash-card {
+  position: relative;
+  z-index: 2;
+  width: 440px;
+  padding: 32px 36px;
+  border-radius: 20px;
+  background: var(--eden-panel);
+  border: 1px solid var(--eden-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px var(--eden-green-glow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: eden-fade-in 400ms ease-out both;
+}
+
+.splash-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.splash-progress {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.splash-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(120, 140, 130, 0.18);
+  overflow: hidden;
+  border: 1px solid var(--eden-border);
+}
+
+.splash-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--eden-green-dark), var(--eden-green-bright));
+  box-shadow: 0 0 10px var(--eden-green-glow);
+  transition: width 80ms linear;
+}
+
+.splash-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--eden-text-dim);
+  text-transform: uppercase;
+}
+
+.splash-footer {
+  margin-top: 16px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--eden-text-mute);
+  text-align: center;
+}

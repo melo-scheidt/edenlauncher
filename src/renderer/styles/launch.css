@@ -1,0 +1,192 @@
+/* ===========================================================
+   Éden Launcher - Bottom Progress Bar Styles
+   (Substitui a janela modal por uma barra inferior estilo Minecraft)
+   =========================================================== */
+
+.eden-launch-bottom-bar {
+  position: absolute;
+  bottom: 20px;
+  left: 104px;
+  right: 20px;
+  z-index: 100;
+  pointer-events: auto;
+  animation: slide-up-bar 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slide-up-bar {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.eden-bottom-bar-content {
+  background: var(--eden-panel);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--eden-border-strong);
+  border-radius: 16px;
+  padding: 10px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px var(--eden-green-glow);
+}
+
+.eden-launch-bottom-bar.is-error .eden-bottom-bar-content {
+  border-color: rgba(231, 111, 81, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(231, 111, 81, 0.2);
+}
+
+.eden-bottom-bar-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Left Info Column */
+.eden-bottom-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 260px;
+  max-width: 340px;
+}
+
+.eden-bottom-rocket-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px var(--eden-green-glow);
+  flex-shrink: 0;
+}
+
+.eden-bottom-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.eden-bottom-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--eden-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eden-bottom-subfile {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--eden-text-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Center Progress Bar */
+.eden-bottom-progress-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.eden-bottom-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(120, 140, 130, 0.18);
+  overflow: hidden;
+  border: 1px solid var(--eden-border);
+}
+
+.eden-bottom-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--eden-green-dark), var(--eden-green-bright));
+  border-radius: 999px;
+  box-shadow: 0 0 12px var(--eden-green-glow);
+  transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eden-bottom-counter {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--eden-text-mute);
+  text-align: right;
+}
+
+/* Right Percentage Badge */
+.eden-bottom-pct-badge {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--eden-green-bright);
+  background: rgba(45, 106, 79, 0.2);
+  border: 1px solid var(--eden-border-strong);
+  padding: 5px 12px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* Error Bar */
+.eden-bottom-bar-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eden-bottom-bar-error .error-icon {
+  color: #ff8a65;
+  flex-shrink: 0;
+}
+
+.error-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.error-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: #ff8a65;
+}
+
+.error-msg {
+  font-size: 11px;
+  color: var(--eden-text-dim);
+}
+
+.eden-bottom-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(231, 111, 81, 0.2);
+  border: 1px solid rgba(231, 111, 81, 0.4);
+  color: #ff8a65;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eden-bottom-close-btn:hover {
+  background: rgba(231, 111, 81, 0.35);
+  color: #ffffff;
+}

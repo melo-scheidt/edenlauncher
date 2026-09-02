@@ -1,0 +1,248 @@
+/* ===========================================================
+   Éden Launcher - Login Screen Styles (Screenshot 1 Match)
+   =========================================================== */
+
+.eden-login-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  padding: 48px 64px;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Left Hero */
+.eden-login-hero {
+  flex: 1;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+}
+
+.eden-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(45, 106, 79, 0.18);
+  border: 1px solid var(--eden-border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--eden-green-bright);
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.eden-hero-sparkle {
+  color: var(--eden-green-bright);
+}
+
+.eden-hero-heading {
+  font-family: var(--font-display);
+  font-size: 58px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--eden-text);
+  margin: 0 0 20px 0;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.eden-hero-desc {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--eden-text-dim);
+  margin: 0;
+  max-width: 440px;
+}
+
+/* Right Card */
+.eden-login-card-side {
+  width: 420px;
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+}
+
+.eden-login-card {
+  width: 100%;
+  background: var(--eden-panel);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--eden-border);
+  border-radius: 24px;
+  padding: 40px 36px 36px 36px;
+  box-shadow: var(--eden-shadow-card), 0 0 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eden-card-brand {
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Feedback messages */
+.eden-auth-alert {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.eden-auth-alert--error {
+  background: rgba(231, 111, 81, 0.15);
+  border: 1px solid rgba(231, 111, 81, 0.35);
+  color: #ff8a65;
+}
+
+.eden-auth-alert--success {
+  background: rgba(82, 183, 136, 0.15);
+  border: 1px solid rgba(82, 183, 136, 0.35);
+  color: #52b788;
+}
+
+/* Form */
+.eden-auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.eden-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.eden-input-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--eden-text-dim);
+}
+
+.eden-input-field-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.eden-auth-input {
+  width: 100%;
+  background: var(--eden-input-bg);
+  border: 1px solid var(--eden-border);
+  border-radius: 12px;
+  padding: 13px 18px;
+  color: var(--eden-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.eden-auth-input:focus {
+  border-color: var(--eden-green-bright);
+  box-shadow: 0 0 0 3px var(--eden-green-glow);
+  outline: none;
+}
+
+/* Submit Button with pill + chevron */
+.eden-auth-submit-btn {
+  margin-top: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #ffffff;
+  border: 1px solid var(--eden-border-strong);
+  border-radius: 999px;
+  padding: 13px 20px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: var(--eden-shadow-button);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eden-auth-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--eden-green-glow);
+}
+
+.eden-auth-submit-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.eden-auth-btn-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eden-auth-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer Link */
+.eden-auth-footer {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.eden-auth-switch-text {
+  font-size: 12px;
+  color: var(--eden-text-mute);
+  margin: 0;
+}
+
+.eden-auth-link {
+  color: var(--eden-green-bright);
+  font-weight: 700;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0 2px;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.eden-auth-link:hover {
+  color: var(--eden-green-light);
+}

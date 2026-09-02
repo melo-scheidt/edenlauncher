@@ -1,0 +1,20 @@
+# Dependências
+node_modules/
+
+# Builds (regenerados por vite/electron-builder/maven)
+dist/
+dist-app/
+session-plugin/target/
+
+# Mods — jars de terceiros, alguns >100MB (limite do GitHub).
+# Re-baixar de Modrinth/CurseForge e colocar nas pastas antes de buildar.
+mod  obrigatorio/*.jar
+mods opcionais/*.jar
+
+# Segredos — nunca subir para o GitHub
+.env
+
+# Logs e temporários
+*.log
+.DS_Store
+Thumbs.db

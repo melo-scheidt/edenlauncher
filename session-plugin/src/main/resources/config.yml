@@ -1,0 +1,8 @@
+# URL base da API do servidor Éden
+api-base: "https://api.eden.net"
+
+# Tempo máximo de resposta da API (segundos)
+timeout-seconds: 5
+
+# Mensagem exibida ao jogador que tentar entrar sem o launcher
+kick-message: "§c§lÉden\n§r§cVocê precisa usar o launcher oficial para entrar!\n§7Download: §beden.net/launcher"
