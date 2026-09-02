@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { ChevronRight, Sparkles, User, Lock, Mail, AlertCircle, CheckCircle } from 'lucide-react';
+import { ChevronRight, AlertCircle, CheckCircle, Languages } from 'lucide-react';
 import EdenLogo from './EdenLogo.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import '../styles/login.css';
 
 export default function LoginScreen({ onLogin }) {
-  const { t } = useI18n();
+  const { lang, setLang, t } = useI18n();
   const [tab, setTab] = useState('login'); // 'login' | 'register'
   const [nick, setNick] = useState('');
   const [email, setEmail] = useState('');
@@ -93,13 +93,22 @@ export default function LoginScreen({ onLogin }) {
 
   return (
     <div className="eden-login-wrapper">
+      {/* ── Top-Left Language Switcher ── */}
+      <div className="eden-login-top-actions">
+        <button
+          type="button"
+          className="eden-social-btn eden-lang-btn eden-login-lang-btn"
+          title={`Idioma: ${lang === 'pt-BR' ? 'Português (Brasil)' : 'Português (Portugal)'} - Clique para alternar`}
+          onClick={() => setLang(lang === 'pt-BR' ? 'pt-PT' : 'pt-BR')}
+        >
+          <Languages size={14} />
+          <span className="eden-lang-badge">{lang === 'pt-BR' ? 'PT-BR' : 'PT-PT'}</span>
+        </button>
+      </div>
+
       {/* ── Left Hero Side ── */}
       <div className="eden-login-hero">
         <div className="eden-login-hero-content">
-          <div className="eden-hero-pill">
-            <Sparkles size={14} className="eden-hero-sparkle" />
-            <span>NOVA ERA MEDIEVAL RPG</span>
-          </div>
           <h1 className="eden-hero-heading">{t('login.welcome')}</h1>
           <p className="eden-hero-desc">{t('login.heroDesc')}</p>
         </div>

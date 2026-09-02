@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Languages, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { Languages, Crown, Sun, Moon } from 'lucide-react';
 import EdenLogo from './EdenLogo.jsx';
 import PlayerHead from './PlayerHead.jsx';
 import RoleTag from './RoleTag.jsx';
@@ -115,7 +115,7 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
       <div className="eden-topbar-right">
         <div className="eden-player-pill">
           <div className="eden-pass-badge">
-            <ShieldCheck size={13} className="eden-pass-icon" />
+            <Crown size={13} className="eden-pass-icon" />
             <span>{t('topbar.pass').split(':')[0]}: <strong>{t('topbar.pass').split(': ')[1]}</strong></span>
           </div>
 

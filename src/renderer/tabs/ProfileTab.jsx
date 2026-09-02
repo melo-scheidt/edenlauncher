@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Crown } from 'lucide-react';
 import SkinViewer3D from '../components/SkinViewer.jsx';
 import PlayerHead from '../components/PlayerHead.jsx';
 import RoleTag from '../components/RoleTag.jsx';
@@ -154,11 +154,20 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
 
           {/* Action Buttons */}
           <div className="eden-profile-btn-row">
-            <button type="button" className="eden-profile-btn eden-profile-btn--primary">
-              {t('profile.buyPass')}
-            </button>
-            <button type="button" className="eden-profile-btn eden-profile-btn--secondary">
-              {t('profile.recharge')}
+            <button
+              type="button"
+              className="eden-profile-btn eden-profile-btn--primary eden-profile-vip-btn"
+              onClick={() => {
+                const url = 'https://discord.gg/XE5SsTurP5';
+                if (window.eden?.shell?.openExternal) {
+                  window.eden.shell.openExternal(url);
+                } else {
+                  window.open(url, '_blank');
+                }
+              }}
+            >
+              <Crown size={16} />
+              <span>{t('profile.buyVip')}</span>
             </button>
           </div>
         </div>

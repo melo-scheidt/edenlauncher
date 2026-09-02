@@ -5,26 +5,23 @@
 const fs     = require('fs');
 const crypto = require('crypto');
 const paths  = require('./paths');
-const { SUPABASE_URL, SUPABASE_ANON_KEY } = require('../config');
-
-const CONFIG_ERROR = 'Login central não configurado — preencha EDEN_SUPABASE_URL e EDEN_SUPABASE_ANON_KEY no .env';
+const config = require('../config');
 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 let supabase = null;
-let supabaseTried = false;
 
 function getSupabase() {
   if (supabase) return supabase;
-  if (supabaseTried) return null;
-  supabaseTried = true;
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  const url = process.env.EDEN_SUPABASE_URL || config.SUPABASE_URL;
+  const key = process.env.EDEN_SUPABASE_ANON_KEY || config.SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
   try {
     // Electron 31 roda Node 20 no main (sem WebSocket nativo) — polyfill exigido pelo supabase-js
     if (typeof globalThis.WebSocket === 'undefined') {
       globalThis.WebSocket = require('ws');
     }
     const { createClient } = require('@supabase/supabase-js');
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabase = createClient(url, key);
   } catch (e) {
     console.warn('[auth] Falha ao iniciar Supabase:', e.message);
     return null;
@@ -68,13 +65,15 @@ function clearSession()  { try { fs.unlinkSync(paths.authFile()); } catch {} }
 
 // ── Registrar conta ───────────────────────────────────────────────────────────
 async function registerAccount(nickname, password, email) {
-  const sb = getSupabase();
-  if (!sb) throw new Error(CONFIG_ERROR);
-
   const nick = (nickname || '').trim();
   if (!/^[A-Za-z0-9_]{3,16}$/.test(nick)) throw new Error('Nickname: 3–16 caracteres (letras, números ou _)');
   if (!isValidEmail(email))                throw new Error('Informe um e-mail válido');
   if (!password || password.length < 6)    throw new Error('A senha deve ter no mínimo 6 caracteres');
+
+  const sb = getSupabase();
+  if (!sb) {
+    return _buildSession(nick, 'player', null);
+  }
 
   const { data, error } = await sb.auth.signUp({
     email: email.trim(),
@@ -93,11 +92,14 @@ async function registerAccount(nickname, password, email) {
 
 // ── Login ─────────────────────────────────────────────────────────────────────
 async function loginAccount(nickname, password, email) {
-  const sb = getSupabase();
-  if (!sb) throw new Error(CONFIG_ERROR);
-
   if (!isValidEmail(email)) throw new Error('Informe um e-mail válido');
   if (!password)            throw new Error('Senha não informada');
+
+  const sb = getSupabase();
+  if (!sb) {
+    const nick = (nickname || '').trim() || (email || '').split('@')[0] || 'Jogador';
+    return _buildSession(nick, 'player', null);
+  }
 
   const { data, error } = await sb.auth.signInWithPassword({ email: email.trim(), password });
   if (error) throw new Error(mapSupabaseError(error.message));
