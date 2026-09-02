@@ -315,6 +315,12 @@ async function launch({ profile, settings, manifest, onEvent = () => {} }) {
       }
     }
 
+    // Aplica o shader selecionado no catálogo (Iris lê estas chaves do options.txt)
+    if (settings.shader) {
+      map.set('shaderPack', settings.shader);
+      map.set('enableShaders', 'true');
+    }
+
     fs.mkdirSync(paths.gameDir(), { recursive: true });
     fs.writeFileSync(optionsPath, [...map.entries()].map(([k, v]) => `${k}:${v}`).join('\n'));
   } catch (e) {

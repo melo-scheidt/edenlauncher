@@ -62,18 +62,17 @@ contextBridge.exposeInMainWorld('eden', {
     listAll:            ()                    => ipcRenderer.invoke('mods:list-all'),
     listLocal:          ()                    => ipcRenderer.invoke('mods:list-local'),
     toggleLocal:        (filename, isEnabled) => ipcRenderer.invoke('mods:toggle-local', { filename, isEnabled }),
-    openFolder:         ()                    => ipcRenderer.invoke('mods:open-folder'),
-    openOptionalFolder: ()                    => ipcRenderer.invoke('mods:open-optional-folder'),
   },
 
   shaders: {
-    listLocal:  () => ipcRenderer.invoke('shaders:list-local'),
-    openFolder: () => ipcRenderer.invoke('shaders:open-folder'),
+    listCatalog: ()        => ipcRenderer.invoke('shaders:list-catalog'),
+    select:      (opts)    => ipcRenderer.invoke('shaders:select', opts),
+    remove:      (opts)    => ipcRenderer.invoke('shaders:remove', opts),
+    listLocal:   ()        => ipcRenderer.invoke('shaders:list-local'),
   },
 
   resourcepacks: {
     listLocal:  () => ipcRenderer.invoke('resourcepacks:list-local'),
-    openFolder: () => ipcRenderer.invoke('resourcepacks:open-folder'),
   },
 
   updater: {

@@ -114,7 +114,7 @@ body,
   margin: 0;
   padding: 0;
   height: 100%;
-  background: var(--eden-bg);
+  background: transparent;
   color: var(--eden-text);
   font-family: var(--font-body);
   overflow: hidden;
@@ -322,9 +322,12 @@ a {
   filter: drop-shadow(0 0 8px var(--eden-green-glow));
 }
 
-.eden-crest-svg {
+.eden-crest-svg,
+.eden-crest-img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .eden-brand-col {

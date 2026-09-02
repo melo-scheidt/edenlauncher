@@ -119,6 +119,36 @@ function getOptionalMods() {
     });
 }
 
+// ── Shaders Embutidos (catálogo oficial) ──────────────────────────────────────
+
+function getSourceShadersDir() {
+  const appPath = (app && typeof app.getAppPath === 'function') ? app.getAppPath() : path.join(__dirname, '..', '..');
+  const candidates = [
+    path.join(__dirname, '..', '..', 'shaders opcionais'),
+    path.join(__dirname, '..', '..', 'shaders-opcionais'),
+    path.join(appPath, 'shaders opcionais'),
+    path.join(appPath, 'shaders-opcionais'),
+    path.join(process.resourcesPath || '', 'shaders opcionais'),
+    path.join(process.resourcesPath || '', 'shaders-opcionais'),
+  ];
+  for (const p of candidates) {
+    if (p && fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+function getShaders() {
+  const src = getSourceShadersDir();
+  if (!src || !fs.existsSync(src)) return [];
+  return fs.readdirSync(src)
+    .filter((e) => e.endsWith('.zip'))
+    .map((filename) => {
+      const fullPath = path.join(src, filename);
+      const stat = fs.statSync(fullPath);
+      return { filename, fullPath, size: stat.size };
+    });
+}
+
 // ── Construção Dinâmica de Manifesto Local ───────────────────────────────────
 
 async function buildLocalManifest() {
@@ -345,6 +375,21 @@ async function syncLocalMods(userEnabledMap = {}) {
   }
 }
 
+// ── Garante que shaderpacks/ contenha SOMENTE shaders do catálogo oficial ────
+
+function enforceShadersFolder() {
+  const dir = paths.shaderpacksDir();
+  if (!fs.existsSync(dir)) return;
+  const allowed = new Set(getShaders().map((s) => s.filename.toLowerCase()));
+  for (const entry of fs.readdirSync(dir)) {
+    if (!entry.toLowerCase().endsWith('.zip')) continue;
+    if (!allowed.has(entry.toLowerCase())) {
+      log.warn('[modpack] Removendo shader não autorizado:', entry);
+      try { fs.unlinkSync(path.join(dir, entry)); } catch {}
+    }
+  }
+}
+
 // ── Sincroniza Modpack Geral ──────────────────────────────────────────────────
 
 async function syncModpack(manifest, onProgress = () => {}, userEnabledMap = {}) {
@@ -414,6 +459,7 @@ async function syncModpack(manifest, onProgress = () => {}, userEnabledMap = {})
   }
 
   await enforceModsFolder(manifest, userEnabledMap);
+  enforceShadersFolder();
   report({ phase: 'done' });
   return { ok: true, version: manifest.version };
 }
@@ -482,6 +528,9 @@ module.exports = {
   sha256File,
   getMandatoryMods,
   getOptionalMods,
+  getShaders,
   getSourceMandatoryModsDir,
   getSourceOptionalModsDir,
+  getSourceShadersDir,
+  enforceShadersFolder,
 };

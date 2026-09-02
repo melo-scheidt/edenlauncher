@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FolderOpen, RefreshCw, Layers, Sparkles, Box, SlidersHorizontal } from 'lucide-react';
+import { RefreshCw, Layers, Sparkles, Box, SlidersHorizontal, AlertTriangle } from 'lucide-react';
 import { getValue, setValue } from '../lib/store.js';
 import '../styles/mods.css';
 
@@ -56,62 +56,82 @@ function getShaderImage(name) {
 }
 
 // ── Catálogo Oficial de Shaders (com fotos da pasta "fotos shaders") ─────────
+// match = palavras-chave usadas para casar o zip embutido com o card do catálogo
 const OFFICIAL_SHADERS = [
   {
     id: 'BSL Shaders',
     name: 'BSL Shaders',
     description: 'Iluminação realista, sombras suaves e reflexos cinematográficos.',
     image: bslImg,
+    match: ['bsl'],
   },
   {
     id: 'BSL Shaders Unbound',
     name: 'BSL Shaders Unbound',
     description: 'Versão alternativa do BSL com cores vívidas e céu estilizado.',
     image: bslUnboundImg,
+    match: ['bslunbound'],
   },
   {
     id: 'Complementary Shaders',
     name: 'Complementary Shaders',
     description: 'Sucessor espiritual do BSL, vibrante e altamente otimizado.',
     image: complementaryImg,
+    match: ['complementary', 'reimagined'],
   },
   {
     id: 'CTR VCR',
     name: 'CTR VCR',
     description: 'Estética retrô VHS com distorções analógicas e ruído de fita.',
     image: ctrVcrImg,
+    match: ['ctr', 'vcr'],
   },
   {
     id: 'Dreamlight',
     name: 'Dreamlight',
     description: 'Atmosfera onírica com luzes suaves e neblina volumétrica.',
     image: dreamlightImg,
+    match: ['dreamlight'],
   },
   {
     id: 'Photon',
     name: 'Photon',
     description: 'Path-tracing experimental com iluminação global realista.',
     image: photonImg,
+    match: ['photon'],
   },
   {
     id: 'Prismarine',
     name: 'Prismarine',
     description: 'Água cristalina, sombras nítidas e clima tropical.',
     image: prismarineImg,
+    match: ['prismarine'],
   },
   {
     id: 'Solas Shader',
     name: 'Solas Shader',
     description: 'Estilo fantasia com luzes quentes e auroras marcantes.',
     image: solasImg,
+    match: ['solas'],
   },
   {
     id: 'Super Duper Vanilla',
     name: 'Super Duper Vanilla',
     description: 'Vanilla aprimorado, sombras leves mantendo a estética original.',
     image: sdvImg,
+    match: ['superduper', 'sdv'],
   },
 ];
+
+// Casca o nome do zip com a entrada correspondente do catálogo oficial
+function findOfficialShader(zipName) {
+  const clean = (zipName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!clean) return null;
+  for (const o of OFFICIAL_SHADERS) {
+    if (o.match?.some((k) => clean.includes(k))) return o;
+  }
+  return null;
+}
 
 // ── Lista Oficial de Mods das Pastas do Projeto ──────────────────────────────
 const OFFICIAL_MANDATORY_MODS = [
@@ -370,7 +390,7 @@ export default function ModsTab() {
               name: info.name,
               description: info.description,
               icon: info.icon,
-              isEnabled: savedState !== undefined ? !!savedState : false,
+              isEnabled: savedState !== undefined ? !!savedState : (mod.isEnabled ?? true),
               size: mod.size,
               isLocal: true,
             };
@@ -383,18 +403,72 @@ export default function ModsTab() {
           const savedState = savedMods.enabled?.[mod.baseFilename];
           return {
             ...mod,
-            isEnabled: savedState !== undefined ? !!savedState : false,
+            isEnabled: savedState !== undefined ? !!savedState : (mod.isEnabled ?? true),
           };
         });
         setOptionalMods(fallbackFormatted);
       }
 
-      // 2. Carrega Shaders locais
+      // 2. Shaders: catálogo oficial embutido + zips já instalados
+      let shaderCatalog = [];
+      if (window.eden?.shaders?.listCatalog) {
+        const res = await window.eden.shaders.listCatalog();
+        if (res?.ok) shaderCatalog = res.catalog || [];
+      }
       let localShaders = [];
       if (window.eden?.shaders?.listLocal) {
         localShaders = await window.eden.shaders.listLocal();
       }
-      setShadersList(localShaders);
+
+      const noBackend = !window.eden?.shaders?.listCatalog;
+      const seen = new Set();
+      const shaderItems = [];
+
+      for (const c of shaderCatalog) {
+        seen.add(c.filename);
+        const official = findOfficialShader(c.filename);
+        shaderItems.push({
+          filename: c.filename,
+          name: official?.name || c.filename.replace(/\.zip$/i, ''),
+          description: official?.description || 'Shader pack oficial do Éden.',
+          image: official?.image || getShaderImage(c.filename),
+          installed: !!c.installed,
+          available: true,
+        });
+      }
+      for (const s of localShaders) {
+        if (seen.has(s)) continue;
+        seen.add(s);
+        const official = findOfficialShader(s);
+        shaderItems.push({
+          filename: s,
+          name: official?.name || s.replace(/\.zip$/i, ''),
+          description: official?.description || 'Shader pack instalado.',
+          image: getShaderImage(s),
+          installed: true,
+          available: true,
+        });
+      }
+      // Entradas do catálogo sem zip embutido aparecem como indisponíveis
+      for (const o of OFFICIAL_SHADERS) {
+        const matched = shaderItems.some((it) => findOfficialShader(it.filename) === o);
+        if (!matched) {
+          shaderItems.push({
+            filename: o.id,
+            name: o.name,
+            description: o.description,
+            image: o.image,
+            installed: false,
+            available: noBackend,
+          });
+        }
+      }
+      const shaderOrder = (it) => {
+        const idx = OFFICIAL_SHADERS.findIndex((o) => findOfficialShader(it.filename) === o);
+        return idx === -1 ? 99 : idx;
+      };
+      shaderItems.sort((a, b) => shaderOrder(a) - shaderOrder(b));
+      setShadersList(shaderItems);
 
     } catch (e) {
       console.warn('[ModsTab] Erro ao carregar dados de mods:', e);
@@ -440,22 +514,33 @@ export default function ModsTab() {
     );
   };
 
-  // ── Selecionar Shader ─────────────────────────────────────────────────────
-  const handleSelectShader = async (shaderName) => {
-    const next = activeShader === shaderName ? '' : shaderName;
-    setActiveShader(next);
-    const currentStore = (await getValue('mods', null)) || {};
-    await setValue('mods', { ...currentStore, shader: next });
-  };
+  // ── Selecionar/Instalar Shader do catálogo oficial ────────────────────────
+  const handleSelectShader = async (item) => {
+    if (!item?.available) return;
+    const next = activeShader === item.filename ? '' : item.filename;
 
-  // ── Abrir Pastas ──────────────────────────────────────────────────────────
-  const handleOpenFolder = () => {
-    if (activeSubTab === 'shaders' && window.eden?.shaders?.openFolder) {
-      window.eden.shaders.openFolder();
-    } else if (window.eden?.mods?.openFolder) {
-      window.eden.mods.openFolder();
+    // Optimistic update
+    setActiveShader(next);
+
+    if (window.eden?.shaders?.select) {
+      const res = await window.eden.shaders.select({ filename: next || null });
+      if (!res?.ok) {
+        setActiveShader(activeShader);
+        console.error('[ModsTab] Falha ao aplicar shader:', res?.error);
+        return;
+      }
+      if (next) {
+        setShadersList((prev) => prev.map((s) => (s.filename === next ? { ...s, installed: true } : s)));
+      }
+    } else {
+      // Preview no navegador (sem Electron)
+      const currentStore = (await getValue('mods', null)) || {};
+      await setValue('mods', { ...currentStore, shader: next });
     }
   };
+
+  const irisMod = optionalMods.find((m) => (m.baseFilename || m.filename || '').toLowerCase().includes('iris'));
+  const irisDisabled = !!irisMod && irisMod.isEnabled === false;
 
   return (
     <div className="mods-container-box eden-fade-in">
@@ -480,19 +565,10 @@ export default function ModsTab() {
         >
           <Sparkles size={16} />
           Shaders
-          <span className="mods-badge-count">{shadersList.length > 0 ? shadersList.length : OFFICIAL_SHADERS.length}</span>
+          <span className="mods-badge-count">{shadersList.length}</span>
         </button>
 
         <div className="mods-nav-footer">
-          <button
-            type="button"
-            className="mods-action-btn"
-            onClick={handleOpenFolder}
-            title="Abrir pasta correspondente no Explorer"
-          >
-            <FolderOpen size={14} />
-            <span>Abrir Pasta</span>
-          </button>
           <button
             type="button"
             className="mods-action-btn"
@@ -528,10 +604,7 @@ export default function ModsTab() {
               <div className="mods-empty-state">
                 <Box size={40} className="mods-empty-icon" />
                 <h3>Nenhum mod opcional encontrado</h3>
-                <p>Os mods da pasta de opcionais aparecerão aqui para você ativar ou desativar livremente.</p>
-                <button type="button" className="btn-primary" onClick={handleOpenFolder}>
-                  <FolderOpen size={16} /> Abrir Pasta de Mods
-                </button>
+                <p>Os mods oficiais do Éden aparecerão aqui para você ativar ou desativar.</p>
               </div>
             ) : (
               <div className="mods-grid-layout">
@@ -566,85 +639,56 @@ export default function ModsTab() {
         {/* ── ABA 3: SHADERS ──────────────────────────────────────────────── */}
         {activeSubTab === 'shaders' && (
           <>
-            {shadersList.length === 0 ? (
-              <div className="shaders-grid-layout">
-                {OFFICIAL_SHADERS.map((shader) => {
-                  const isActive = activeShader === shader.id || activeShader === shader.name;
-                  const img = shader.image || getShaderImage(shader.name);
-                  return (
-                    <div
-                      key={shader.id}
-                      className={`shader-item-card ${isActive ? 'active' : ''}`}
-                      onClick={() => handleSelectShader(shader.id)}
-                    >
-                      <div className="shader-item-preview">
-                        {img ? (
-                          <img src={img} alt={shader.name} className="shader-preview-img" />
-                        ) : (
-                          <ShaderArt />
-                        )}
-                      </div>
-                      <div className="shader-item-body">
-                        <div className="shader-item-header">
-                          <strong>{shader.name}</strong>
-                        </div>
-                        <p className="shader-desc">{shader.description}</p>
-                      </div>
-                      <button
-                        type="button"
-                        className={`mod-toggle-switch ${isActive ? 'on' : ''}`}
-                        role="switch"
-                        aria-checked={isActive}
-                      >
-                        <span className="mod-toggle-thumb" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="shaders-grid-layout">
-                {shadersList.map((s) => {
-                  const isActive = activeShader === s;
-                  const displayName = s.replace(/\.zip$/i, '').replace(/\.disabled$/i, '');
-                  const img = getShaderImage(displayName);
-                  const official = OFFICIAL_SHADERS.find((o) => {
-                    const a = displayName.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const b = o.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    return a.includes(b) || b.includes(a);
-                  });
-                  return (
-                    <div
-                      key={s}
-                      className={`shader-item-card ${isActive ? 'active' : ''}`}
-                      onClick={() => handleSelectShader(s)}
-                    >
-                      <div className="shader-item-preview">
-                        {img ? (
-                          <img src={img} alt={displayName} className="shader-preview-img" />
-                        ) : (
-                          <ShaderArt />
-                        )}
-                      </div>
-                      <div className="shader-item-body">
-                        <div className="shader-item-header">
-                          <strong>{displayName}</strong>
-                        </div>
-                        <p className="shader-desc">{official?.description || 'Shader pack instalado na pasta do jogo.'}</p>
-                      </div>
-                      <button
-                        type="button"
-                        className={`mod-toggle-switch ${isActive ? 'on' : ''}`}
-                        role="switch"
-                        aria-checked={isActive}
-                      >
-                        <span className="mod-toggle-thumb" />
-                      </button>
-                    </div>
-                  );
-                })}
+            {irisDisabled && (
+              <div className="shaders-iris-warning">
+                <AlertTriangle size={15} />
+                <span>
+                  O mod <strong>Iris</strong> está desativado — ative-o na aba Mods Opcionais para os shaders funcionarem.
+                </span>
               </div>
             )}
+
+            <div className="shaders-grid-layout">
+              {shadersList.map((item) => {
+                const isActive = activeShader === item.filename;
+                const img = item.image || getShaderImage(item.name);
+                return (
+                  <div
+                    key={item.filename}
+                    className={`shader-item-card ${isActive ? 'active' : ''} ${!item.available ? 'unavailable' : ''}`}
+                    onClick={() => handleSelectShader(item)}
+                  >
+                    <div className="shader-item-preview">
+                      {img ? (
+                        <img src={img} alt={item.name} className="shader-preview-img" />
+                      ) : (
+                        <ShaderArt />
+                      )}
+                      {!item.available && (
+                        <span className="shader-unavailable-badge">Indisponível</span>
+                      )}
+                    </div>
+                    <div className="shader-item-body">
+                      <div className="shader-item-header">
+                        <strong>{item.name}</strong>
+                        {item.installed && !isActive && (
+                          <span className="shader-installed-badge">Instalado</span>
+                        )}
+                      </div>
+                      <p className="shader-desc">{item.description}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className={`mod-toggle-switch ${isActive ? 'on' : ''}`}
+                      role="switch"
+                      aria-checked={isActive}
+                    >
+                      <span className="mod-toggle-thumb" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </>
         )}
       </main>

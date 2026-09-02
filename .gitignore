@@ -6,10 +6,11 @@ dist/
 dist-app/
 session-plugin/target/
 
-# Mods — jars de terceiros, alguns >100MB (limite do GitHub).
+# Mods e shaders — binários de terceiros, alguns >100MB (limite do GitHub).
 # Re-baixar de Modrinth/CurseForge e colocar nas pastas antes de buildar.
 mod  obrigatorio/*.jar
 mods opcionais/*.jar
+shaders opcionais/*.zip
 
 # Segredos — nunca subir para o GitHub
 .env

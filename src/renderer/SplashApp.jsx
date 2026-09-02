@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import EdenCanvas from './components/EdenCanvas.jsx';
 import EdenLogo from './components/EdenLogo.jsx';
 import './styles/splash.css';
 
@@ -29,7 +28,6 @@ export default function SplashApp() {
 
   return (
     <div className="splash-root">
-      <EdenCanvas dense />
       <div className="splash-card">
         <div className="splash-logo-container">
           <EdenLogo size="large" showBeta={true} showText={true} />

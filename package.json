@@ -1,6 +1,6 @@
 {
   "name": "eden-launcher",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "private": true,
   "description": "Éden Launcher",
   "author": "Éden Studios",
@@ -61,6 +61,10 @@
       {
         "from": "mods opcionais",
         "to": "mods opcionais"
+      },
+      {
+        "from": "shaders opcionais",
+        "to": "shaders opcionais"
       }
     ],
     "win": {

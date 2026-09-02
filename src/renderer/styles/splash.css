@@ -7,8 +7,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background: var(--eden-bg);
-  border-radius: 18px;
+  background: transparent;
   overflow: hidden;
 }
 
@@ -18,11 +17,9 @@
   width: 440px;
   padding: 32px 36px;
   border-radius: 20px;
-  background: var(--eden-panel);
+  background: var(--eden-panel-solid, #22262e);
   border: 1px solid var(--eden-border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px var(--eden-green-glow);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 0 30px var(--eden-green-glow);
   display: flex;
   flex-direction: column;
   align-items: center;

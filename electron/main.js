@@ -70,6 +70,7 @@ function createSplashWindow() {
     width: 520, height: 320,
     frame: false, resizable: false, transparent: true,
     alwaysOnTop: true, show: false, backgroundColor: '#00000000',
+    icon: path.join(__dirname, '..', 'icon', 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, nodeIntegration: false,
@@ -98,6 +99,7 @@ function createMainWindow() {
     show: false, backgroundColor: '#0A0A0A',
     title: 'Éden Launcher', autoHideMenuBar: true,
     maximizable: false, fullscreenable: false,
+    icon: path.join(__dirname, '..', 'icon', 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, nodeIntegration: false,
@@ -216,6 +218,9 @@ ipcMain.handle('launch:start', async (_e, { profile, settings, manifest }) => {
     const storeData = loadStore();
     if (storeData?.mods?.enabled) {
       settings.modsEnabled = { ...(storeData.mods.enabled || {}), ...(settings.modsEnabled || {}) };
+    }
+    if (storeData?.mods?.shader) {
+      settings.shader = storeData.mods.shader;
     }
     const r = await launcher.launch({
       profile, settings, manifest,
@@ -398,14 +403,6 @@ ipcMain.handle('mods:toggle-local', async (_e, { filename, isEnabled }) => {
   }
 });
 
-ipcMain.handle('mods:open-folder', () => shell.openPath(paths.modsDir()));
-ipcMain.handle('mods:open-optional-folder', () => {
-  const src = modpack.getSourceOptionalModsDir() || paths.optionalModsDir();
-  return shell.openPath(src);
-});
-ipcMain.handle('shaders:open-folder', () => shell.openPath(paths.shaderpacksDir()));
-ipcMain.handle('resourcepacks:open-folder', () => shell.openPath(paths.resourcepacksDir()));
-
 ipcMain.handle('shaders:list-local', async () => {
   try {
     const dir = paths.shaderpacksDir();
@@ -414,6 +411,67 @@ ipcMain.handle('shaders:list-local', async () => {
     return entries.filter((e) => e.endsWith('.zip') || fs.statSync(path.join(dir, e)).isDirectory());
   } catch (e) {
     return [];
+  }
+});
+
+// ── IPC: Shaders do catálogo oficial (instalação e seleção) ──────────────────
+ipcMain.handle('shaders:list-catalog', () => {
+  try {
+    const installedDir = paths.shaderpacksDir();
+    const installed = new Set(fs.existsSync(installedDir) ? fs.readdirSync(installedDir) : []);
+    const catalog = modpack.getShaders().map((s) => ({
+      filename: s.filename,
+      size: s.size,
+      installed: installed.has(s.filename),
+    }));
+    return { ok: true, catalog };
+  } catch (e) {
+    log.warn('[shaders:list-catalog] error', e);
+    return { ok: false, catalog: [] };
+  }
+});
+
+ipcMain.handle('shaders:select', (_e, { filename } = {}) => {
+  try {
+    if (!filename) {
+      const storeData = loadStore();
+      if (storeData?.mods) { storeData.mods.shader = ''; saveStore(storeData); }
+      return { ok: true, active: '' };
+    }
+    const src = modpack.getShaders().find((s) => s.filename === filename);
+    if (!src) return { ok: false, error: 'Shader não encontrado no catálogo oficial' };
+    const destDir = paths.shaderpacksDir();
+    const dest = path.join(destDir, filename);
+    fs.mkdirSync(destDir, { recursive: true });
+    if (!fs.existsSync(dest) || fs.statSync(dest).size !== src.size) {
+      fs.copyFileSync(src.fullPath, dest);
+      log.info('[shaders] Instalado:', filename);
+    }
+    const storeData = loadStore();
+    storeData.mods = storeData.mods || {};
+    storeData.mods.shader = filename;
+    saveStore(storeData);
+    return { ok: true, active: filename };
+  } catch (e) {
+    log.error('[shaders:select]', e);
+    return { ok: false, error: e.message };
+  }
+});
+
+ipcMain.handle('shaders:remove', (_e, { filename } = {}) => {
+  try {
+    if (!filename) return { ok: false, error: 'filename não informado' };
+    const dest = path.join(paths.shaderpacksDir(), filename);
+    if (fs.existsSync(dest)) fs.unlinkSync(dest);
+    const storeData = loadStore();
+    if (storeData?.mods?.shader === filename) {
+      storeData.mods.shader = '';
+      saveStore(storeData);
+    }
+    return { ok: true };
+  } catch (e) {
+    log.error('[shaders:remove]', e);
+    return { ok: false, error: e.message };
   }
 });
 
