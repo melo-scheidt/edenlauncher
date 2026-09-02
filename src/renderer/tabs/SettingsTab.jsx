@@ -74,6 +74,18 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
     }
   };
 
+  const handleUninstallLauncher = async () => {
+    if (!window.confirm(t('settings.uninstallConfirm'))) return;
+    if (window.eden?.app?.uninstall) {
+      const res = await window.eden.app.uninstall();
+      if (!res?.ok) {
+        window.alert(t('settings.uninstallUnavailable'));
+      }
+    } else {
+      window.alert(t('settings.uninstallUnavailable'));
+    }
+  };
+
   const ramMax = systemInfo
     ? Math.min(32, Math.max(8, Math.floor(systemInfo.totalMemGB)))
     : 16;
@@ -295,6 +307,23 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                 >
                   <RotateCcw size={16} />
                   <span>{t('settings.resetBtn')}</span>
+                </button>
+              </div>
+
+              <div className="eden-setting-item">
+                <div className="eden-setting-meta">
+                  <h4 className="eden-item-title">{t('settings.uninstallLauncher')}</h4>
+                  <p className="eden-item-desc">
+                    {t('settings.uninstallLauncherDesc')}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="btn-ghost eden-action-inline-btn eden-danger-btn"
+                  onClick={handleUninstallLauncher}
+                >
+                  <Trash2 size={16} />
+                  <span>{t('settings.uninstallBtn')}</span>
                 </button>
               </div>
             </div>

@@ -344,6 +344,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0,0, 0.3);
   animation: eden-fade-in 0.2s ease;
+}
+
+/* Botão destrutivo (desinstalar launcher) */
+.eden-danger-btn {
+  color: var(--eden-error, #e76f51);
+  border-color: rgba(231, 111, 81, 0.4);
+}
+
+.eden-danger-btn:hover {
+  background: rgba(231, 111, 81, 0.12);
 }

@@ -8,6 +8,7 @@
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { spawn } = require('child_process');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 const path = require('path');
@@ -213,6 +214,27 @@ ipcMain.handle('app:resize', (_e, width, height) => {
   if (mainWindow && !mainWindow.isMaximized()) {
     mainWindow.setSize(width, height);
     mainWindow.center();
+  }
+});
+// ── IPC: Desinstalar o próprio launcher (NSIS per-user) ─────────────────────
+ipcMain.handle('app:uninstall', () => {
+  try {
+    if (!app.isPackaged) return { ok: false, error: 'dev' };
+    const dir = path.dirname(process.execPath);
+    const uninstaller = fs.readdirSync(dir).find((f) => /^uninstall/i.test(f) && f.endsWith('.exe'));
+    if (!uninstaller) return { ok: false, error: 'notfound' };
+    log.info('[uninstall] Executando desinstalador:', uninstaller);
+    const child = spawn(path.join(dir, uninstaller), ['/S', '/currentuser'], {
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+    child.unref();
+    setTimeout(() => app.quit(), 800);
+    return { ok: true };
+  } catch (e) {
+    log.error('[uninstall]', e);
+    return { ok: false, error: e.message };
   }
 });
 // ── IPC: Auth ─────────────────────────────────────────────────────────────────

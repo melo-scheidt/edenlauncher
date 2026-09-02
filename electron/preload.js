@@ -28,6 +28,7 @@ contextBridge.exposeInMainWorld('eden', {
   app: {
     getInfo: () => ipcRenderer.invoke('app:get-info'),
     resize:  (w, h) => ipcRenderer.invoke('app:resize', w, h),
+    uninstall: () => ipcRenderer.invoke('app:uninstall'),
   },
 
   auth: {
