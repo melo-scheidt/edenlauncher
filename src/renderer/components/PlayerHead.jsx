@@ -15,14 +15,18 @@ export default function PlayerHead({ skinUrl, nickname = 'Steve', size = 34, cla
 
     let isMounted = true;
 
+    // Internal padding to prevent container rounded corners (border-radius) from clipping face/eyes
+    const pad = Math.max(2, Math.round(size * 0.08));
+    const drawSize = size - pad * 2;
+
     const renderMinotarFallback = () => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      img.src = `https://minotar.net/helm/${encodeURIComponent(nickname || 'Steve')}/${size}.png`;
+      img.src = `https://minotar.net/helm/${encodeURIComponent(nickname || 'Steve')}/${drawSize}.png`;
       img.onload = () => {
         if (!isMounted) return;
         ctx.clearRect(0, 0, size, size);
-        ctx.drawImage(img, 0, 0, size, size);
+        ctx.drawImage(img, pad, pad, drawSize, drawSize);
       };
     };
 
@@ -56,7 +60,7 @@ export default function PlayerHead({ skinUrl, nickname = 'Steve', size = 34, cla
       img.onload = () => {
         if (!isMounted) return;
         ctx.clearRect(0, 0, size, size);
-        ctx.drawImage(img, 0, 0, size, size);
+        ctx.drawImage(img, pad, pad, drawSize, drawSize);
       };
       img.onerror = renderMinotarFallback;
       return () => {
@@ -76,7 +80,7 @@ export default function PlayerHead({ skinUrl, nickname = 'Steve', size = 34, cla
 
       // If the image is smaller than a Minecraft skin texture (min 64px width), treat as already-cropped
       if (w < 64) {
-        ctx.drawImage(img, 0, 0, size, size);
+        ctx.drawImage(img, pad, pad, drawSize, drawSize);
         return;
       }
 
@@ -88,8 +92,8 @@ export default function PlayerHead({ skinUrl, nickname = 'Steve', size = 34, cla
       const hatX = Math.round(40 * scale);
       const hatY = Math.round(8 * scale);
 
-      // Draw base face layer (front of head)
-      ctx.drawImage(img, faceX, faceY, headSize, headSize, 0, 0, size, size);
+      // Draw base face layer (front of head) centered inside padding
+      ctx.drawImage(img, faceX, faceY, headSize, headSize, pad, pad, drawSize, drawSize);
 
       // Draw Hat / Outer layer (hair, helmet, accessories)
       try {
@@ -120,13 +124,13 @@ export default function PlayerHead({ skinUrl, nickname = 'Steve', size = 34, cla
 
           // Only overlay hat if there are visible pixels and it's not a solid monochrome opaque block
           if (hasVisiblePixels && (hasAlpha || !isMonochrome)) {
-            ctx.drawImage(offCanvas, 0, 0, headSize, headSize, 0, 0, size, size);
+            ctx.drawImage(offCanvas, 0, 0, headSize, headSize, pad, pad, drawSize, drawSize);
           }
         }
       } catch {
         // Fallback: draw directly if canvas pixel inspection is restricted
         try {
-          ctx.drawImage(img, hatX, hatY, headSize, headSize, 0, 0, size, size);
+          ctx.drawImage(img, hatX, hatY, headSize, headSize, pad, pad, drawSize, drawSize);
         } catch {
           // ignore
         }

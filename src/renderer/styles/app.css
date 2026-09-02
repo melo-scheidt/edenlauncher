@@ -253,6 +253,35 @@
   border-color: var(--eden-border);
 }
 
+.eden-discord-btn:hover {
+  color: #5865F2;
+  border-color: rgba(88, 101, 242, 0.4);
+  box-shadow: 0 0 10px rgba(88, 101, 242, 0.25);
+}
+
+.eden-lang-btn {
+  width: auto;
+  min-width: 64px;
+  height: 34px;
+  padding: 0 9px;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.eden-lang-badge {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--eden-text);
+  line-height: 1;
+}
+
+.eden-lang-btn:hover .eden-lang-badge {
+  color: var(--eden-green-bright);
+}
+
 /* Right Player Pill */
 .eden-topbar-right {
   display: flex;
@@ -302,6 +331,9 @@
   border: 1.5px solid var(--eden-green-bright);
   box-shadow: 0 0 8px var(--eden-green-glow);
   background: var(--eden-input-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .eden-player-avatar img {

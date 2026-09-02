@@ -153,7 +153,7 @@ export const SUPPORT_LINKS = [
   {
     id: 'discord',
     label: 'Discord oficial',
-    url: 'https://discord.gg/eden',
+    url: 'https://discord.gg/XE5SsTurP5',
     description: 'Comunidade, suporte ao vivo e canais de RP.',
     color: '#5865F2',
   },

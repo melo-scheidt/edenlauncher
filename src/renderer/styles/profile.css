@@ -55,6 +55,9 @@
   border: 2px solid var(--eden-green-bright);
   background: var(--eden-input-bg);
   box-shadow: 0 0 10px var(--eden-green-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .eden-profile-head-avatar img {
