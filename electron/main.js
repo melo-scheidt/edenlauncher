@@ -37,6 +37,14 @@ const RENDERER_PROD_FILE = (!isDev && fs.existsSync(UNPACKED_RENDERER))
 let splashWindow = null;
 let mainWindow = null;
 
+// Envia IPC ao renderer sem estourar se a janela já foi destruída
+// (ex.: durante auto-update/quit — "Object has been destroyed")
+function sendToMain(channel, ...args) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(channel, ...args);
+  }
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const MIN_FABRIC_VERSION = '0.16.14';
 
@@ -119,8 +127,14 @@ function createMainWindow() {
   loadRenderer(mainWindow, '/');
   mainWindow.once('ready-to-show', () => {
     setTimeout(() => {
-      if (splashWindow) { splashWindow.close(); splashWindow = null; }
-      mainWindow.show();
+      // Janelas podem ter sido destruídas durante o timeout (quit/update)
+      if (splashWindow && !splashWindow.isDestroyed()) {
+        splashWindow.close();
+        splashWindow = null;
+      }
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.show();
+      }
     }, 3000);
   });
   mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
@@ -137,10 +151,10 @@ app.whenReady().then(() => {
   if (!isDev) {
     autoUpdater.checkForUpdatesAndNotify().catch((e) => log.warn('updater', e));
   }
-  autoUpdater.on('update-available', (i) => mainWindow?.webContents.send('updater:available', i));
-  autoUpdater.on('download-progress', (p) => mainWindow?.webContents.send('updater:progress', p));
-  autoUpdater.on('update-downloaded', () => mainWindow?.webContents.send('updater:ready'));
-  autoUpdater.on('error', (e) => mainWindow?.webContents.send('updater:error', String(e?.message || e)));
+  autoUpdater.on('update-available', (i) => sendToMain('updater:available', i));
+  autoUpdater.on('download-progress', (p) => sendToMain('updater:progress', p));
+  autoUpdater.on('update-downloaded', () => sendToMain('updater:ready'));
+  autoUpdater.on('error', (e) => sendToMain('updater:error', String(e?.message || e)));
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
@@ -215,9 +229,7 @@ ipcMain.handle('modpack:fetch-manifest', async () => {
 ipcMain.handle('modpack:cached', () => modpack.loadCachedManifest());
 ipcMain.handle('modpack:sync', async (_e, manifest) => {
   try {
-    await modpack.syncModpack(manifest, (p) =>
-      mainWindow?.webContents.send('modpack:progress', p)
-    );
+    await modpack.syncModpack(manifest, (p) => sendToMain('modpack:progress', p));
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 });
@@ -235,7 +247,7 @@ ipcMain.handle('launch:start', async (_e, { profile, settings, manifest }) => {
     }
     const r = await launcher.launch({
       profile, settings, manifest,
-      onEvent: (evt) => mainWindow?.webContents.send('launch:event', evt),
+      onEvent: (evt) => sendToMain('launch:event', evt),
     });
     return { ok: true, ...r };
   } catch (e) {
