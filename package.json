@@ -42,6 +42,7 @@
   "build": {
     "appId": "com.eden.launcher",
     "productName": "Éden Launcher",
+    "artifactName": "eden-launcher-setup-${version}.${ext}",
     "directories": {
       "output": "dist-app",
       "buildResources": "build"
