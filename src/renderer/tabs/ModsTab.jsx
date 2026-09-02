@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { RefreshCw, Layers, Sparkles, Box, SlidersHorizontal, AlertTriangle } from 'lucide-react';
+import { FolderOpen, RefreshCw, Layers, Sparkles, Box, SlidersHorizontal, AlertTriangle } from 'lucide-react';
 import { getValue, setValue } from '../lib/store.js';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/mods.css';
 
 import skinLayersImg from '../assets/mods/3d skin layers.png';
@@ -61,63 +62,63 @@ const OFFICIAL_SHADERS = [
   {
     id: 'BSL Shaders',
     name: 'BSL Shaders',
-    description: 'Iluminação realista, sombras suaves e reflexos cinematográficos.',
+    descKey: 'shader.bsl.desc',
     image: bslImg,
     match: ['bsl'],
   },
   {
     id: 'BSL Shaders Unbound',
     name: 'BSL Shaders Unbound',
-    description: 'Versão alternativa do BSL com cores vívidas e céu estilizado.',
+    descKey: 'shader.bslunbound.desc',
     image: bslUnboundImg,
     match: ['bslunbound'],
   },
   {
     id: 'Complementary Shaders',
     name: 'Complementary Shaders',
-    description: 'Sucessor espiritual do BSL, vibrante e altamente otimizado.',
+    descKey: 'shader.complementary.desc',
     image: complementaryImg,
     match: ['complementary', 'reimagined'],
   },
   {
     id: 'CTR VCR',
     name: 'CTR VCR',
-    description: 'Estética retrô VHS com distorções analógicas e ruído de fita.',
+    descKey: 'shader.ctrvcr.desc',
     image: ctrVcrImg,
     match: ['ctr', 'vcr'],
   },
   {
     id: 'Dreamlight',
     name: 'Dreamlight',
-    description: 'Atmosfera onírica com luzes suaves e neblina volumétrica.',
+    descKey: 'shader.dreamlight.desc',
     image: dreamlightImg,
     match: ['dreamlight'],
   },
   {
     id: 'Photon',
     name: 'Photon',
-    description: 'Path-tracing experimental com iluminação global realista.',
+    descKey: 'shader.photon.desc',
     image: photonImg,
     match: ['photon'],
   },
   {
     id: 'Prismarine',
     name: 'Prismarine',
-    description: 'Água cristalina, sombras nítidas e clima tropical.',
+    descKey: 'shader.prismarine.desc',
     image: prismarineImg,
     match: ['prismarine'],
   },
   {
     id: 'Solas Shader',
     name: 'Solas Shader',
-    description: 'Estilo fantasia com luzes quentes e auroras marcantes.',
+    descKey: 'shader.solas.desc',
     image: solasImg,
     match: ['solas'],
   },
   {
     id: 'Super Duper Vanilla',
     name: 'Super Duper Vanilla',
-    description: 'Vanilla aprimorado, sombras leves mantendo a estética original.',
+    descKey: 'shader.supervanilla.desc',
     image: sdvImg,
     match: ['superduper', 'sdv'],
   },
@@ -140,7 +141,7 @@ const OFFICIAL_MANDATORY_MODS = [
     filename: 'CustomPlayerModels-Fabric-1.21.5-0.6.27a.jar',
     baseFilename: 'CustomPlayerModels-Fabric-1.21.5-0.6.27a.jar',
     name: 'Custom Player Models',
-    description: 'Modelos customizados, orelhas, caudas e animações personalizadas de personagem.',
+    descKey: 'mods.cpm.desc',
     icon: 'skin3d',
     required: true,
   },
@@ -149,7 +150,7 @@ const OFFICIAL_MANDATORY_MODS = [
     filename: 'fabric-api-0.128.2+1.21.5.jar',
     baseFilename: 'fabric-api-0.128.2+1.21.5.jar',
     name: 'Fabric API',
-    description: 'API base indispensável para o funcionamento dos mods no Fabric Loader.',
+    descKey: 'mods.fabricapi.desc',
     icon: 'wrench',
     required: true,
   },
@@ -158,7 +159,7 @@ const OFFICIAL_MANDATORY_MODS = [
     filename: 'malilib-fabric-1.21.5-0.24.3.jar',
     baseFilename: 'malilib-fabric-1.21.5-0.24.3.jar',
     name: 'MaLiLib',
-    description: 'Biblioteca base de utilitários e configurações integradas.',
+    descKey: 'mods.malilib.desc',
     icon: 'config',
     required: true,
   },
@@ -167,7 +168,7 @@ const OFFICIAL_MANDATORY_MODS = [
     filename: 'sodium-fabric-0.6.12+mc1.21.5.jar',
     baseFilename: 'sodium-fabric-0.6.12+mc1.21.5.jar',
     name: 'Sodium',
-    description: 'Mecanismo de renderização moderno que multiplica a taxa de FPS.',
+    descKey: 'mods.sodium.desc',
     icon: 'performance',
     required: true,
   },
@@ -176,7 +177,7 @@ const OFFICIAL_MANDATORY_MODS = [
     filename: 'voicechat-fabric-1.21.5-2.6.21.jar',
     baseFilename: 'voicechat-fabric-1.21.5-2.6.21.jar',
     name: 'Simple Voice Chat',
-    description: 'Chat de voz posicional 3D por proximidade com suporte a grupos e microfone.',
+    descKey: 'mods.voicechat.desc',
     icon: 'voice',
     required: true,
   },
@@ -188,7 +189,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'CameraOverhaul-v2.1.1-fabric+mc[1.21.5-1.21.8].jar',
     baseFilename: 'CameraOverhaul-v2.1.1-fabric+mc[1.21.5-1.21.8].jar',
     name: 'Camera Overhaul',
-    description: 'Movimentação e inclinação realista da câmera ao andar, correr, voar e pular.',
+    descKey: 'mods.cameraoverhaul.desc',
     icon: 'camera',
   },
   {
@@ -196,7 +197,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'cloth-config-18.0.145-fabric.jar',
     baseFilename: 'cloth-config-18.0.145-fabric.jar',
     name: 'Cloth Config',
-    description: 'Biblioteca para menus de configuração gráficos interativos de mods.',
+    descKey: 'mods.clothconfig.desc',
     icon: 'config',
   },
   {
@@ -204,7 +205,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'cpm-svc-compat-1.3.2.jar',
     baseFilename: 'cpm-svc-compat-1.3.2.jar',
     name: 'CPM Voice Chat Compat',
-    description: 'Sincronização de animações labiais e expressões do CPM com o chat de voz.',
+    descKey: 'mods.cpmsvccompat.desc',
     icon: 'voice',
   },
   {
@@ -212,7 +213,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'DistantHorizons-3.2.0-b-1.21.5-fabric-neoforge.jar',
     baseFilename: 'DistantHorizons-3.2.0-b-1.21.5-fabric-neoforge.jar',
     name: 'Distant Horizons',
-    description: 'Aumenta drasticamente o alcance de renderização do horizonte sem perder FPS.',
+    descKey: 'mods.distanthorizons.desc',
     icon: 'horizon',
   },
   {
@@ -220,7 +221,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'emotecraft-fabric-for-MC1.21.5-2.6.2.jar',
     baseFilename: 'emotecraft-fabric-for-MC1.21.5-2.6.2.jar',
     name: 'Emotecraft',
-    description: 'Permite executar animações corporais, danças e poses no Roleplay.',
+    descKey: 'mods.emotecraft.desc',
     icon: 'emote',
   },
   {
@@ -228,7 +229,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'Flashback-0.39.7-for-MC1.21.5.jar',
     baseFilename: 'Flashback-0.39.7-for-MC1.21.5.jar',
     name: 'Flashback Replay',
-    description: 'Gravação contínua e reprodução instantânea de replays em tempo real.',
+    descKey: 'mods.flashback.desc',
     icon: 'replay',
   },
   {
@@ -236,7 +237,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'iris-fabric-1.8.11+mc1.21.5.jar',
     baseFilename: 'iris-fabric-1.8.11+mc1.21.5.jar',
     name: 'Iris Shaders',
-    description: 'Suporte a shaders gráficos com alta performance e compatibilidade.',
+    descKey: 'mods.iris.desc',
     icon: 'iris',
   },
   {
@@ -244,7 +245,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'lambdynamiclights-4.8.7+1.21.5.jar',
     baseFilename: 'lambdynamiclights-4.8.7+1.21.5.jar',
     name: 'LambDynamicLights',
-    description: 'Iluminação dinâmica ao segurar tochas, lanternas ou itens brilhantes na mão.',
+    descKey: 'mods.lambdynamiclights.desc',
     icon: 'torch',
   },
   {
@@ -252,7 +253,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'litematica-fabric-1.21.5-0.22.5.jar',
     baseFilename: 'litematica-fabric-1.21.5-0.22.5.jar',
     name: 'Litematica',
-    description: 'Projetor de esquemáticos e blueprints holográficos para construções 3D.',
+    descKey: 'mods.litematica.desc',
     icon: 'schematic',
   },
   {
@@ -260,7 +261,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'replaymod-1.21.5-2.6.27.jar',
     baseFilename: 'replaymod-1.21.5-2.6.27.jar',
     name: 'Replay Mod',
-    description: 'Grave e renderize tomadas cinemáticas profissionais das suas partidas.',
+    descKey: 'mods.replaymod.desc',
     icon: 'replay',
   },
   {
@@ -268,7 +269,7 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'skinlayers3d-fabric-1.11.2-mc1.21.5.jar',
     baseFilename: 'skinlayers3d-fabric-1.11.2-mc1.21.5.jar',
     name: '3D Skin Layers',
-    description: 'Renderiza a segunda camada da skin como detalhes volumétricos em 3D.',
+    descKey: 'mods.skinlayers3d.desc',
     icon: 'skin3d',
   },
   {
@@ -276,29 +277,29 @@ const OFFICIAL_OPTIONAL_MODS = [
     filename: 'status-effect-bars-1.0.8.jar',
     baseFilename: 'status-effect-bars-1.0.8.jar',
     name: 'Status Effect Bars',
-    description: 'Barras visuais com contagem regressiva de efeitos de poções e buffs.',
+    descKey: 'mods.statuseffectbars.desc',
     icon: 'bars',
   },
 ];
 
 const POPULAR_MODS_MAP = {
-  customplayermodels: { name: 'Custom Player Models', description: 'Modelos customizados e animações de personagem.', icon: 'skin3d' },
-  fabricapi: { name: 'Fabric API', description: 'API base indispensável para mods no Fabric.', icon: 'wrench' },
-  malilib: { name: 'MaLiLib', description: 'Biblioteca de utilitários e configurações.', icon: 'config' },
-  sodium: { name: 'Sodium', description: 'Mecanismo de renderização de alta performance.', icon: 'performance' },
-  voicechat: { name: 'Simple Voice Chat', description: 'Chat de voz posicional 3D por proximidade.', icon: 'voice' },
-  cameraoverhaul: { name: 'Camera Overhaul', description: 'Movimentação fluida e inclinação da câmera.', icon: 'camera' },
-  distanthorizons: { name: 'Distant Horizons', description: 'Alcance de renderização do horizonte sem perder FPS.', icon: 'horizon' },
-  flashback: { name: 'Flashback Replay', description: 'Gravação e reprodução de replays em tempo real.', icon: 'replay' },
-  clothconfig: { name: 'Cloth Config', description: 'Menus de configuração interativos de mods.', icon: 'config' },
-  cpmsvccompat: { name: 'CPM Voice Chat Compat', description: 'Sincronização de fala do CPM com Voice Chat.', icon: 'voice' },
-  emotecraft: { name: 'Emotecraft', description: 'Animações corporais, danças e poses no RP.', icon: 'emote' },
-  iris: { name: 'Iris Shaders', description: 'Shaders gráficos de alta performance.', icon: 'iris' },
-  lambdynamiclights: { name: 'LambDynamicLights', description: 'Iluminação dinâmica ao segurar tochas na mão.', icon: 'torch' },
-  litematica: { name: 'Litematica', description: 'Projetor de esquemáticos holográficos 3D.', icon: 'schematic' },
-  replaymod: { name: 'Replay Mod', description: 'Grave tomadas cinemáticas das partidas.', icon: 'replay' },
-  skinlayers3d: { name: '3D Skin Layers', description: 'Camadas da skin em modelo 3D volumétrico.', icon: 'skin3d' },
-  statuseffectbars: { name: 'Status Effect Bars', description: 'Barras de duração de poções e buffs.', icon: 'bars' },
+  customplayermodels: { name: 'Custom Player Models', descKey: 'mods.cpm.desc', icon: 'skin3d' },
+  fabricapi: { name: 'Fabric API', descKey: 'mods.fabricapi.desc', icon: 'wrench' },
+  malilib: { name: 'MaLiLib', descKey: 'mods.malilib.desc', icon: 'config' },
+  sodium: { name: 'Sodium', descKey: 'mods.sodium.desc', icon: 'performance' },
+  voicechat: { name: 'Simple Voice Chat', descKey: 'mods.voicechat.desc', icon: 'voice' },
+  cameraoverhaul: { name: 'Camera Overhaul', descKey: 'mods.cameraoverhaul.desc', icon: 'camera' },
+  distanthorizons: { name: 'Distant Horizons', descKey: 'mods.distanthorizons.desc', icon: 'horizon' },
+  flashback: { name: 'Flashback Replay', descKey: 'mods.flashback.desc', icon: 'replay' },
+  clothconfig: { name: 'Cloth Config', descKey: 'mods.clothconfig.desc', icon: 'config' },
+  cpmsvccompat: { name: 'CPM Voice Chat Compat', descKey: 'mods.cpmsvccompat.desc', icon: 'voice' },
+  emotecraft: { name: 'Emotecraft', descKey: 'mods.emotecraft.desc', icon: 'emote' },
+  iris: { name: 'Iris Shaders', descKey: 'mods.iris.desc', icon: 'iris' },
+  lambdynamiclights: { name: 'LambDynamicLights', descKey: 'mods.lambdynamiclights.desc', icon: 'torch' },
+  litematica: { name: 'Litematica', descKey: 'mods.litematica.desc', icon: 'schematic' },
+  replaymod: { name: 'Replay Mod', descKey: 'mods.replaymod.desc', icon: 'replay' },
+  skinlayers3d: { name: '3D Skin Layers', descKey: 'mods.skinlayers3d.desc', icon: 'skin3d' },
+  statuseffectbars: { name: 'Status Effect Bars', descKey: 'mods.statuseffectbars.desc', icon: 'bars' },
 };
 
 function formatModInfo(filename) {
@@ -313,12 +314,13 @@ function formatModInfo(filename) {
     .trim();
   return {
     name: rawName ? rawName.charAt(0).toUpperCase() + rawName.slice(1) : filename,
-    description: 'Mod cliente instalado.',
+    descKey: 'mods.genericDesc',
     icon: 'generic',
   };
 }
 
 export default function ModsTab() {
+  const { t } = useI18n();
   const [activeSubTab, setActiveSubTab] = useState('optional'); // 'optional' | 'mandatory' | 'shaders'
   const [optionalMods, setOptionalMods] = useState(OFFICIAL_OPTIONAL_MODS);
   const [mandatoryMods, setMandatoryMods] = useState(OFFICIAL_MANDATORY_MODS);
@@ -349,7 +351,7 @@ export default function ModsTab() {
             filename: m.filename,
             baseFilename: m.baseFilename || m.filename,
             name: info.name,
-            description: info.description,
+            descKey: info.descKey || 'mods.genericDesc',
             icon: info.icon,
             size: m.size,
             required: true,
@@ -388,7 +390,7 @@ export default function ModsTab() {
               filename: mod.filename,
               baseFilename: baseName,
               name: info.name,
-              description: info.description,
+              descKey: info.descKey || 'mods.genericDesc',
               icon: info.icon,
               isEnabled: savedState !== undefined ? !!savedState : (mod.isEnabled ?? true),
               size: mod.size,
@@ -430,7 +432,7 @@ export default function ModsTab() {
         shaderItems.push({
           filename: c.filename,
           name: official?.name || c.filename.replace(/\.zip$/i, ''),
-          description: official?.description || 'Shader pack oficial do Éden.',
+          descKey: official?.descKey || 'mods.shaderOfficial',
           image: official?.image || getShaderImage(c.filename),
           installed: !!c.installed,
           available: true,
@@ -443,7 +445,7 @@ export default function ModsTab() {
         shaderItems.push({
           filename: s,
           name: official?.name || s.replace(/\.zip$/i, ''),
-          description: official?.description || 'Shader pack instalado.',
+          descKey: official?.descKey || 'mods.shaderInstalled',
           image: getShaderImage(s),
           installed: true,
           available: true,
@@ -456,7 +458,7 @@ export default function ModsTab() {
           shaderItems.push({
             filename: o.id,
             name: o.name,
-            description: o.description,
+            descKey: o.descKey,
             image: o.image,
             installed: false,
             available: noBackend,
@@ -552,7 +554,7 @@ export default function ModsTab() {
           onClick={() => setActiveSubTab('optional')}
         >
           <SlidersHorizontal size={16} />
-          Mods Opcionais
+          {t('mods.optional')}
           {optionalMods.length > 0 && (
             <span className="mods-badge-count">{optionalMods.length}</span>
           )}
@@ -573,10 +575,10 @@ export default function ModsTab() {
             type="button"
             className="mods-action-btn"
             onClick={refreshData}
-            title="Recarregar arquivos"
+            title={t('mods.refresh')}
           >
             <RefreshCw size={14} className={loading ? 'eden-spin' : ''} />
-            <span>Atualizar</span>
+            <span>{t('mods.refresh')}</span>
           </button>
         </div>
       </aside>
@@ -587,12 +589,12 @@ export default function ModsTab() {
         <header className="mods-content-header">
           <div className="mods-header-info">
             <h2 className="mods-header-title">
-              {activeSubTab === 'optional' && 'Mods Opcionais'}
-              {activeSubTab === 'shaders' && 'Shaders e Iluminação'}
+              {activeSubTab === 'optional' && t('mods.optional')}
+              {activeSubTab === 'shaders' && t('mods.shaders')}
             </h2>
             <span className="mods-header-subtitle">
-              {activeSubTab === 'optional' && 'Escolha quais recursos e utilitários adicionais você deseja ativar.'}
-              {activeSubTab === 'shaders' && 'Selecione um pacote de iluminação e sombras para o jogo.'}
+              {activeSubTab === 'optional' && t('mods.optionalSub')}
+              {activeSubTab === 'shaders' && t('mods.shadersSub')}
             </span>
           </div>
         </header>
@@ -603,8 +605,8 @@ export default function ModsTab() {
             {optionalMods.length === 0 ? (
               <div className="mods-empty-state">
                 <Box size={40} className="mods-empty-icon" />
-                <h3>Nenhum mod opcional encontrado</h3>
-                <p>Os mods oficiais do Éden aparecerão aqui para você ativar ou desativar.</p>
+                <h3>{t('mods.emptyTitle')}</h3>
+                <p>{t('mods.emptyDesc')}</p>
               </div>
             ) : (
               <div className="mods-grid-layout">
@@ -616,7 +618,7 @@ export default function ModsTab() {
                       </div>
                       <div className="mod-item-details">
                         <strong className="mod-item-title">{mod.name}</strong>
-                        <p className="mod-item-desc">{mod.description}</p>
+                        <p className="mod-item-desc">{t(mod.descKey || 'mods.genericDesc')}</p>
                       </div>
                     </div>
                     <button
@@ -625,7 +627,7 @@ export default function ModsTab() {
                       role="switch"
                       aria-checked={mod.isEnabled}
                       onClick={() => handleToggleMod(mod)}
-                      title={mod.isEnabled ? 'Desativar mod' : 'Ativar mod'}
+                      title={mod.isEnabled ? t('mods.toggleOff') : t('mods.toggleOn')}
                     >
                       <span className="mod-toggle-thumb" />
                     </button>
@@ -642,9 +644,7 @@ export default function ModsTab() {
             {irisDisabled && (
               <div className="shaders-iris-warning">
                 <AlertTriangle size={15} />
-                <span>
-                  O mod <strong>Iris</strong> está desativado — ative-o na aba Mods Opcionais para os shaders funcionarem.
-                </span>
+                <span>{t('mods.irisWarning')}</span>
               </div>
             )}
 
@@ -665,17 +665,17 @@ export default function ModsTab() {
                         <ShaderArt />
                       )}
                       {!item.available && (
-                        <span className="shader-unavailable-badge">Indisponível</span>
+                        <span className="shader-unavailable-badge">{t('mods.unavailable')}</span>
                       )}
                     </div>
                     <div className="shader-item-body">
                       <div className="shader-item-header">
                         <strong>{item.name}</strong>
                         {item.installed && !isActive && (
-                          <span className="shader-installed-badge">Instalado</span>
+                          <span className="shader-installed-badge">{t('mods.installed')}</span>
                         )}
                       </div>
-                      <p className="shader-desc">{item.description}</p>
+                      <p className="shader-desc">{t(item.descKey || 'mods.shaderOfficial')}</p>
                     </div>
                     <button
                       type="button"

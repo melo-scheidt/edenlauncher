@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Monitor, Cpu, FolderArchive, Check, RotateCcw, FolderOpen, Trash2, Sun, Moon } from 'lucide-react';
 import { getValue, setValue } from '../lib/store.js';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/settings.css';
 
 const DEFAULTS = {
@@ -15,6 +16,7 @@ const DEFAULTS = {
 };
 
 export default function SettingsTab({ currentTheme, onThemeChange }) {
+  const { t } = useI18n();
   const [activeSubTab, setActiveSubTab] = useState('window'); // 'window' | 'java' | 'resources'
   const [settings, setSettings] = useState(DEFAULTS);
   const [saved, setSaved] = useState(false);
@@ -80,9 +82,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
     <div className="eden-settings-page eden-fade-in">
       {/* Top Header (Screenshot 4 Match) */}
       <div className="eden-settings-head">
-        <h1 className="eden-settings-title">Configurações</h1>
+        <h1 className="eden-settings-title">{t('settings.title')}</h1>
         <p className="eden-settings-subtitle">
-          Aqui você pode configurar o cliente e o launcher como preferir.
+          {t('settings.subtitle')}
         </p>
       </div>
 
@@ -96,7 +98,7 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
             onClick={() => setActiveSubTab('window')}
           >
             <Monitor size={16} />
-            <span>Janela e Tela</span>
+            <span>{t('settings.window')}</span>
           </button>
 
           <button
@@ -105,7 +107,7 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
             onClick={() => setActiveSubTab('java')}
           >
             <Cpu size={16} />
-            <span>Java e Memória</span>
+            <span>{t('settings.java')}</span>
           </button>
 
           <button
@@ -114,16 +116,14 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
             onClick={() => setActiveSubTab('resources')}
           >
             <FolderArchive size={16} />
-            <span>Gerenciamento</span>
+            <span>{t('settings.management')}</span>
           </button>
 
           {/* Footer Info Bottom Left */}
           <div className="eden-settings-footer-info">
             <span className="eden-footer-app-name">Éden App 1.0 Beta</span>
             <span className="eden-footer-os-info">
-              {systemInfo?.platform === 'win32'
-                ? 'Windows 10/11'
-                : 'Sistema Operacional Compatível'}
+              {systemInfo?.platform === 'win32' ? t('settings.osWin') : t('settings.osOther')}
             </span>
           </div>
         </div>
@@ -136,9 +136,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
               {/* Fullscreen Toggle */}
               <div className="eden-setting-row-toggle">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Tela Cheia</h4>
+                  <h4 className="eden-item-title">{t('settings.fullscreen')}</h4>
                   <p className="eden-item-desc">
-                    Inicie o jogo em modo tela cheia ao invés de janela (usando options.txt).
+                    {t('settings.fullscreenDesc')}
                   </p>
                 </div>
                 <button
@@ -153,9 +153,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
               {/* Window Width */}
               <div className="eden-setting-row-input">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Largura</h4>
+                  <h4 className="eden-item-title">{t('settings.width')}</h4>
                   <p className="eden-item-desc">
-                    Largura da janela do jogo ao iniciar (em pixels).
+                    {t('settings.widthDesc')}
                   </p>
                 </div>
                 <input
@@ -169,9 +169,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
               {/* Window Height */}
               <div className="eden-setting-row-input">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Altura</h4>
+                  <h4 className="eden-item-title">{t('settings.height')}</h4>
                   <p className="eden-item-desc">
-                    Altura da janela do jogo ao iniciar (em pixels).
+                    {t('settings.heightDesc')}
                   </p>
                 </div>
                 <input
@@ -190,9 +190,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
               {/* RAM Slider */}
               <div className="eden-setting-item">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Alocação de Memória RAM</h4>
+                  <h4 className="eden-item-title">{t('settings.ram')}</h4>
                   <p className="eden-item-desc">
-                    Quantidade de memória dedicada ao Minecraft (Recomendado: 4GB a 8GB).
+                    {t('settings.ramDesc')}
                   </p>
                 </div>
 
@@ -222,16 +222,16 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
               {/* Java Executable Path */}
               <div className="eden-setting-item">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Caminho do Java</h4>
+                  <h4 className="eden-item-title">{t('settings.javaPath')}</h4>
                   <p className="eden-item-desc">
-                    Deixe em branco para detecção automática (Java 17/21 recomendado).
+                    {t('settings.javaPathDesc')}
                   </p>
                 </div>
                 <div className="eden-java-path-row">
                   <input
                     type="text"
                     className="eden-setting-text-input"
-                    placeholder="Detecção automática (Padrão)"
+                    placeholder={t('settings.javaPathPlaceholder')}
                     value={settings.javaPath}
                     onChange={(e) => update({ javaPath: e.target.value })}
                   />
@@ -240,7 +240,7 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                     className="btn-ghost"
                     onClick={handleBrowseJava}
                   >
-                    Procurar...
+                    {t('settings.browse')}
                   </button>
                 </div>
               </div>
@@ -248,8 +248,8 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
               {/* JVM Flags */}
               <div className="eden-setting-item">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Argumentos JVM</h4>
-                  <p className="eden-item-desc">Flags de otimização de GC para a JVM.</p>
+                  <h4 className="eden-item-title">{t('settings.jvmArgs')}</h4>
+                  <p className="eden-item-desc">{t('settings.jvmArgsDesc')}</p>
                 </div>
                 <input
                   type="text"
@@ -266,9 +266,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
             <div className="eden-settings-group eden-fade-in">
               <div className="eden-setting-item">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Diretório do Jogo</h4>
+                  <h4 className="eden-item-title">{t('settings.gameDir')}</h4>
                   <p className="eden-item-desc">
-                    Abra a pasta local contendo screenshots, logs e resourcepacks.
+                    {t('settings.gameDirDesc')}
                   </p>
                 </div>
                 <button
@@ -277,15 +277,15 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                   onClick={handleOpenFolder}
                 >
                   <FolderOpen size={16} />
-                  <span>Abrir pasta de logs e arquivos</span>
+                  <span>{t('settings.openLogs')}</span>
                 </button>
               </div>
 
               <div className="eden-setting-item">
                 <div className="eden-setting-meta">
-                  <h4 className="eden-item-title">Restaurar Padrões</h4>
+                  <h4 className="eden-item-title">{t('settings.reset')}</h4>
                   <p className="eden-item-desc">
-                    Redefine todas as configurações para as opções originais recomendadas.
+                    {t('settings.resetDesc')}
                   </p>
                 </div>
                 <button
@@ -294,7 +294,7 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                   onClick={handleReset}
                 >
                   <RotateCcw size={16} />
-                  <span>Restaurar configurações padrão</span>
+                  <span>{t('settings.resetBtn')}</span>
                 </button>
               </div>
             </div>
@@ -302,7 +302,7 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
 
           {saved && (
             <div className="eden-saved-toast">
-              <Check size={14} /> Configurações salvas
+              <Check size={14} /> {t('settings.saved')}
             </div>
           )}
         </div>

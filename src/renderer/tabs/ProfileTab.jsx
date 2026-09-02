@@ -4,6 +4,7 @@ import SkinViewer3D from '../components/SkinViewer.jsx';
 import PlayerHead from '../components/PlayerHead.jsx';
 import RoleTag from '../components/RoleTag.jsx';
 import { getValue, setValue } from '../lib/store.js';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/profile.css';
 
 const DEFAULT_SAVED_SKINS = [
@@ -12,11 +13,12 @@ const DEFAULT_SAVED_SKINS = [
 ];
 
 export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
+  const { t } = useI18n();
   const [skinModel, setSkinModel] = useState('auto');
   const [savedSkins, setSavedSkins] = useState(DEFAULT_SAVED_SKINS);
   const [skinsLoaded, setSkinsLoaded] = useState(false);
 
-  const nick = profile?.nickname || 'Aventureiro';
+  const nick = profile?.nickname || t('user.defaultNick');
   const isMicrosoft = profile?.type === 'microsoft';
   const uuid = profile?.uuid || '';
 
@@ -55,12 +57,12 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
       });
 
       if (!found && activeSkin) {
-        const customCount = updated.filter((s) => s.name.startsWith('Skin')).length;
+        const customCount = updated.filter((s) => s.id.startsWith('skin-')).length;
         return [
           ...updated.map((s) => ({ ...s, active: false })),
           {
             id: `skin-${Date.now()}`,
-            name: customCount === 0 ? 'Skin Personalizada' : `Skin Personalizada ${customCount + 1}`,
+            name: customCount === 0 ? t('profile.customSkin') : t('profile.customSkinN', { n: customCount + 1 }),
             url: activeSkin,
             active: true,
           },
@@ -77,7 +79,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
         if (res?.ok && res.base64) {
           if (onSkinChange) onSkinChange(res.base64);
         } else if (res?.error && res.error !== 'Cancelado') {
-          alert('Erro ao selecionar skin: ' + res.error);
+          alert(t('login.skinError', { msg: res.error }));
         }
       } catch (e) {
         console.error('[ProfileTab] Erro ao adicionar skin:', e);
@@ -110,14 +112,14 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
               <div className="eden-profile-user-info">
                 <div className="eden-user-badge-row">
                   <RoleTag role={profile?.role} size="lg" />
-                  <span className="eden-pass-status-text">Passe: adquirida</span>
+                  <span className="eden-pass-status-text">{t('topbar.pass')}</span>
                 </div>
                 <h2 className="eden-user-display-name">{nick}</h2>
               </div>
             </div>
 
             <div className="eden-balance-col">
-              <span className="eden-balance-label">Seu Saldo</span>
+              <span className="eden-balance-label">{t('profile.balance')}</span>
               <span className="eden-balance-amount">1.000 VP</span>
             </div>
           </div>
@@ -125,38 +127,38 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
           {/* Stats Grid */}
           <div className="eden-stats-grid">
             <div className="eden-stat-box">
-              <span className="eden-stat-label">Tempo em jogo</span>
+              <span className="eden-stat-label">{t('profile.statPlaytime')}</span>
               <strong className="eden-stat-val">1273h 30m</strong>
             </div>
             <div className="eden-stat-box">
-              <span className="eden-stat-label">Mobs derrotados</span>
+              <span className="eden-stat-label">{t('profile.statKills')}</span>
               <strong className="eden-stat-val">192.034</strong>
             </div>
             <div className="eden-stat-box">
-              <span className="eden-stat-label">Qtd. de mortes</span>
+              <span className="eden-stat-label">{t('profile.statDeaths')}</span>
               <strong className="eden-stat-val">95</strong>
             </div>
             <div className="eden-stat-box">
-              <span className="eden-stat-label">Data registro</span>
+              <span className="eden-stat-label">{t('profile.statRegistered')}</span>
               <strong className="eden-stat-val">10.12.2024</strong>
             </div>
             <div className="eden-stat-box">
-              <span className="eden-stat-label">Último login</span>
-              <strong className="eden-stat-val">Hoje</strong>
+              <span className="eden-stat-label">{t('profile.statLastLogin')}</span>
+              <strong className="eden-stat-val">{t('profile.today')}</strong>
             </div>
             <div className="eden-stat-box">
-              <span className="eden-stat-label">No projeto</span>
-              <strong className="eden-stat-val">1 ano</strong>
+              <span className="eden-stat-label">{t('profile.statProject')}</span>
+              <strong className="eden-stat-val">{t('profile.oneYear')}</strong>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="eden-profile-btn-row">
             <button type="button" className="eden-profile-btn eden-profile-btn--primary">
-              Comprar Passe
+              {t('profile.buyPass')}
             </button>
             <button type="button" className="eden-profile-btn eden-profile-btn--secondary">
-              Recarregar Saldo
+              {t('profile.recharge')}
             </button>
           </div>
         </div>
@@ -176,7 +178,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
 
         {/* Right: Saved Skins */}
         <div className="eden-saved-skins-panel">
-          <h3 className="eden-skins-title">Skins Salvas</h3>
+          <h3 className="eden-skins-title">{t('profile.savedSkins')}</h3>
           <div className="eden-skins-list">
             <button
               type="button"
@@ -184,7 +186,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
               onClick={handleAddSkin}
             >
               <Plus size={24} />
-              <span>Adicionar skin</span>
+              <span>{t('profile.addSkin')}</span>
             </button>
 
             {savedSkins.map((s) => (
@@ -196,7 +198,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
                 <div className="eden-skin-thumb-preview">
                   <PlayerHead skinUrl={s.url || defaultRawSkinUrl} nickname={nick} size={44} />
                 </div>
-                {s.active && <div className="eden-skin-active-tag">Ativa</div>}
+                {s.active && <div className="eden-skin-active-tag">{t('profile.active')}</div>}
               </div>
             ))}
           </div>

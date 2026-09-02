@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { RefreshCw, CheckCircle, CloudDownload, AlertTriangle } from 'lucide-react';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/update.css';
 
 // Modal bloqueante de atualização — não pode ser fechado.
 // Estados: baixando (progresso) → pronto (botão reiniciar) | erro (retry).
 export default function UpdateModal({ info, progress, ready, error, onInstall, onRetry }) {
+  const { t } = useI18n();
   const [installing, setInstalling] = useState(false);
 
   const version = info?.version || '';
@@ -27,25 +29,21 @@ export default function UpdateModal({ info, progress, ready, error, onInstall, o
         </div>
 
         <h2 className="update-modal-title">
-          {error
-            ? 'Falha ao baixar a atualização'
-            : ready
-              ? 'Atualização pronta!'
-              : 'Nova atualização disponível!'}
+          {error ? t('update.error') : ready ? t('update.ready') : t('update.available')}
         </h2>
 
         <p className="update-modal-desc">
           {error
-            ? 'Não foi possível concluir o download. Verifique sua conexão e tente novamente.'
+            ? t('update.descError')
             : ready
-              ? `A versão ${version ? `v${version} ` : ''}foi baixada e está pronta. Reinicie o launcher para aplicá-la.`
-              : `Uma nova versão${version ? ` (v${version})` : ''} do Éden Launcher está disponível e já está sendo baixada. O launcher será liberado após a atualização.`}
+              ? t('update.descReady', { v: version })
+              : t('update.descAvailable', { v: version })}
         </p>
 
         {error ? (
           <button className="update-modal-btn" onClick={onRetry}>
             <RefreshCw size={15} />
-            Tentar novamente
+            {t('update.retry')}
           </button>
         ) : ready ? (
           <button
@@ -54,7 +52,7 @@ export default function UpdateModal({ info, progress, ready, error, onInstall, o
             disabled={installing}
           >
             {installing ? <RefreshCw size={15} className="spinning" /> : <RefreshCw size={15} />}
-            {installing ? 'Reiniciando…' : 'Reiniciar & Atualizar'}
+            {installing ? t('update.restarting') : t('update.install')}
           </button>
         ) : (
           <div className="update-modal-progress">
@@ -62,7 +60,7 @@ export default function UpdateModal({ info, progress, ready, error, onInstall, o
               <div className="update-modal-progress-fill" style={{ width: `${downloadPct ?? 0}%` }} />
             </div>
             <span className="update-modal-progress-label">
-              {downloadPct !== null ? `Baixando… ${downloadPct}%` : 'Preparando download…'}
+              {downloadPct !== null ? t('splash.phase1').replace('...', `… ${downloadPct}%`) : t('map.loading')}
             </span>
           </div>
         )}

@@ -3,7 +3,7 @@ import { Languages, ShieldCheck, Sun, Moon } from 'lucide-react';
 import EdenLogo from './EdenLogo.jsx';
 import PlayerHead from './PlayerHead.jsx';
 import RoleTag from './RoleTag.jsx';
-import { getValue, setValue } from '../lib/store.js';
+import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 
 function DiscordIcon({ size = 16, className = '' }) {
   return (
@@ -21,42 +21,26 @@ function DiscordIcon({ size = 16, className = '' }) {
 
 export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onlinePlayers = 54, maxPlayers = 100 }) {
   const [timeStr, setTimeStr] = useState('');
-  const [language, setLanguage] = useState('pt-BR');
-
-  useEffect(() => {
-    (async () => {
-      const savedLang = await getValue('language', 'pt-BR');
-      if (savedLang) {
-        setLanguage(savedLang);
-        document.documentElement.lang = savedLang;
-      }
-    })();
-  }, []);
+  const { lang, setLang, t } = useI18n();
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setTimeStr(
-        now.toLocaleTimeString(language === 'pt-PT' ? 'pt-PT' : 'pt-BR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-        })
-      );
+      setTimeStr(now.toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit', hour12: false }));
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [language]);
+  }, [lang]);
 
-  const handleToggleLanguage = async () => {
-    const nextLang = language === 'pt-BR' ? 'pt-PT' : 'pt-BR';
-    setLanguage(nextLang);
-    document.documentElement.lang = nextLang;
-    await setValue('language', nextLang);
+  const handleToggleLanguage = () => {
+    const idx = LANGUAGES.findIndex((l) => l.code === lang);
+    const next = LANGUAGES[(idx + 1) % LANGUAGES.length].code;
+    setLang(next);
   };
 
-  const nick = profile?.nickname || 'Aventureiro';
+  const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
+  const nick = profile?.nickname || t('user.defaultNick');
   const onlinePct = Math.min(100, Math.round((onlinePlayers / maxPlayers) * 100));
 
   const openSocial = (url) => {
@@ -87,7 +71,7 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
             <div className="eden-status-bar">
               <div className="eden-status-bar-fill" style={{ width: `${onlinePct}%` }} />
             </div>
-            <span className="eden-status-text">online do servidor</span>
+            <span className="eden-status-text">{t('topbar.online')}</span>
           </div>
         </div>
       </div>
@@ -98,7 +82,7 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
           <button
             type="button"
             className="eden-social-btn eden-discord-btn"
-            title="Discord Oficial (https://discord.gg/XE5SsTurP5)"
+            title={t('topbar.discord')}
             onClick={() => openSocial('https://discord.gg/XE5SsTurP5')}
           >
             <DiscordIcon size={16} />
@@ -107,18 +91,18 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
           <button
             type="button"
             className="eden-social-btn eden-lang-btn"
-            title={`Idioma: ${language === 'pt-BR' ? 'Português (Brasil)' : 'Português (Portugal)'} - Clique para alternar`}
+            title={t('topbar.lang', { name: currentLang.name })}
             onClick={handleToggleLanguage}
           >
             <Languages size={14} />
-            <span className="eden-lang-badge">{language === 'pt-BR' ? 'PT-BR' : 'PT-PT'}</span>
+            <span className="eden-lang-badge">{currentLang.short}</span>
           </button>
 
           {onToggleTheme && (
             <button
               type="button"
               className="eden-social-btn eden-theme-toggle-btn"
-              title={theme === 'light' ? 'Mudar para Modo Escuro' : 'Mudar para Modo Claro'}
+              title={t(theme === 'light' ? 'topbar.themeDark' : 'topbar.themeLight')}
               onClick={onToggleTheme}
             >
               {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
@@ -132,7 +116,7 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
         <div className="eden-player-pill">
           <div className="eden-pass-badge">
             <ShieldCheck size={13} className="eden-pass-icon" />
-            <span>Passe: <strong>adquirido</strong></span>
+            <span>{t('topbar.pass').split(':')[0]}: <strong>{t('topbar.pass').split(': ')[1]}</strong></span>
           </div>
 
           <span className="eden-player-name">{nick}</span>

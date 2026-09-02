@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Play, RotateCw, Sparkles, Tag, Gift, Award, Compass, Flame, ShieldAlert, Check, Trash2 } from 'lucide-react';
 import { getValue } from '../lib/store.js';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/home.css';
 
 const SETTINGS_DEFAULTS = {
@@ -13,45 +14,14 @@ const SETTINGS_DEFAULTS = {
 };
 
 const PROMO_CARDS = [
-  {
-    id: 'p1',
-    badge: 'CUPOM EXCLUSIVO',
-    badgeColor: '#52b788',
-    title: 'Cupom de Boas-vindas',
-    subtitle: 'Use EDEN2026 e receba 500 VP + Kit Inicial exclusivo!',
-    time: 'Válido até 30/12',
-    imageType: 'cupom',
-  },
-  {
-    id: 'p2',
-    badge: 'EVENTO RP',
-    badgeColor: '#e9c46a',
-    title: 'Guerra dos Tronos do Norte',
-    subtitle: 'Conflito de facções pelo controle da Fortaleza de Calderon.',
-    time: 'Neste Sábado às 19h',
-    imageType: 'evento',
-  },
-  {
-    id: 'p3',
-    badge: 'ATUALIZAÇÃO',
-    badgeColor: '#40916c',
-    title: 'Dungeons & Relíquias',
-    subtitle: 'Novos chefes lendários, masmorras ancestrais e itens épicos.',
-    time: 'Versão 1.4.2 Ativa',
-    imageType: 'update',
-  },
-  {
-    id: 'p4',
-    badge: 'RECOMPENSA',
-    badgeColor: '#e76f51',
-    title: 'Passe de Temporada',
-    subtitle: 'Desbloqueie montarias exclusivas, cosméticos e títulos raros.',
-    time: 'Temporada 1',
-    imageType: 'passe',
-  },
+  { id: 'p1', badgeKey: 'promo.p1.badge', badgeColor: '#52b788', titleKey: 'promo.p1.title', subKey: 'promo.p1.sub', timeKey: 'promo.p1.time', imageType: 'cupom' },
+  { id: 'p2', badgeKey: 'promo.p2.badge', badgeColor: '#e9c46a', titleKey: 'promo.p2.title', subKey: 'promo.p2.sub', timeKey: 'promo.p2.time', imageType: 'evento' },
+  { id: 'p3', badgeKey: 'promo.p3.badge', badgeColor: '#40916c', titleKey: 'promo.p3.title', subKey: 'promo.p3.sub', timeKey: 'promo.p3.time', imageType: 'update' },
+  { id: 'p4', badgeKey: 'promo.p4.badge', badgeColor: '#e76f51', titleKey: 'promo.p4.title', subKey: 'promo.p4.sub', timeKey: 'promo.p4.time', imageType: 'passe' },
 ];
 
 export default function HomeTab({ profile, onLaunch }) {
+  const { t } = useI18n();
   const [serverStatus, setServerStatus] = useState({ online: true, players: 54, max: 100, version: '1.21.5' });
   const [modCount, setModCount] = useState(10);
   const [launching, setLaunching] = useState(false);
@@ -204,14 +174,14 @@ export default function HomeTab({ profile, onLaunch }) {
 
           {/* Badges Row */}
           <div className="eden-hero-tags">
-            <span className="eden-pill-tag">Versão: {serverStatus.version}</span>
-            <span className="eden-pill-tag">Mods: {modCount}</span>
-            <span className="eden-pill-tag">RP</span>
+            <span className="eden-pill-tag">{t('home.version', { v: serverStatus.version })}</span>
+            <span className="eden-pill-tag">{t('home.modsCount', { n: modCount })}</span>
+            <span className="eden-pill-tag">{t('home.tagRP')}</span>
           </div>
 
           {/* Description */}
           <p className="eden-hero-description">
-            Explore um universo com infinitas possibilidades de vidas novas e experiências únicas.
+            {t('home.heroDesc')}
           </p>
 
           {/* Action Row */}
@@ -233,12 +203,12 @@ export default function HomeTab({ profile, onLaunch }) {
                 <Play size={18} fill="currentColor" />
                 <span>
                   {checkingInstall
-                    ? 'VERIFICANDO...'
+                    ? t('home.checking')
                     : launching
-                    ? 'INICIANDO...'
+                    ? t('home.launching')
                     : isInstalled
-                    ? 'JOGAR'
-                    : 'INSTALAR'}
+                    ? t('home.play')
+                    : t('home.install')}
                 </span>
               </span>
             </button>
@@ -247,11 +217,11 @@ export default function HomeTab({ profile, onLaunch }) {
               <button
                 type="button"
                 className="eden-btn-uninstall"
-                title="Desinstalar jogo e modpack"
+                title={t('home.uninstallTip')}
                 onClick={handleUninstall}
                 disabled={uninstalling || launching}
               >
-                <span>{uninstalling ? 'DESINSTALANDO...' : 'DESINSTALAR'}</span>
+                <span>{uninstalling ? t('home.uninstalling') : t('home.uninstall')}</span>
               </button>
             )}
           </div>
@@ -271,14 +241,14 @@ export default function HomeTab({ profile, onLaunch }) {
                   {card.imageType === 'passe' && <Award size={28} />}
                 </div>
                 <div className="eden-promo-badge-tag" style={{ color: card.badgeColor }}>
-                  {card.badge}
+                  {t(card.badgeKey)}
                 </div>
               </div>
 
               <div className="eden-promo-info">
-                <h3 className="eden-promo-title">{card.title}</h3>
-                <p className="eden-promo-desc">{card.subtitle}</p>
-                <span className="eden-promo-time">{card.time}</span>
+                <h3 className="eden-promo-title">{t(card.titleKey)}</h3>
+                <p className="eden-promo-desc">{t(card.subKey)}</p>
+                <span className="eden-promo-time">{t(card.timeKey)}</span>
               </div>
             </div>
           ))}

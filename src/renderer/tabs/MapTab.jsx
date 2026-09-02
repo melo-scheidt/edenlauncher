@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { RefreshCw, ExternalLink, Radio } from 'lucide-react';
+import { RefreshCw, ExternalLink } from 'lucide-react';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/map.css';
 
 const LIVE_MAP_URL = 'http://sd-br12.blazebr.com:26880/';
 
 export default function MapTab() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
   const iframeRef = useRef(null);
@@ -33,20 +35,13 @@ export default function MapTab() {
 
   return (
     <div className="eden-map-view-wrapper eden-fade-in">
-      {/* ── Top Center: Live Indicator ── */}
-      <div className="eden-map-time-badge">
-        <span className="eden-map-live-dot" />
-        <Radio size={14} className="eden-map-sun-icon" />
-        <span className="eden-map-time-text">Mapa em tempo real</span>
-      </div>
-
       {/* ── Top Right: Tools (Reload, Open in Browser) ── */}
       <div className="eden-map-tools-tr">
         <button
           type="button"
           className="eden-map-tool-btn"
           onClick={handleReload}
-          title="Recarregar mapa"
+          title={t('map.reload')}
         >
           <RefreshCw size={16} />
         </button>
@@ -54,7 +49,7 @@ export default function MapTab() {
           type="button"
           className="eden-map-tool-btn"
           onClick={handleOpenExternal}
-          title="Abrir no navegador"
+          title={t('map.openBrowser')}
         >
           <ExternalLink size={16} />
         </button>
@@ -65,7 +60,7 @@ export default function MapTab() {
         {loading && (
           <div className="eden-map-loading-overlay">
             <div className="eden-map-spinner" />
-            <span className="eden-map-loading-text">Carregando mapa do servidor...</span>
+            <span className="eden-map-loading-text">{t('map.loading')}</span>
           </div>
         )}
         <iframe
@@ -73,7 +68,7 @@ export default function MapTab() {
           ref={iframeRef}
           className="eden-map-iframe"
           src={LIVE_MAP_URL}
-          title="Mapa do servidor em tempo real"
+          title={t('map.iframeTitle')}
           onLoad={handleIframeLoad}
           allow="fullscreen"
         />

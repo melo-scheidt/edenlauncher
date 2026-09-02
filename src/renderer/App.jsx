@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import CRTOverlay from './components/CRTOverlay.jsx';
 import UpdateModal from './components/UpdateModal.jsx';
+import { useI18n } from './i18n/index.jsx';
 import HomeTab from './tabs/HomeTab.jsx';
 import ProfileTab from './tabs/ProfileTab.jsx';
 import ModsTab from './tabs/ModsTab.jsx';
@@ -25,6 +26,7 @@ export default function App() {
   const [launchError, setLaunchError] = useState('');
   const launchListenerRef = useRef(null);
   const [update, setUpdate] = useState(null);
+  const { t } = useI18n();
 
   // ── Theme Handlers ────────────────────────────────────────────────────────
   const applyTheme = useCallback((newTheme) => {
@@ -133,10 +135,10 @@ export default function App() {
       window.eden.launch.onEvent((evt) => {
         if (evt.phase === 'jvm:exit' || evt.phase === 'jvm:error') {
           if (evt.code !== 0 && evt.phase === 'jvm:exit') {
-            setLaunchError(`Minecraft encerrou com código ${evt.code}`);
+            setLaunchError(t('launch.exitError', { code: evt.code }));
           }
           if (evt.phase === 'jvm:error') {
-            setLaunchError(evt.error || 'Erro ao iniciar Java');
+            setLaunchError(evt.error || t('launch.javaError'));
           }
         }
       });
@@ -145,7 +147,7 @@ export default function App() {
     try {
       const res = await window.eden.launch.start({ profile: prof, settings, manifest });
       if (!res?.ok) {
-        setLaunchError(res?.error || 'Falha ao iniciar Minecraft');
+        setLaunchError(res?.error || t('launch.failed'));
       }
     } catch (e) {
       setLaunchError(e.message);

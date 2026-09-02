@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { ChevronRight, Sparkles, User, Lock, Mail, AlertCircle, CheckCircle } from 'lucide-react';
 import EdenLogo from './EdenLogo.jsx';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/login.css';
 
 export default function LoginScreen({ onLogin }) {
+  const { t } = useI18n();
   const [tab, setTab] = useState('login'); // 'login' | 'register'
   const [nick, setNick] = useState('');
   const [email, setEmail] = useState('');
@@ -13,8 +15,8 @@ export default function LoginScreen({ onLogin }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const switchTab = (t) => {
-    setTab(t);
+  const switchTab = (newTab) => {
+    setTab(newTab);
     setError('');
     setSuccess('');
   };
@@ -27,22 +29,22 @@ export default function LoginScreen({ onLogin }) {
     setSuccess('');
 
     if (!emailOk) {
-      setError('Informe um e-mail válido');
+      setError(t('login.errEmail'));
       return;
     }
 
     if (tab === 'register' && !/^[A-Za-z0-9_]{3,16}$/.test(nick.trim())) {
-      setError('Nickname: 3–16 caracteres (letras, números ou _)');
+      setError(t('login.errNick'));
       return;
     }
 
     if (pass.length < 6) {
-      setError('A senha deve conter no mínimo 6 caracteres');
+      setError(t('login.errPass'));
       return;
     }
 
     if (tab === 'register' && pass !== passConf) {
-      setError('As senhas não coincidem');
+      setError(t('login.errPassMatch'));
       return;
     }
 
@@ -67,16 +69,18 @@ export default function LoginScreen({ onLogin }) {
       const res = await fn(nick.trim(), pass, email.trim());
       if (res?.ok) {
         if (tab === 'register') {
-          setSuccess('Conta criada com sucesso! Entrando...');
+          setSuccess(t('login.registerOk'));
           setTimeout(() => onLogin(res.session), 800);
         } else {
           onLogin(res.session);
         }
+      } else if (res?.error === 'Conta criada! Confirme seu e-mail e faça login.') {
+        setError(t('login.registerConfirm'));
       } else {
-        setError(res?.error || 'Não foi possível autenticar');
+        setError(res?.error || t('login.errGeneric'));
       }
     } catch (err) {
-      setError(err.message || 'Erro ao conectar ao servidor de autenticação');
+      setError(err.message || t('login.errConnect'));
     } finally {
       setLoading(false);
     }
@@ -96,10 +100,8 @@ export default function LoginScreen({ onLogin }) {
             <Sparkles size={14} className="eden-hero-sparkle" />
             <span>NOVA ERA MEDIEVAL RPG</span>
           </div>
-          <h1 className="eden-hero-heading">Bem-vindo!</h1>
-          <p className="eden-hero-desc">
-            Autentique-se para mergulhar na verdadeira experiência de sobrevivência!
-          </p>
+          <h1 className="eden-hero-heading">{t('login.welcome')}</h1>
+          <p className="eden-hero-desc">{t('login.heroDesc')}</p>
         </div>
       </div>
 
@@ -129,14 +131,14 @@ export default function LoginScreen({ onLogin }) {
           <form className="eden-auth-form" onSubmit={handleSubmit}>
             <div className="eden-input-group">
               <label htmlFor="auth-email" className="eden-input-label">
-                E-mail
+                {t('login.email')}
               </label>
               <div className="eden-input-field-wrap">
                 <input
                   id="auth-email"
                   type="email"
                   className="eden-auth-input"
-                  placeholder="seu@email.com"
+                  placeholder="user@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -148,14 +150,14 @@ export default function LoginScreen({ onLogin }) {
             {tab === 'register' && (
               <div className="eden-input-group">
                 <label htmlFor="auth-nick" className="eden-input-label">
-                  Nickname
+                  {t('login.nickname')}
                 </label>
                 <div className="eden-input-field-wrap">
                   <input
                     id="auth-nick"
                     type="text"
                     className="eden-auth-input"
-                    placeholder="Seu nickname..."
+                    placeholder="Nickname..."
                     value={nick}
                     onChange={(e) => setNick(e.target.value)}
                     maxLength={16}
@@ -167,7 +169,7 @@ export default function LoginScreen({ onLogin }) {
 
             <div className="eden-input-group">
               <label htmlFor="auth-pass" className="eden-input-label">
-                Senha
+                {t('login.password')}
               </label>
               <div className="eden-input-field-wrap">
                 <input
@@ -185,14 +187,14 @@ export default function LoginScreen({ onLogin }) {
             {tab === 'register' && (
               <div className="eden-input-group">
                 <label htmlFor="auth-pass-conf" className="eden-input-label">
-                  Confirmar Senha
+                  {t('login.confirmPassword')}
                 </label>
                 <div className="eden-input-field-wrap">
                   <input
                     id="auth-pass-conf"
                     type="password"
                     className="eden-auth-input"
-                    placeholder="••••••••"
+                    placeholder="•••••••••"
                     value={passConf}
                     onChange={(e) => setPassConf(e.target.value)}
                     autoComplete="new-password"
@@ -214,7 +216,7 @@ export default function LoginScreen({ onLogin }) {
                   <span className="eden-auth-btn-icon">
                     <ChevronRight size={16} strokeWidth={3} />
                   </span>
-                  <span>{tab === 'login' ? 'AUTENTICAR' : 'REGISTRAR'}</span>
+                  <span>{tab === 'login' ? t('login.submitLogin') : t('login.submitRegister')}</span>
                 </>
               )}
             </button>
@@ -224,24 +226,24 @@ export default function LoginScreen({ onLogin }) {
           <div className="eden-auth-footer">
             {tab === 'login' ? (
               <p className="eden-auth-switch-text">
-                Não tem uma conta?{' '}
+                {t('login.noAccount')}{' '}
                 <button
                   type="button"
                   className="eden-auth-link"
                   onClick={() => switchTab('register')}
                 >
-                  Registre-se!
+                  {t('login.registerHere')}
                 </button>
               </p>
             ) : (
               <p className="eden-auth-switch-text">
-                Já tem uma conta?{' '}
+                {t('login.hasAccount')}{' '}
                 <button
                   type="button"
                   className="eden-auth-link"
                   onClick={() => switchTab('login')}
                 >
-                  Entrar
+                  {t('login.loginHere')}
                 </button>
               </p>
             )}

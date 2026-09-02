@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { SUPPORT_LINKS } from '../lib/mockData.js';
+import { useI18n } from '../i18n/index.jsx';
 import '../styles/support.css';
 
 export default function SupportTab() {
+  const { t } = useI18n();
   const [logs, setLogs] = useState('');
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
@@ -39,7 +41,7 @@ export default function SupportTab() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch (err) {
-      setError('Falha ao copiar: ' + err.message);
+      setError(t('support.copyFail', { msg: err.message }));
     }
   };
 
@@ -47,7 +49,7 @@ export default function SupportTab() {
     if (window.eden?.logs?.openFolder) {
       await window.eden.logs.openFolder();
     } else {
-      alert('Disponível apenas no app Electron.');
+      alert(t('support.electronOnly'));
     }
   };
 
@@ -56,8 +58,8 @@ export default function SupportTab() {
       <section className="eden-panel support-panel">
         <header className="panel-head">
           <div>
-            <h3 className="eden-title panel-title">Atalhos &amp; Suporte</h3>
-            <span className="panel-sub">Conecte-se com a comunidade Éden</span>
+            <h3 className="eden-title panel-title">{t('support.title')}</h3>
+            <span className="panel-sub">{t('support.subtitle')}</span>
           </div>
         </header>
 
@@ -74,8 +76,8 @@ export default function SupportTab() {
                 {iconFor(l.id)}
               </div>
               <div className="support-link-text">
-                <strong>{l.label}</strong>
-                <span>{l.description}</span>
+                <strong>{t(l.labelKey)}</strong>
+                <span>{t(l.descKey)}</span>
                 <code>{l.url}</code>
               </div>
               <div className="support-link-arrow">→</div>
@@ -87,19 +89,19 @@ export default function SupportTab() {
       <section className="eden-panel support-panel">
         <header className="panel-head">
           <div>
-            <h3 className="eden-title panel-title">Visualizador de Logs</h3>
+            <h3 className="eden-title panel-title">{t('support.logViewer')}</h3>
             <span className="panel-sub">launcher-latest.log</span>
           </div>
           <div className="logs-actions">
             <button type="button" className="btn-ghost" onClick={openLogsFolder}>
-              Abrir pasta
+              {t('support.openFolder')}
             </button>
             <button
               type="button"
               className={`btn-ghost ${copied ? 'is-active' : ''}`}
               onClick={copyLogs}
             >
-              {copied ? '✓ Copiado' : 'Copiar logs'}
+              {copied ? `✓ ${t('support.copied').replace('✓ ', '')}` : t('support.copy')}
             </button>
           </div>
         </header>
@@ -118,8 +120,7 @@ export default function SupportTab() {
         </div>
 
         <p className="form-help">
-          Estes logs são gerados localmente. Em caso de problema, copie-os e
-          envie no canal <strong>#suporte</strong> do Discord.
+          {t('support.help')}
         </p>
       </section>
     </div>

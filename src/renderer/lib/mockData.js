@@ -152,24 +152,24 @@ export const NEWS = [
 export const SUPPORT_LINKS = [
   {
     id: 'discord',
-    label: 'Discord oficial',
+    labelKey: 'support.discord.label',
+    descKey: 'support.discord.desc',
     url: 'https://discord.gg/XE5SsTurP5',
-    description: 'Comunidade, suporte ao vivo e canais de RP.',
     color: '#5865F2',
   },
   {
     id: 'website',
-    label: 'Website',
+    labelKey: 'support.website.label',
+    descKey: 'support.website.desc',
     url: 'https://eden.net',
-    description: 'Notícias, ranking e loja oficial do servidor.',
-    color: '#9C27B0',
+    color: '#52b788',
   },
   {
     id: 'faq',
-    label: 'FAQ & Tutoriais',
+    labelKey: 'support.faq.label',
+    descKey: 'support.faq.desc',
     url: 'https://eden.net/faq',
-    description: 'Guias rápidos para resolver problemas comuns.',
-    color: '#00E5FF',
+    color: '#e9c46a',
   },
 ];
 
