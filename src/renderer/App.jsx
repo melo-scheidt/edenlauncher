@@ -96,6 +96,8 @@ export default function App() {
     window.eden.updater.onReady(() => setUpdate((u) => ({ ...u, ready: true, error: null })));
     // Só exibe erro se a atualização já tinha sido detectada (não travar offline)
     window.eden.updater.onError((error) => setUpdate((u) => (u?.info ? { ...u, error } : u)));
+    // Re-checa após montar para não perder eventos disparados antes do mount
+    window.eden.updater.check?.().catch(() => {});
   }, []);
 
   // ── Auth handlers ─────────────────────────────────────────────────────────
