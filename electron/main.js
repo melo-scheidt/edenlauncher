@@ -93,6 +93,9 @@ function createSplashWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, nodeIntegration: false,
+      // file:// + ES modules sempre pedem CORS e o Chromium bloqueia origin null;
+      // a UI carrega apenas arquivos locais embutidos, então liberamos o webSecurity
+      webSecurity: false,
     },
   });
   loadRenderer(splashWindow, '/splash');
@@ -122,6 +125,9 @@ function createMainWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, nodeIntegration: false,
+      // file:// + ES modules sempre pedem CORS e o Chromium bloqueia origin null;
+      // a UI carrega apenas arquivos locais embutidos, então liberamos o webSecurity
+      webSecurity: false,
     },
   });
   loadRenderer(mainWindow, '/');
