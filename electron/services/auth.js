@@ -18,6 +18,10 @@ function getSupabase() {
   supabaseTried = true;
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
   try {
+    // Electron 31 roda Node 20 no main (sem WebSocket nativo) — polyfill exigido pelo supabase-js
+    if (typeof globalThis.WebSocket === 'undefined') {
+      globalThis.WebSocket = require('ws');
+    }
     const { createClient } = require('@supabase/supabase-js');
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } catch (e) {
