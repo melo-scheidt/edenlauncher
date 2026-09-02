@@ -376,16 +376,34 @@ async function syncLocalMods(userEnabledMap = {}) {
 }
 
 // ── Garante que shaderpacks/ contenha SOMENTE shaders do catálogo oficial ────
+// Zips não autorizados são removidos; zips do catálogo que foram alterados
+// (hash divergente do original embutido) são restaurados automaticamente.
 
-function enforceShadersFolder() {
+async function enforceShadersFolder() {
   const dir = paths.shaderpacksDir();
   if (!fs.existsSync(dir)) return;
-  const allowed = new Set(getShaders().map((s) => s.filename.toLowerCase()));
+  const catalog = getShaders();
+  const allowed = new Map(catalog.map((s) => [s.filename.toLowerCase(), s]));
+
   for (const entry of fs.readdirSync(dir)) {
     if (!entry.toLowerCase().endsWith('.zip')) continue;
-    if (!allowed.has(entry.toLowerCase())) {
+    const full = path.join(dir, entry);
+    const src = allowed.get(entry.toLowerCase());
+    if (!src) {
       log.warn('[modpack] Removendo shader não autorizado:', entry);
-      try { fs.unlinkSync(path.join(dir, entry)); } catch {}
+      try { fs.unlinkSync(full); } catch {}
+      continue;
+    }
+    let altered = false;
+    try {
+      altered = fs.statSync(full).size !== src.size
+        || (await sha256File(full)) !== (await sha256File(src.fullPath));
+    } catch {
+      altered = true;
+    }
+    if (altered) {
+      log.warn('[modpack] Restaurando shader alterado:', entry);
+      try { fs.copyFileSync(src.fullPath, full); } catch {}
     }
   }
 }
@@ -459,7 +477,7 @@ async function syncModpack(manifest, onProgress = () => {}, userEnabledMap = {})
   }
 
   await enforceModsFolder(manifest, userEnabledMap);
-  enforceShadersFolder();
+  await enforceShadersFolder();
   report({ phase: 'done' });
   return { ok: true, version: manifest.version };
 }
