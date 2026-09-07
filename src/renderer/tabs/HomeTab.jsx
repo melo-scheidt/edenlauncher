@@ -207,7 +207,7 @@ export default function HomeTab({ profile, onLaunch, gameRunning }) {
                     : gameRunning
                     ? t('home.playing')
                     : launching
-                    ? t('home.launching')
+                    ? (isInstalled ? t('home.launching') : t('home.installing'))
                     : isInstalled
                     ? t('home.play')
                     : t('home.install')}

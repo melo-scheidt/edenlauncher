@@ -75,6 +75,7 @@ const S = {
   'home.playing': ['JOGANDO', 'A JOGAR'],
   'home.play': ['JOGAR', 'JOGAR'],
   'home.install': ['INSTALAR', 'INSTALAR'],
+  'home.installing': ['INSTALANDO...', 'A INSTALAR...'],
   'home.uninstalling': ['DESINSTALANDO...', 'A DESINSTALAR...'],
   'home.uninstall': ['DESINSTALAR', 'DESINSTALAR'],
   'home.uninstallTip': ['Desinstalar jogo e modpack', 'Desinstalar jogo e modpack'],
