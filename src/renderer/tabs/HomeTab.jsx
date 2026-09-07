@@ -13,6 +13,12 @@ const SETTINGS_DEFAULTS = {
   launchArgs: '-XX:+UseG1GC -XX:+ParallelRefProcEnabled',
 };
 
+// API própria do servidor (server/status-server.js) com fallback público
+const STATUS_ENDPOINTS = [
+  'http://jogar.eden.net:3001/status',
+  'https://api.mcsrvstat.us/3/jogar.eden.net',
+];
+
 const PROMO_CARDS = [
   { id: 'p1', badgeKey: 'promo.p1.badge', badgeColor: '#52b788', titleKey: 'promo.p1.title', subKey: 'promo.p1.sub', timeKey: 'promo.p1.time', imageType: 'cupom' },
   { id: 'p2', badgeKey: 'promo.p2.badge', badgeColor: '#e9c46a', titleKey: 'promo.p2.title', subKey: 'promo.p2.sub', timeKey: 'promo.p2.time', imageType: 'evento' },
@@ -33,20 +39,23 @@ export default function HomeTab({ profile, onLaunch, gameRunning }) {
   // Fetch status
   useEffect(() => {
     const fetchStatus = async () => {
-      try {
-        const res = await fetch('https://api.mcsrvstat.us/3/jogar.eden.net');
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data && data.online !== undefined) {
-          setServerStatus({
-            online: data.online,
-            players: data.players?.online ?? 54,
-            max: data.players?.max ?? 100,
-            version: data.version ?? '1.21.5',
-          });
+      for (const endpoint of STATUS_ENDPOINTS) {
+        try {
+          const res = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && data.online !== undefined) {
+            setServerStatus({
+              online: data.online,
+              players: data.players?.online ?? 0,
+              max: data.players?.max ?? 0,
+              version: data.version ?? '1.21.5',
+            });
+            return;
+          }
+        } catch {
+          // tenta o próximo endpoint
         }
-      } catch {
-        // Fallback default
       }
     };
     fetchStatus();
