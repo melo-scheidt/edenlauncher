@@ -183,9 +183,7 @@ const S = {
   'profile.statDeaths': ['Qtd. de mortes', 'N.º de mortes'],
   'profile.statRegistered': ['Data registro', 'Data de registo'],
   'profile.statLastLogin': ['Último login', 'Último acesso'],
-  'profile.statProject': ['No projeto', 'No projeto'],
   'profile.today': ['Hoje', 'Hoje'],
-  'profile.oneYear': ['1 ano', '1 ano'],
 
   // ── Suporte ───────────────────────────────────────────────────────────
   'support.title': ['Atalhos & Suporte', 'Atalhos & Suporte'],

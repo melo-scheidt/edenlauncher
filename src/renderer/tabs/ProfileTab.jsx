@@ -191,10 +191,6 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
                   : '—'}
               </strong>
             </div>
-            <div className="eden-stat-box">
-              <span className="eden-stat-label">{t('profile.statProject')}</span>
-              <strong className="eden-stat-val">{t('profile.oneYear')}</strong>
-            </div>
           </div>
 
           {/* Action Buttons */}
