@@ -47,6 +47,9 @@ contextBridge.exposeInMainWorld('eden', {
     onProgress:    (cb) => ipcRenderer.on('modpack:progress', (_, p) => cb(p)),
   },
 
+  server: {
+    status: () => ipcRenderer.invoke('server:status'),
+  },
   launch: {
     start:   (payload) => ipcRenderer.invoke('launch:start', payload),
     onEvent: (cb)      => ipcRenderer.on('launch:event', (_, e) => cb(e)),

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const SERVER_HOST = 'jogar.eden.net';
+const SERVER_HOST = 'sp-22.magnohost.com.br:25573';
 
 export default function ServerStatus() {
   const [status, setStatus] = useState({

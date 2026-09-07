@@ -181,7 +181,7 @@ export function fakeServerStatus() {
     online,
     players,
     maxPlayers: 100,
-    host: 'jogar.eden.net',
+    host: 'sp-22.magnohost.com.br:25573',
     motd: 'Éden MC·RP — Bem-vindo, runner.',
     ping: 18 + Math.floor(Math.random() * 25),
   };

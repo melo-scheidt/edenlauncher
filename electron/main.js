@@ -20,6 +20,7 @@ const auth = require('./services/auth');
 const modpack = require('./services/modpack');
 const launcher = require('./services/launcher');
 const skins = require('./services/skins');
+const serverStatus = require('./services/serverStatus');
 
 // Configurar log
 log.transports.file.resolvePathFn = () => path.join(paths.logsDir(), 'launcher.log');
@@ -284,6 +285,10 @@ ipcMain.handle('launch:start', async (_e, { profile, settings, manifest }) => {
   }
 });
 ipcMain.handle('launch:is-running', () => launcher.isRunning());
+
+// ── IPC: Status do servidor (ping direto no protocolo do Minecraft) ─────────
+ipcMain.handle('server:status', () => serverStatus.status());
+
 ipcMain.handle('launch:is-installed', async (_e, { manifest } = {}) => {
   try {
     const mcVersion = manifest?.minecraft || '1.21.5';

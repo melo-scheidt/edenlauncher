@@ -13,11 +13,16 @@ const SETTINGS_DEFAULTS = {
   launchArgs: '-XX:+UseG1GC -XX:+ParallelRefProcEnabled',
 };
 
-// API própria do servidor (server/status-server.js) com fallback público
+// Fallbacks públicos de status (preview no navegador ou ping bloqueado)
 const STATUS_ENDPOINTS = [
-  'http://jogar.eden.net:3001/status',
-  'https://api.mcsrvstat.us/3/jogar.eden.net',
+  'https://api.mcstatus.io/v2/status/java/sp-22.magnohost.com.br:25573',
+  'https://api.mcsrvstat.us/3/sp-22.magnohost.com.br:25573',
 ];
+
+const pickVersion = (v) => {
+  if (typeof v === 'object' && v) return v.name_clean || v.name || '1.21.5';
+  return v || '1.21.5';
+};
 
 const PROMO_CARDS = [
   { id: 'p1', badgeKey: 'promo.p1.badge', badgeColor: '#52b788', titleKey: 'promo.p1.title', subKey: 'promo.p1.sub', timeKey: 'promo.p1.time', imageType: 'cupom' },
@@ -28,7 +33,7 @@ const PROMO_CARDS = [
 
 export default function HomeTab({ profile, onLaunch, gameRunning }) {
   const { t } = useI18n();
-  const [serverStatus, setServerStatus] = useState({ online: true, players: 54, max: 100, version: '1.21.5' });
+  const [serverStatus, setServerStatus] = useState({ online: false, players: 0, max: 0, version: '1.21.5' });
   const [modCount, setModCount] = useState(10);
   const [launching, setLaunching] = useState(false);
   const [uninstalling, setUninstalling] = useState(false);
@@ -38,19 +43,30 @@ export default function HomeTab({ profile, onLaunch, gameRunning }) {
 
   // Fetch status
   useEffect(() => {
+    const applyStatus = (data) => {
+      setServerStatus({
+        online: data.online,
+        players: data.players?.online ?? 0,
+        max: data.players?.max ?? 0,
+        version: pickVersion(data.version),
+      });
+    };
     const fetchStatus = async () => {
+      // 1. Ping direto no protocolo do Minecraft (main process, tempo real)
+      if (window.eden?.server?.status) {
+        try {
+          applyStatus(await window.eden.server.status());
+          return;
+        } catch { /* cai para o fallback público */ }
+      }
+      // 2. Fallback público
       for (const endpoint of STATUS_ENDPOINTS) {
         try {
           const res = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
           if (!res.ok) continue;
           const data = await res.json();
           if (data && data.online !== undefined) {
-            setServerStatus({
-              online: data.online,
-              players: data.players?.online ?? 0,
-              max: data.players?.max ?? 0,
-              version: data.version ?? '1.21.5',
-            });
+            applyStatus(data);
             return;
           }
         } catch {

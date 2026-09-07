@@ -166,6 +166,6 @@ function makeFakeLogs() {
     `[${now}] [INFO] Browser preview (no Electron).`,
     `[${now}] [DEBUG] Loaded modpack manifest v1.4.2`,
     `[${now}] [INFO] Mods checksum OK (28/28)`,
-    `[${now}] [INFO] Connection to jogar.eden.net:25565 ready`,
+    `[${now}] [INFO] Connection to sp-22.magnohost.com.br:25573 ready`,
   ].join('\n');
 }
