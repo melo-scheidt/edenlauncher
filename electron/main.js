@@ -26,6 +26,9 @@ const serverStatus = require('./services/serverStatus');
 log.transports.file.resolvePathFn = () => path.join(paths.logsDir(), 'launcher.log');
 autoUpdater.logger = log;
 autoUpdater.autoDownload = true;
+// Download completo em vez de diferencial (blockmap) — o download diferencial
+// já pendurou o updater com cache inconsistente; full download é infalível.
+autoUpdater.disableDifferentialDownload = true;
 
 const isDev = process.env.NODE_ENV === 'development';
 const RENDERER_DEV_URL = 'http://localhost:5173';
