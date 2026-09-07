@@ -13,19 +13,6 @@ const SETTINGS_DEFAULTS = {
   launchArgs: '-XX:+UseG1GC -XX:+ParallelRefProcEnabled',
 };
 
-// Fallbacks de status (preview no navegador ou ping direto bloqueado):
-// endpoint do plugin EdenStatus (porta 25617 liberada pelo host) + públicos
-const STATUS_ENDPOINTS = [
-  'http://sp-22.magnohost.com.br:25617/status',
-  'https://api.mcstatus.io/v2/status/java/sp-22.magnohost.com.br:25573',
-  'https://api.mcsrvstat.us/3/sp-22.magnohost.com.br:25573',
-];
-
-const pickVersion = (v) => {
-  if (typeof v === 'object' && v) return v.name_clean || v.name || '1.21.5';
-  return v || '1.21.5';
-};
-
 const PROMO_CARDS = [
   { id: 'p1', badgeKey: 'promo.p1.badge', badgeColor: '#52b788', titleKey: 'promo.p1.title', subKey: 'promo.p1.sub', timeKey: 'promo.p1.time', imageType: 'cupom' },
   { id: 'p2', badgeKey: 'promo.p2.badge', badgeColor: '#e9c46a', titleKey: 'promo.p2.title', subKey: 'promo.p2.sub', timeKey: 'promo.p2.time', imageType: 'evento' },
@@ -33,53 +20,14 @@ const PROMO_CARDS = [
   { id: 'p4', badgeKey: 'promo.p4.badge', badgeColor: '#00f5d4', titleKey: 'promo.p4.title', subKey: 'promo.p4.sub', timeKey: 'promo.p4.time', imageType: 'vip' },
 ];
 
-export default function HomeTab({ profile, onLaunch, gameRunning }) {
+export default function HomeTab({ profile, onLaunch, gameRunning, serverStatus = { online: false, players: 0, max: 0, version: '1.21.5' } }) {
   const { t } = useI18n();
-  const [serverStatus, setServerStatus] = useState({ online: false, players: 0, max: 0, version: '1.21.5' });
   const [modCount, setModCount] = useState(10);
   const [launching, setLaunching] = useState(false);
   const [uninstalling, setUninstalling] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [checkingInstall, setCheckingInstall] = useState(true);
   const [installProgress, setInstallProgress] = useState(0);
-
-  // Fetch status
-  useEffect(() => {
-    const applyStatus = (data) => {
-      setServerStatus({
-        online: data.online,
-        players: data.players?.online ?? 0,
-        max: data.players?.max ?? 0,
-        version: pickVersion(data.version),
-      });
-    };
-    const fetchStatus = async () => {
-      // 1. Ping direto no protocolo do Minecraft (main process, tempo real)
-      if (window.eden?.server?.status) {
-        try {
-          applyStatus(await window.eden.server.status());
-          return;
-        } catch { /* cai para o fallback público */ }
-      }
-      // 2. Fallback público
-      for (const endpoint of STATUS_ENDPOINTS) {
-        try {
-          const res = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
-          if (!res.ok) continue;
-          const data = await res.json();
-          if (data && data.online !== undefined) {
-            applyStatus(data);
-            return;
-          }
-        } catch {
-          // tenta o próximo endpoint
-        }
-      }
-    };
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   const getManifest = useCallback(async () => {
     if (!window.eden?.modpack) return null;

@@ -16,6 +16,19 @@ import { getValue, setValue } from './lib/store.js';
 import './styles/canvas.css';
 import './styles/app.css';
 
+// Fallbacks de status do servidor (preview no navegador ou ping direto bloqueado):
+// endpoint do plugin EdenStatus (porta 25617 liberada pelo host) + serviços públicos
+const STATUS_ENDPOINTS = [
+  'http://sp-22.magnohost.com.br:25617/status',
+  'https://api.mcstatus.io/v2/status/java/sp-22.magnohost.com.br:25573',
+  'https://api.mcsrvstat.us/3/sp-22.magnohost.com.br:25573',
+];
+
+const pickVersion = (v) => {
+  if (typeof v === 'object' && v) return v.name_clean || v.name || '1.21.5';
+  return v || '1.21.5';
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [profile, setProfile] = useState(null);
@@ -128,6 +141,51 @@ export default function App() {
     await setValue('profile', null);
   }, []);
 
+  // ── Status do servidor (ping direto + fallbacks, compartilhado) ─────────────
+  const [serverStatus, setServerStatus] = useState({ online: false, players: 0, max: 0, version: '1.21.5' });
+
+  useEffect(() => {
+    let cancelled = false;
+    const applyStatus = (data) => {
+      if (cancelled) return;
+      setServerStatus({
+        online: data.online,
+        players: data.players?.online ?? 0,
+        max: data.players?.max ?? 0,
+        version: pickVersion(data.version),
+      });
+    };
+    const fetchStatus = async () => {
+      // 1. Ping direto no protocolo do Minecraft (main process, tempo real)
+      if (window.eden?.server?.status) {
+        try {
+          applyStatus(await window.eden.server.status());
+          return;
+        } catch { /* cai para o fallback público */ }
+      }
+      // 2. Fallback público (plugin na 25617 + serviços externos)
+      for (const endpoint of STATUS_ENDPOINTS) {
+        try {
+          const res = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && data.online !== undefined) {
+            applyStatus(data);
+            return;
+          }
+        } catch {
+          // tenta o próximo endpoint
+        }
+      }
+    };
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 60000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
+
   // ── Launch events: estado do jogo (JOGANDO) e erros ────────────────────────
   useEffect(() => {
     if (!window.eden?.launch?.onEvent) return;
@@ -209,6 +267,8 @@ export default function App() {
           theme={theme}
           onToggleTheme={handleToggleTheme}
           activeSkin={activeSkin}
+          onlinePlayers={serverStatus.players}
+          maxPlayers={serverStatus.max}
           onOpenVipModal={() => setVipModalOpen(true)}
         />
 
@@ -219,6 +279,7 @@ export default function App() {
                 profile={profile}
                 onLaunch={handleLaunch}
                 gameRunning={gameRunning}
+                serverStatus={serverStatus}
               />
             )}
             {activeTab === 'profile' && (

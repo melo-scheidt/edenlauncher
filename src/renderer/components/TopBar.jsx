@@ -20,7 +20,7 @@ function DiscordIcon({ size = 16, className = '' }) {
   );
 }
 
-export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onlinePlayers = 54, maxPlayers = 100, onOpenVipModal }) {
+export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onlinePlayers = 0, maxPlayers = 0, onOpenVipModal }) {
   const [timeStr, setTimeStr] = useState('');
   const { lang, setLang, t } = useI18n();
 
@@ -50,7 +50,7 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
 
   const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
   const nick = profile?.nickname || t('user.defaultNick');
-  const onlinePct = Math.min(100, Math.round((onlinePlayers / maxPlayers) * 100));
+  const onlinePct = maxPlayers > 0 ? Math.min(100, Math.round((onlinePlayers / maxPlayers) * 100)) : 0;
 
   const openSocial = (url) => {
     if (window.eden?.shell?.openExternal) {
