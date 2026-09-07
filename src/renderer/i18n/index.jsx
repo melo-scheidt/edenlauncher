@@ -115,14 +115,15 @@ const S = {
     'Inicie o jogo em ecrã inteiro em vez de janela (usando options.txt).',
   ],
   'settings.width': ['Largura', 'Largura'],
+  'settings.auto': ['Automático', 'Automático'],
   'settings.widthDesc': [
-    'Largura da janela do jogo ao iniciar (em pixels).',
-    'Largura da janela do jogo ao iniciar (em pixels).',
+    'Largura da janela do jogo em pixels. Em branco = automático.',
+    'Largura da janela do jogo em pixels. Em branco = automático.',
   ],
   'settings.height': ['Altura', 'Altura'],
   'settings.heightDesc': [
-    'Altura da janela do jogo ao iniciar (em pixels).',
-    'Altura da janela do jogo ao iniciar (em pixels).',
+    'Altura da janela do jogo em pixels. Em branco = automático.',
+    'Altura da janela do jogo em pixels. Em branco = automático.',
   ],
   'settings.ram': ['Alocação de Memória RAM', 'Alocação de Memória RAM'],
   'settings.ramDesc': [

@@ -6,7 +6,6 @@ import '../styles/home.css';
 
 const SETTINGS_DEFAULTS = {
   ramGb: 4,
-  resolution: '1920x1080',
   fullscreen: false,
   javaPath: '',
   vsync: true,

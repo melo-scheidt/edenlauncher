@@ -252,8 +252,14 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
   const javaPath = detectJava(settings.javaPath) !== (process.platform === 'win32' ? 'java.exe' : 'java')
     ? detectJava(settings.javaPath)
     : bundledJavaPath;
-  const ramMb     = (settings.ramGb || 4) * 1024;
-  const [w, h]    = (settings.resolution || '1920x1080').split('x');
+  const ramMb = (settings.ramGb || 4) * 1024;
+  // Dimensões customizadas da janela (Configurações). Sem valores válidos,
+  // o Minecraft usa o tamanho natural/lembrado — forçar 1920x1080 faz a
+  // janela cobrir a tela inteira num monitor 1080p (parece tela cheia).
+  const customW = Number(settings.width);
+  const customH = Number(settings.height);
+  const hasCustomSize = Number.isFinite(customW) && customW >= 320
+    && Number.isFinite(customH) && customH >= 240;
   const nativesDir = path.join(paths.versionsDir(), versionId, 'natives');
   const classpath  = buildClasspath(versionJson, versionId);
 
@@ -276,8 +282,8 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
     auth_type:          profile.type === 'microsoft' ? 'msa' : 'legacy',
     user_type:          profile.type === 'microsoft' ? 'msa' : 'legacy',
     version_type:       versionJson.type || 'release',
-    resolution_width:   w,
-    resolution_height:  h,
+    resolution_width:  hasCustomSize ? customW : 854,
+    resolution_height: hasCustomSize ? customH : 480,
     game_assets:        path.join(paths.assetsDir(), 'virtual', 'legacy'),
     user_properties:    '{}',
   };
@@ -335,8 +341,13 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
     });
     map.set('enableVsync', settings.vsync ? 'true' : 'false');
     map.set('fullscreen',  settings.fullscreen ? 'true' : 'false');
-    map.set('overrideWidth',  w);
-    map.set('overrideHeight', h);
+    if (hasCustomSize) {
+      map.set('overrideWidth',  customW);
+      map.set('overrideHeight', customH);
+    } else {
+      map.delete('overrideWidth');
+      map.delete('overrideHeight');
+    }
     // Force enable the custom skin resource pack if it's not there
     const rpLine = map.get('resourcePacks') || '["vanilla"]';
     if (!rpLine.includes('file/EdenCustomSkin')) {

@@ -8,8 +8,8 @@ const DEFAULTS = {
   theme: 'dark', // 'dark' | 'light'
   ramGb: 4,
   fullscreen: false,
-  width: 1920,
-  height: 1080,
+  width: '',
+  height: '',
   javaPath: '',
   vsync: true,
   launchArgs: '-XX:+UseG1GC -XX:+ParallelRefProcEnabled',
@@ -173,8 +173,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                 <input
                   type="number"
                   className="eden-setting-num-input"
-                  value={settings.width || 1920}
-                  onChange={(e) => update({ width: Number(e.target.value) })}
+                  value={settings.width ?? ''}
+                  onChange={(e) => update({ width: e.target.value === '' ? '' : Number(e.target.value) })}
+                  placeholder={t('settings.auto')}
                 />
               </div>
 
@@ -189,8 +190,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                 <input
                   type="number"
                   className="eden-setting-num-input"
-                  value={settings.height || 1080}
-                  onChange={(e) => update({ height: Number(e.target.value) })}
+                  value={settings.height ?? ''}
+                  onChange={(e) => update({ height: e.target.value === '' ? '' : Number(e.target.value) })}
+                  placeholder={t('settings.auto')}
                 />
               </div>
             </div>
