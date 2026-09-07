@@ -13,8 +13,10 @@ const SETTINGS_DEFAULTS = {
   launchArgs: '-XX:+UseG1GC -XX:+ParallelRefProcEnabled',
 };
 
-// Fallbacks públicos de status (preview no navegador ou ping bloqueado)
+// Fallbacks de status (preview no navegador ou ping direto bloqueado):
+// endpoint do plugin EdenStatus (porta 25617 liberada pelo host) + públicos
 const STATUS_ENDPOINTS = [
+  'http://sp-22.magnohost.com.br:25617/status',
   'https://api.mcstatus.io/v2/status/java/sp-22.magnohost.com.br:25573',
   'https://api.mcsrvstat.us/3/sp-22.magnohost.com.br:25573',
 ];
