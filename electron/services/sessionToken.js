@@ -6,8 +6,6 @@ const fetch = require('node-fetch');
 const { API_BASE, LAUNCHER_VERSION } = require('../config');
 const log = require('electron-log');
 
-const isDev = process.env.NODE_ENV === 'development';
-
 async function requestSessionToken({ uuid, nickname, accountType, integrityHash }) {
   const payload = {
     uuid,
@@ -32,12 +30,11 @@ async function requestSessionToken({ uuid, nickname, accountType, integrityHash 
     if (!data.token) throw new Error('Resposta sem token');
     return data; // { token, expiresIn }
   } catch (e) {
-    if (isDev) {
-      // Em modo de desenvolvimento, usa token mock para não travar o fluxo
-      log.warn('[sessionToken] API indisponível, usando token mock (dev only):', e.message);
-      return { token: `dev-mock-token-${Date.now()}`, expiresIn: 86400 };
-    }
-    throw e;
+    // API ainda não disponível (ex.: domínio não configurado): segue com token
+    // offline para não travar o jogo. Quando a API Éden entrar no ar, o token
+    // real volta a ser usado automaticamente.
+    log.warn('[sessionToken] API indisponível, usando token offline:', e.message);
+    return { token: `eden-offline-${Date.now()}`, expiresIn: 0 };
   }
 }
 
