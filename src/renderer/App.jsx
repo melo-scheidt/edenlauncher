@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import EdenCanvas from './components/EdenCanvas.jsx';
 import TopBar from './components/TopBar.jsx';
 import Sidebar from './components/Sidebar.jsx';
@@ -26,7 +26,7 @@ export default function App() {
 
   // Launch state (without overlay)
   const [launchError, setLaunchError] = useState('');
-  const launchListenerRef = useRef(null);
+  const [gameRunning, setGameRunning] = useState(false);
   const [update, setUpdate] = useState(null);
   const { t } = useI18n();
 
@@ -128,33 +128,39 @@ export default function App() {
     await setValue('profile', null);
   }, []);
 
-  // ── Launch handler ────────────────────────────────────────────────────────
+  // ── Launch events: estado do jogo (JOGANDO) e erros ────────────────────────
+  useEffect(() => {
+    if (!window.eden?.launch?.onEvent) return;
+    window.eden.launch.onEvent((evt) => {
+      if (evt.phase === 'jvm:spawn') setGameRunning(true);
+      if (evt.phase === 'jvm:exit' || evt.phase === 'jvm:error') {
+        setGameRunning(false);
+        if (evt.phase === 'jvm:exit' && evt.code !== 0) {
+          setLaunchError(t('launch.exitError', { code: evt.code }));
+        }
+        if (evt.phase === 'jvm:error') {
+          setLaunchError(evt.error || t('launch.javaError'));
+        }
+      }
+    });
+    // Se o renderer recarregar com o jogo aberto, sincroniza o estado
+    window.eden.launch.isRunning?.().then(setGameRunning).catch(() => {});
+  }, [t]);
+
   const handleLaunch = useCallback(async ({ profile: prof, settings, manifest }) => {
     setLaunchError('');
-
-    if (window.eden?.launch?.onEvent && !launchListenerRef.current) {
-      launchListenerRef.current = true;
-      window.eden.launch.onEvent((evt) => {
-        if (evt.phase === 'jvm:exit' || evt.phase === 'jvm:error') {
-          if (evt.code !== 0 && evt.phase === 'jvm:exit') {
-            setLaunchError(t('launch.exitError', { code: evt.code }));
-          }
-          if (evt.phase === 'jvm:error') {
-            setLaunchError(evt.error || t('launch.javaError'));
-          }
-        }
-      });
-    }
-
     try {
       const res = await window.eden.launch.start({ profile: prof, settings, manifest });
       if (!res?.ok) {
-        setLaunchError(res?.error || t('launch.failed'));
+        const msg = res?.error === 'already-running'
+          ? t('launch.alreadyRunning')
+          : (res?.error || t('launch.failed'));
+        setLaunchError(msg);
       }
     } catch (e) {
       setLaunchError(e.message);
     }
-  }, []);
+  }, [t]);
 
   // ── Render ────────────────────────────────────────────────────────────────
   if (!hydrated) return null;
@@ -212,6 +218,7 @@ export default function App() {
               <HomeTab
                 profile={profile}
                 onLaunch={handleLaunch}
+                gameRunning={gameRunning}
               />
             )}
             {activeTab === 'profile' && (

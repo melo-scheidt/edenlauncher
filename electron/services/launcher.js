@@ -149,7 +149,25 @@ function buildArgs(vj, vars) {
 
 // ── Main launch function ──────────────────────────────────────────────────────
 
-async function launch({ profile, settings, manifest, onEvent = () => {} }) {
+// Estado do jogo: impede mais de um Minecraft por vez
+let launchState = 'idle'; // idle | preparing | running
+
+function isRunning() {
+  return launchState !== 'idle';
+}
+
+async function launch(opts) {
+  if (isRunning()) throw new Error('already-running');
+  launchState = 'preparing';
+  try {
+    return await launchGame(opts);
+  } catch (e) {
+    launchState = 'idle';
+    throw e;
+  }
+}
+
+async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
   settings = settings || {};
   manifest = manifest || {};
 
@@ -342,13 +360,14 @@ async function launch({ profile, settings, manifest, onEvent = () => {} }) {
     detached: false,
     stdio:    ['ignore', 'pipe', 'pipe'],
   });
+  launchState = 'running';
 
   child.stdout.on('data', (d) => log.info('[mc]',     d.toString().trimEnd()));
   child.stderr.on('data', (d) => log.warn('[mc:err]', d.toString().trimEnd()));
-  child.on('exit',  (code) => emit('jvm:exit',  { code }));
-  child.on('error', (err)  => emit('jvm:error', { error: err.message }));
+  child.on('exit',  (code) => { launchState = 'idle'; emit('jvm:exit',  { code }); });
+  child.on('error', (err)  => { launchState = 'idle'; emit('jvm:error', { error: err.message }); });
 
   return { pid: child.pid };
 }
 
-module.exports = { launch };
+module.exports = { launch, isRunning };

@@ -20,7 +20,7 @@ const PROMO_CARDS = [
   { id: 'p4', badgeKey: 'promo.p4.badge', badgeColor: '#00f5d4', titleKey: 'promo.p4.title', subKey: 'promo.p4.sub', timeKey: 'promo.p4.time', imageType: 'vip' },
 ];
 
-export default function HomeTab({ profile, onLaunch }) {
+export default function HomeTab({ profile, onLaunch, gameRunning }) {
   const { t } = useI18n();
   const [serverStatus, setServerStatus] = useState({ online: true, players: 54, max: 100, version: '1.21.5' });
   const [modCount, setModCount] = useState(10);
@@ -119,7 +119,7 @@ export default function HomeTab({ profile, onLaunch }) {
   }, []);
 
   const handlePlay = useCallback(async () => {
-    if (launching || !onLaunch) return;
+    if (launching || gameRunning || !onLaunch) return;
     setLaunching(true);
     try {
       const storedSettings = await getValue('settings', null);
@@ -145,10 +145,10 @@ export default function HomeTab({ profile, onLaunch }) {
     } finally {
       setLaunching(false);
     }
-  }, [launching, onLaunch, profile]);
+  }, [launching, gameRunning, onLaunch, profile]);
 
   const handleUninstall = useCallback(async () => {
-    if (uninstalling || launching) return;
+    if (uninstalling || launching || gameRunning) return;
     setUninstalling(true);
     try {
       const manifest = await getManifest();
@@ -189,11 +189,11 @@ export default function HomeTab({ profile, onLaunch }) {
             <button
               id="btn-play-main"
               type="button"
-              className={`eden-btn-play ${launching ? 'is-loading' : ''}`}
+              className={`eden-btn-play ${launching ? 'is-loading' : ''} ${gameRunning ? 'is-playing' : ''}`}
               onClick={handlePlay}
-              disabled={launching || checkingInstall || uninstalling}
+              disabled={launching || checkingInstall || uninstalling || gameRunning}
             >
-              {launching && installProgress > 0 && (
+              {(launching || gameRunning) && installProgress > 0 && (
                 <div
                   className="eden-btn-progress-bar"
                   style={{ width: `${installProgress}%` }}
@@ -204,6 +204,8 @@ export default function HomeTab({ profile, onLaunch }) {
                 <span>
                   {checkingInstall
                     ? t('home.checking')
+                    : gameRunning
+                    ? t('home.playing')
                     : launching
                     ? t('home.launching')
                     : isInstalled
@@ -219,7 +221,7 @@ export default function HomeTab({ profile, onLaunch }) {
                 className="eden-btn-uninstall"
                 title={t('home.uninstallTip')}
                 onClick={handleUninstall}
-                disabled={uninstalling || launching}
+                disabled={uninstalling || launching || gameRunning}
               >
                 <span>{uninstalling ? t('home.uninstalling') : t('home.uninstall')}</span>
               </button>

@@ -72,6 +72,7 @@ const S = {
   ],
   'home.checking': ['VERIFICANDO...', 'A VERIFICAR...'],
   'home.launching': ['INICIANDO...', 'A INICIAR...'],
+  'home.playing': ['JOGANDO', 'A JOGAR'],
   'home.play': ['JOGAR', 'JOGAR'],
   'home.install': ['INSTALAR', 'INSTALAR'],
   'home.uninstalling': ['DESINSTALANDO...', 'A DESINSTALAR...'],
@@ -284,6 +285,7 @@ const S = {
   'update.restarting': ['Reiniciando…', 'A reiniciar…'],
 
   // ── Launch (App) ─────────────────────────────────────────────────────
+  'launch.alreadyRunning': ['Já existe um Minecraft em execução por este launcher.', 'Já existe um Minecraft em execução por este launcher.'],
   'launch.exitError': ['Minecraft encerrou com código {code}', 'O Minecraft terminou com o código {code}'],
   'launch.javaError': ['Erro ao iniciar Java', 'Erro ao iniciar Java'],
   'launch.failed': ['Falha ao iniciar Minecraft', 'Falha ao iniciar Minecraft'],

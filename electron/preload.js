@@ -50,6 +50,7 @@ contextBridge.exposeInMainWorld('eden', {
   launch: {
     start:   (payload) => ipcRenderer.invoke('launch:start', payload),
     onEvent: (cb)      => ipcRenderer.on('launch:event', (_, e) => cb(e)),
+    isRunning: ()      => ipcRenderer.invoke('launch:is-running'),
     isInstalled: (opts) => ipcRenderer.invoke('launch:is-installed', opts),
     uninstall: (opts) => ipcRenderer.invoke('launch:uninstall', opts),
   },

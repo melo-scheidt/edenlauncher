@@ -283,6 +283,7 @@ ipcMain.handle('launch:start', async (_e, { profile, settings, manifest }) => {
     return { ok: false, error: e.message };
   }
 });
+ipcMain.handle('launch:is-running', () => launcher.isRunning());
 ipcMain.handle('launch:is-installed', async (_e, { manifest } = {}) => {
   try {
     const mcVersion = manifest?.minecraft || '1.21.5';

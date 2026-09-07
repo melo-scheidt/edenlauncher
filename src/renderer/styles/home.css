@@ -424,3 +424,14 @@
   }
 }
 
+/* ── Estado JOGANDO (jogo em execução) ── */
+.eden-btn-play.is-playing {
+  cursor: default;
+  animation: eden-play-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes eden-play-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(82, 184, 136, 0.45); }
+  50%      { box-shadow: 0 0 0 12px rgba(82, 184, 136, 0); }
+}
+
