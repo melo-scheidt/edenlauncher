@@ -32,8 +32,8 @@ contextBridge.exposeInMainWorld('eden', {
   },
 
   auth: {
-    login:    (nick, pass, email)   => ipcRenderer.invoke('auth:login',    nick, pass, email),
-    register: (nick, pass, email)   => ipcRenderer.invoke('auth:register', nick, pass, email),
+    login:    (nick, pass) => ipcRenderer.invoke('auth:login',    nick, pass),
+    register: (nick, pass) => ipcRenderer.invoke('auth:register', nick, pass),
     current:  ()           => ipcRenderer.invoke('auth:current'),
     logout:   ()           => ipcRenderer.invoke('auth:logout'),
   },

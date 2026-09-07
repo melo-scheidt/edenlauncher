@@ -40,18 +40,18 @@ function offlineUuid(nick) {
 
 function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim()); }
 
-// Nick válido para o Minecraft a partir de qualquer texto (remove pontos,
-// hífens etc. de prefixos de e-mail) — o nick do jogo vem da conta registrada.
-function sanitizeNick(s) {
-  return String(s || '').replace(/[^A-Za-z0-9_]/g, '').slice(0, 16) || 'Jogador';
+// E-mail sintético — identificador interno da conta no Supabase.
+// O jogador só usa nick + senha; o e-mail é derivado do nick e nunca aparece.
+function synthEmail(nick) {
+  return `${String(nick).trim().toLowerCase()}@eden.launcher`;
 }
 
 function mapSupabaseError(msg) {
   const m = String(msg || '');
-  if (m.includes('Invalid login credentials')) return 'E-mail ou senha incorretos';
-  if (m.includes('User already registered'))   return 'Este e-mail já possui uma conta';
+  if (m.includes('Invalid login credentials')) return 'Nickname ou senha incorretos';
+  if (m.includes('User already registered'))   return 'Este nickname já está em uso';
   if (m.includes('at least 6 characters'))     return 'A senha deve ter no mínimo 6 caracteres';
-  if (m.includes('Email not confirmed'))       return 'Confirme seu e-mail antes de entrar';
+  if (m.includes('Email not confirmed'))       return 'Conta não confirmada. Contate a administração.';
   if (m.toLowerCase().includes('rate limit'))  return 'Muitas tentativas. Aguarde um momento e tente novamente';
   return m;
 }
@@ -69,11 +69,10 @@ function loadSession()   {
 }
 function clearSession()  { try { fs.unlinkSync(paths.authFile()); } catch {} }
 
-// ── Registrar conta ───────────────────────────────────────────────────────────
-async function registerAccount(nickname, password, email) {
+// ── Registrar conta (nick + senha) ────────────────────────────────────────────
+async function registerAccount(nickname, password) {
   const nick = (nickname || '').trim();
   if (!/^[A-Za-z0-9_]{3,16}$/.test(nick)) throw new Error('Nickname: 3–16 caracteres (letras, números ou _)');
-  if (!isValidEmail(email))                throw new Error('Informe um e-mail válido');
   if (!password || password.length < 6)    throw new Error('A senha deve ter no mínimo 6 caracteres');
 
   const sb = getSupabase();
@@ -82,41 +81,41 @@ async function registerAccount(nickname, password, email) {
   }
 
   const { data, error } = await sb.auth.signUp({
-    email: email.trim(),
+    email: synthEmail(nick),
     password,
     options: { data: { nickname: nick } },
   });
   if (error) throw new Error(mapSupabaseError(error.message));
 
   if (!data?.session) {
-    // Projeto com confirmação de e-mail ativada no painel do Supabase
-    throw new Error('Conta criada! Confirme seu e-mail e faça login.');
+    // Projeto com confirmação de e-mail ativada no painel do Supabase —
+    // o fluxo por nick exige que a confirmação esteja desativada.
+    throw new Error('REGISTRO_PENDENTE');
   }
 
   return _buildSession(nick, 'player', data.session.access_token);
 }
 
-// ── Login ─────────────────────────────────────────────────────────────────────
-async function loginAccount(nickname, password, email) {
-  if (!isValidEmail(email)) throw new Error('Informe um e-mail válido');
-  if (!password)            throw new Error('Senha não informada');
+// ── Login (nick + senha) ──────────────────────────────────────────────────────
+async function loginAccount(nickname, password) {
+  const nick = (nickname || '').trim();
+  if (!/^[A-Za-z0-9_]{3,16}$/.test(nick)) throw new Error('Nickname: 3–16 caracteres (letras, números ou _)');
+  if (!password)                          throw new Error('Senha não informada');
 
   const sb = getSupabase();
   if (!sb) {
-    const nick = (nickname || '').trim() || sanitizeNick((email || '').split('@')[0]);
     return _buildSession(nick, 'player', null);
   }
 
-  const { data, error } = await sb.auth.signInWithPassword({ email: email.trim(), password });
+  const { data, error } = await sb.auth.signInWithPassword({ email: synthEmail(nick), password });
   if (error) throw new Error(mapSupabaseError(error.message));
 
   const meta = data?.user?.user_metadata || {};
-  // Nick vinculado à conta: usa o nickname registrado no cadastro;
-  // só recorre ao prefixo do e-mail se a conta não tiver nick salvo.
-  const nick = meta.nickname || (nickname || '').trim() || sanitizeNick((email || '').split('@')[0]);
+  // O nick digitado É a chave da conta — o jogo sempre inicia com ele
+  const finalNick = meta.nickname || nick;
 
   // accessToken = JWT do Supabase (pode ser validado pelo plugin do servidor)
-  return _buildSession(nick, meta.role || 'player', data.session.access_token);
+  return _buildSession(finalNick, meta.role || 'player', data.session.access_token);
 }
 
 function _buildSession(nick, role, accessToken = null) {

@@ -8,7 +8,6 @@ export default function LoginScreen({ onLogin }) {
   const { lang, setLang, t } = useI18n();
   const [tab, setTab] = useState('login'); // 'login' | 'register'
   const [nick, setNick] = useState('');
-  const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [passConf, setPassConf] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,19 +20,14 @@ export default function LoginScreen({ onLogin }) {
     setSuccess('');
   };
 
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const nickOk = /^[A-Za-z0-9_]{3,16}$/.test(nick.trim());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
-    if (!emailOk) {
-      setError(t('login.errEmail'));
-      return;
-    }
-
-    if (tab === 'register' && !/^[A-Za-z0-9_]{3,16}$/.test(nick.trim())) {
+    if (!nickOk) {
       setError(t('login.errNick'));
       return;
     }
@@ -66,7 +60,7 @@ export default function LoginScreen({ onLogin }) {
         return;
       }
 
-      const res = await fn(nick.trim(), pass, email.trim());
+      const res = await fn(nick.trim(), pass);
       if (res?.ok) {
         if (tab === 'register') {
           setSuccess(t('login.registerOk'));
@@ -74,8 +68,8 @@ export default function LoginScreen({ onLogin }) {
         } else {
           onLogin(res.session);
         }
-      } else if (res?.error === 'Conta criada! Confirme seu e-mail e faça login.') {
-        setError(t('login.registerConfirm'));
+      } else if (res?.error === 'REGISTRO_PENDENTE') {
+        setError(t('login.registerPending'));
       } else {
         setError(res?.error || t('login.errGeneric'));
       }
@@ -87,8 +81,7 @@ export default function LoginScreen({ onLogin }) {
   };
 
   const canSubmit = !loading
-    && emailOk && pass.length >= 6
-    && (tab === 'login' || /^[A-Za-z0-9_]{3,16}$/.test(nick.trim()))
+    && nickOk && pass.length >= 6
     && (tab === 'login' || pass === passConf);
 
   return (
@@ -139,42 +132,23 @@ export default function LoginScreen({ onLogin }) {
           {/* Form */}
           <form className="eden-auth-form" onSubmit={handleSubmit}>
             <div className="eden-input-group">
-              <label htmlFor="auth-email" className="eden-input-label">
-                {t('login.email')}
+              <label htmlFor="auth-nick" className="eden-input-label">
+                {t('login.nickname')}
               </label>
               <div className="eden-input-field-wrap">
                 <input
-                  id="auth-email"
-                  type="email"
+                  id="auth-nick"
+                  type="text"
                   className="eden-auth-input"
-                  placeholder="user@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
+                  placeholder="Nickname..."
+                  value={nick}
+                  onChange={(e) => setNick(e.target.value)}
+                  maxLength={16}
+                  autoComplete="username"
                   autoFocus
                 />
               </div>
             </div>
-
-            {tab === 'register' && (
-              <div className="eden-input-group">
-                <label htmlFor="auth-nick" className="eden-input-label">
-                  {t('login.nickname')}
-                </label>
-                <div className="eden-input-field-wrap">
-                  <input
-                    id="auth-nick"
-                    type="text"
-                    className="eden-auth-input"
-                    placeholder="Nickname..."
-                    value={nick}
-                    onChange={(e) => setNick(e.target.value)}
-                    maxLength={16}
-                    autoComplete="username"
-                  />
-                </div>
-              </div>
-            )}
 
             <div className="eden-input-group">
               <label htmlFor="auth-pass" className="eden-input-label">

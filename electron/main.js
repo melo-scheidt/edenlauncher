@@ -239,12 +239,12 @@ ipcMain.handle('app:uninstall', () => {
   }
 });
 // ── IPC: Auth ─────────────────────────────────────────────────────────────────
-ipcMain.handle('auth:login', async (_e, nick, pass, email) => {
-  try   { return { ok: true,  session: await auth.loginAccount(nick, pass, email) }; }
+ipcMain.handle('auth:login', async (_e, nick, pass) => {
+  try   { return { ok: true,  session: await auth.loginAccount(nick, pass) }; }
   catch (e) { return { ok: false, error: e.message }; }
 });
-ipcMain.handle('auth:register', async (_e, nick, pass, email) => {
-  try   { return { ok: true,  session: await auth.registerAccount(nick, pass, email) }; }
+ipcMain.handle('auth:register', async (_e, nick, pass) => {
+  try   { return { ok: true,  session: await auth.registerAccount(nick, pass) }; }
   catch (e) { return { ok: false, error: e.message }; }
 });
 ipcMain.handle('auth:current', () => auth.loadSession());

@@ -50,6 +50,10 @@ const S = {
   'login.errPassMatch': ['As senhas não coincidem', 'As palavras-passe não coincidem'],
   'login.registerOk': ['Conta criada com sucesso! Entrando...', 'Conta criada com sucesso! A entrar...'],
   'login.registerConfirm': ['Conta criada! Confirme seu e-mail e faça login.', 'Conta criada! Confirme o seu e-mail e inicie sessão.'],
+  'login.registerPending': [
+    'Registro pendente: a confirmação de conta está ativa no servidor. Contate a administração do Éden.',
+    'Registo pendente: a confirmação de conta está ativa no servidor. Contacte a administração do Éden.',
+  ],
   'login.errGeneric': ['Não foi possível autenticar', 'Não foi possível autenticar'],
   'login.errConnect': ['Erro ao conectar ao servidor de autenticação', 'Erro ao ligar ao servidor de autenticação'],
   'login.skinError': ['Erro ao selecionar skin: {msg}', 'Erro ao selecionar skin: {msg}'],
