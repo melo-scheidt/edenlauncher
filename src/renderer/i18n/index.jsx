@@ -171,7 +171,7 @@ const S = {
 
   // ── Perfil ────────────────────────────────────────────────────────────
   'profile.balance': ['Seu Saldo', 'O teu Saldo'],
-  'profile.buyPass': ['Comprar Passe', 'Comprar Passe'],
+  'profile.buyVip': ['Comprar VIP', 'Comprar VIP'],
   'profile.recharge': ['Recarregar Saldo', 'Recarregar Saldo'],
   'profile.savedSkins': ['Skins Salvas', 'Skins Guardadas'],
   'profile.addSkin': ['Adicionar skin', 'Adicionar skin'],

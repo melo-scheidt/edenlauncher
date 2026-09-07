@@ -3,10 +3,12 @@ import { Plus, Crown } from 'lucide-react';
 import SkinViewer3D from '../components/SkinViewer.jsx';
 import PlayerHead from '../components/PlayerHead.jsx';
 import RoleTag from '../components/RoleTag.jsx';
-import VipModal from '../components/VipModal.jsx';
 import { getValue, setValue } from '../lib/store.js';
 import { useI18n } from '../i18n/index.jsx';
 import '../styles/profile.css';
+
+// Loja oficial de VIP (MineCart)
+const VIP_SHOP_URL = 'https://edenrp.minecart.com.br';
 
 const DEFAULT_SAVED_SKINS = [
   { id: 'skin-default', name: 'Original', url: '', active: false },
@@ -18,7 +20,6 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
   const [skinModel, setSkinModel] = useState('auto');
   const [savedSkins, setSavedSkins] = useState(DEFAULT_SAVED_SKINS);
   const [skinsLoaded, setSkinsLoaded] = useState(false);
-  const [vipModalOpen, setVipModalOpen] = useState(false);
 
   const nick = profile?.nickname || t('user.defaultNick');
   const isMicrosoft = profile?.type === 'microsoft';
@@ -159,7 +160,13 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
             <button
               type="button"
               className="eden-profile-btn eden-profile-btn--primary eden-profile-vip-btn"
-              onClick={() => setVipModalOpen(true)}
+              onClick={() => {
+                if (window.eden?.shell?.openExternal) {
+                  window.eden.shell.openExternal(VIP_SHOP_URL);
+                } else {
+                  window.open(VIP_SHOP_URL, '_blank', 'noopener,noreferrer');
+                }
+              }}
             >
               <Crown size={16} />
               <span>{t('profile.buyVip')}</span>
@@ -208,13 +215,6 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
           </div>
         </div>
       </div>
-
-      {/* ── 4 VIP Tiers Modal (Cobre, Ferro, Diamante, Rubi) ── */}
-      <VipModal
-        isOpen={vipModalOpen}
-        onClose={() => setVipModalOpen(false)}
-        currentRole={profile?.role}
-      />
     </div>
   );
 }
