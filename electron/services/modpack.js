@@ -43,6 +43,10 @@ function getSourceMandatoryModsDir() {
     path.join(__dirname, '..', '..', 'mod obrigatorio'),
     path.join(__dirname, '..', '..', 'mods obrigatorios'),
     path.join(__dirname, '..', '..', 'mods-obrigatorios'),
+    path.join(process.resourcesPath || '', 'app.asar', 'mod  obrigatorio'),
+    path.join(process.resourcesPath || '', 'app.asar', 'mod obrigatorio'),
+    path.join(process.resourcesPath || '', 'app.asar', 'mods obrigatorios'),
+    path.join(process.resourcesPath || '', 'app.asar', 'mods-obrigatorios'),
     path.join(appPath, 'mod  obrigatorio'),
     path.join(appPath, 'mod obrigatorio'),
     path.join(appPath, 'mods obrigatorios'),
@@ -63,6 +67,8 @@ function getSourceOptionalModsDir() {
   const candidates = [
     path.join(__dirname, '..', '..', 'mods opcionais'),
     path.join(__dirname, '..', '..', 'mods-opcionais'),
+    path.join(process.resourcesPath || '', 'app.asar', 'mods opcionais'),
+    path.join(process.resourcesPath || '', 'app.asar', 'mods-opcionais'),
     path.join(appPath, 'mods opcionais'),
     path.join(appPath, 'mods-opcionais'),
     path.join(process.resourcesPath || '', 'mods opcionais'),
@@ -126,6 +132,8 @@ function getSourceShadersDir() {
   const candidates = [
     path.join(__dirname, '..', '..', 'shaders opcionais'),
     path.join(__dirname, '..', '..', 'shaders-opcionais'),
+    path.join(process.resourcesPath || '', 'app.asar', 'shaders opcionais'),
+    path.join(process.resourcesPath || '', 'app.asar', 'shaders-opcionais'),
     path.join(appPath, 'shaders opcionais'),
     path.join(appPath, 'shaders-opcionais'),
     path.join(process.resourcesPath || '', 'shaders opcionais'),

@@ -1,6 +1,6 @@
 {
   "name": "eden-launcher",
-  "version": "0.5.17",
+  "version": "0.5.18",
   "private": true,
   "description": "Éden Launcher",
   "author": "Éden Studios",
@@ -53,25 +53,14 @@
     "files": [
       "electron/**/*",
       "dist/**/*",
+      "mod  obrigatorio/**/*",
+      "mods opcionais/**/*",
+      "shaders opcionais/**/*",
       ".env",
       "!**/*.map"
     ],
     "asarUnpack": [
       "dist/**/*"
-    ],
-    "extraResources": [
-      {
-        "from": "mod  obrigatorio",
-        "to": "mod  obrigatorio"
-      },
-      {
-        "from": "mods opcionais",
-        "to": "mods opcionais"
-      },
-      {
-        "from": "shaders opcionais",
-        "to": "shaders opcionais"
-      }
     ],
     "win": {
       "target": [
