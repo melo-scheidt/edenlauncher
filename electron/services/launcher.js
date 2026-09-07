@@ -300,8 +300,26 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
     allJvmArgs.push('-cp', classpath);
   }
 
+  // Garante a identidade do player nos args — nem todo version.json repassa
+  // os placeholders (${auth_player_name}); sem isso o jogo abre como "PlayerNNN"
+  const flatGameArgs = vgameArgs.map(String);
+  const identityArgs = [];
+  if (!flatGameArgs.includes('--username')) {
+    identityArgs.push('--username', profile.nickname);
+  }
+  if (!flatGameArgs.includes('--uuid')) {
+    identityArgs.push('--uuid', profile.uuid.replace(/-/g, ''));
+  }
+  if (!flatGameArgs.includes('--accessToken')) {
+    identityArgs.push('--accessToken', vars.auth_access_token);
+  }
+  if (!flatGameArgs.includes('--userType')) {
+    identityArgs.push('--userType', vars.user_type);
+  }
+
   // Éden-specific game args (server auto-connect, etc.)
   const edenGameArgs = [
+    ...identityArgs,
     '--server', SERVER_HOST, '--port', String(SERVER_PORT),
   ];
   if (settings.fullscreen) edenGameArgs.push('--fullscreen');
