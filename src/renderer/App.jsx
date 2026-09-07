@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import EdenCanvas from './components/EdenCanvas.jsx';
 import TopBar from './components/TopBar.jsx';
 import Sidebar from './components/Sidebar.jsx';
@@ -40,6 +40,7 @@ export default function App() {
   // Launch state (without overlay)
   const [launchError, setLaunchError] = useState('');
   const [gameRunning, setGameRunning] = useState(false);
+  const injectionRef = useRef(false);
   const [update, setUpdate] = useState(null);
   const { t } = useI18n();
 
@@ -191,9 +192,13 @@ export default function App() {
     if (!window.eden?.launch?.onEvent) return;
     window.eden.launch.onEvent((evt) => {
       if (evt.phase === 'jvm:spawn') setGameRunning(true);
+      if (evt.phase === 'anticheat:injection') {
+        injectionRef.current = true;
+        setLaunchError(t('launch.injectionKilled'));
+      }
       if (evt.phase === 'jvm:exit' || evt.phase === 'jvm:error') {
         setGameRunning(false);
-        if (evt.phase === 'jvm:exit' && evt.code !== 0) {
+        if (evt.phase === 'jvm:exit' && evt.code !== 0 && !injectionRef.current) {
           setLaunchError(t('launch.exitError', { code: evt.code }));
         }
         if (evt.phase === 'jvm:error') {
@@ -207,6 +212,7 @@ export default function App() {
 
   const handleLaunch = useCallback(async ({ profile: prof, settings, manifest }) => {
     setLaunchError('');
+    injectionRef.current = false;
     try {
       const res = await window.eden.launch.start({ profile: prof, settings, manifest });
       if (!res?.ok) {

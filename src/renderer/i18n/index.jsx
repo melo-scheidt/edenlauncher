@@ -290,6 +290,10 @@ const S = {
 
   // ── Launch (App) ─────────────────────────────────────────────────────
   'launch.alreadyRunning': ['Já existe um Minecraft em execução por este launcher.', 'Já existe um Minecraft em execução por este launcher.'],
+  'launch.injectionKilled': [
+    'Jogo encerrado: injeção detectada no processo do Minecraft.',
+    'Jogo terminado: injeção detetada no processo do Minecraft.',
+  ],
   'launch.exitError': ['Minecraft encerrou com código {code}', 'O Minecraft terminou com o código {code}'],
   'launch.javaError': ['Erro ao iniciar Java', 'Erro ao iniciar Java'],
   'launch.failed': ['Falha ao iniciar Minecraft', 'Falha ao iniciar Minecraft'],

@@ -252,6 +252,15 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
   const javaPath = detectJava(settings.javaPath) !== (process.platform === 'win32' ? 'java.exe' : 'java')
     ? detectJava(settings.javaPath)
     : bundledJavaPath;
+
+  // DLLs proxy de injeção nativa ao lado do java ou no diretório do jogo
+  const proxyHits = ac.scanProxyDlls([path.dirname(javaPath), paths.gameDir()]);
+  if (proxyHits.length) {
+    throw new Error(
+      'Anti-cheat bloqueou: dll_proxy: ' + proxyHits.join(', ')
+    );
+  }
+
   const ramMb = (settings.ramGb || 4) * 1024;
   // Dimensões customizadas da janela (Configurações). Sem valores válidos,
   // o Minecraft usa o tamanho natural/lembrado — forçar 1920x1080 faz a
@@ -297,6 +306,8 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
     `-Xms${Math.min(1024, ramMb)}M`,
     `-Deden.session=${tok.token}`,
     `-Deden.launcher=true`,
+    // Bloqueia o attach de agentes/injectors Java no processo do jogo
+    '-XX:+DisableAttachMechanism',
     ...userArgs,
   ];
 
@@ -395,6 +406,12 @@ async function launchGame({ profile, settings, manifest, onEvent = () => {} }) {
   child.stderr.on('data', (d) => log.warn('[mc:err]', d.toString().trimEnd()));
   child.on('exit',  (code) => { launchState = 'idle'; emit('jvm:exit',  { code }); });
   child.on('error', (err)  => { launchState = 'idle'; emit('jvm:error', { error: err.message }); });
+
+  // Watchdog anti-injeção: monitora módulos do processo enquanto roda
+  ac.startInjectionWatchdog(child, (foreign) => {
+    emit('anticheat:injection', { modules: foreign });
+    child.kill();
+  });
 
   return { pid: child.pid };
 }
