@@ -1,46 +1,59 @@
 // electron/services/paths.js
 // Diretórios canônicos do launcher Éden.
-// Os arquivos do jogo ficam em uma pasta OCULTA de caminho específico no
-// LocalAppData — fora das pastas usuais, só acessível por quem conhece o
-// caminho. Na primeira execução, a raiz antiga (visível) é migrada para lá.
+// Os arquivos do jogo ficam em uma pasta OCULTA de caminho específico,
+// dentro da pasta de sistema do Windows no perfil do usuário:
+//   AppData\Local\Microsoft\Windows\.boot
+// — sem exigir permissão de administrador e sem parecer pasta de jogo.
+// A raiz antiga (visível) é migrada automaticamente na primeira execução.
 const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-const HIDDEN_PARENT = 'EdenRuntime';
 const GAME_ROOT = path.join(
   process.env.LOCALAPPDATA || app.getPath('userData'),
-  HIDDEN_PARENT,
-  '.gamedata'
+  'Microsoft', 'Windows', '.boot'
 );
 
 const ensure = (p) => { if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); return p; };
 
-// Oculta as pastas no Windows (attrib +h) — quem não sabe o caminho não vê
+// Oculta a pasta .boot no Windows (attrib +h) — as pastas Microsoft/Windows
+// de verdade não são alteradas, só a nossa subpasta
 function hideOnWindows() {
   try {
-    const base = process.env.LOCALAPPDATA;
-    if (!base) return;
-    const parent = path.join(base, HIDDEN_PARENT);
-    require('child_process').exec(`attrib +h "${parent}" & attrib +h "${GAME_ROOT}"`);
-  } catch { /* atrib indisponível — segue sem ocultar */ }
+    require('child_process').exec(`attrib +h "${GAME_ROOT}"`);
+  } catch { /* attrib indisponível — segue sem ocultar */ }
 }
 
-// Migração única: move a raiz antiga (userData\eden) para o local oculto
+// Migração única: move a primeira raiz antiga existente para o local novo.
+// Ordem: local da 0.5.18+ (EdenRuntime\.gamedata) e depois o original
+// (userData\eden, das versões anteriores).
 function migrateOldRoot() {
-  try {
-    const oldRoot = path.join(app.getPath('userData'), 'eden');
-    if (fs.existsSync(oldRoot) && !fs.existsSync(GAME_ROOT)) {
+  if (fs.existsSync(GAME_ROOT)) return;
+  const oldRoots = [
+    path.join(process.env.LOCALAPPDATA || '', 'EdenRuntime', '.gamedata'),
+    path.join(app.getPath('userData'), 'eden'),
+  ];
+  for (const old of oldRoots) {
+    try {
+      if (!old || !fs.existsSync(old)) continue;
       fs.mkdirSync(path.dirname(GAME_ROOT), { recursive: true });
       try {
-        fs.renameSync(oldRoot, GAME_ROOT);
+        fs.renameSync(old, GAME_ROOT);
       } catch {
         // unidade diferente: copia e remove
-        fs.cpSync(oldRoot, GAME_ROOT, { recursive: true });
-        fs.rmSync(oldRoot, { recursive: true, force: true });
+        fs.cpSync(old, GAME_ROOT, { recursive: true });
+        fs.rmSync(old, { recursive: true, force: true });
       }
-    }
-  } catch { /* em caso de falha, segue com a raiz nova */ }
+      // remove a pasta EdenRuntime que ficou vazia (local da 0.5.18)
+      try {
+        const legacy = path.join(process.env.LOCALAPPDATA || '', 'EdenRuntime');
+        if (fs.existsSync(legacy) && fs.readdirSync(legacy).length === 0) {
+          fs.rmdirSync(legacy);
+        }
+      } catch {}
+      return;
+    } catch { /* tenta a próxima raiz antiga */ }
+  }
 }
 
 let rootInitialized = false;
