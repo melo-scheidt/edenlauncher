@@ -10,6 +10,24 @@ import '../styles/profile.css';
 // Loja oficial de VIP (MineCart)
 const VIP_SHOP_URL = 'https://edenrp.minecart.com.br';
 
+// Estatísticas do player (plugin EdenStatus no servidor)
+const PLAYER_STATS_URL = 'http://sp-22.magnohost.com.br:25617/player/';
+
+const fmtPlaytime = (sec) => {
+  if (!Number.isFinite(sec) || sec < 0) return '—';
+  const d = Math.floor(sec / 86400);
+  const h = Math.floor((sec % 86400) / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+};
+
+const fmtDate = (ms) => {
+  if (!ms) return '—';
+  return new Date(ms).toLocaleDateString('pt-BR');
+};
+
 const DEFAULT_SAVED_SKINS = [
   { id: 'skin-default', name: 'Original', url: '', active: false },
   { id: 'skin-steve', name: 'Clássico', url: 'https://minotar.net/skin/MHF_Steve', active: false },
@@ -20,6 +38,7 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
   const [skinModel, setSkinModel] = useState('auto');
   const [savedSkins, setSavedSkins] = useState(DEFAULT_SAVED_SKINS);
   const [skinsLoaded, setSkinsLoaded] = useState(false);
+  const [playerStats, setPlayerStats] = useState(null);
 
   const nick = profile?.nickname || t('user.defaultNick');
   const isMicrosoft = profile?.type === 'microsoft';
@@ -28,6 +47,25 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
   const defaultRawSkinUrl = isMicrosoft && uuid
     ? `https://minotar.net/skin/${uuid}`
     : `https://minotar.net/skin/${nick}`;
+
+  // Busca as estatísticas reais do nick no plugin do servidor
+  useEffect(() => {
+    let cancelled = false;
+    setPlayerStats(null);
+    (async () => {
+      try {
+        const res = await fetch(`${PLAYER_STATS_URL}${encodeURIComponent(nick)}`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data?.found) setPlayerStats(data);
+      } catch {
+        // endpoint fora do ar — mantém placeholders
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [nick]);
 
   // Load persisted skins from the launcher store
   useEffect(() => {
@@ -131,23 +169,27 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
           <div className="eden-stats-grid">
             <div className="eden-stat-box">
               <span className="eden-stat-label">{t('profile.statPlaytime')}</span>
-              <strong className="eden-stat-val">1273h 30m</strong>
+              <strong className="eden-stat-val">{playerStats ? fmtPlaytime(playerStats.playtimeSec) : '—'}</strong>
             </div>
             <div className="eden-stat-box">
               <span className="eden-stat-label">{t('profile.statKills')}</span>
-              <strong className="eden-stat-val">192.034</strong>
+              <strong className="eden-stat-val">{playerStats ? String(playerStats.mobKills ?? 0) : '—'}</strong>
             </div>
             <div className="eden-stat-box">
               <span className="eden-stat-label">{t('profile.statDeaths')}</span>
-              <strong className="eden-stat-val">95</strong>
+              <strong className="eden-stat-val">{playerStats ? String(playerStats.deaths ?? 0) : '—'}</strong>
             </div>
             <div className="eden-stat-box">
               <span className="eden-stat-label">{t('profile.statRegistered')}</span>
-              <strong className="eden-stat-val">10.12.2024</strong>
+              <strong className="eden-stat-val">{playerStats ? fmtDate(playerStats.firstJoin) : '—'}</strong>
             </div>
             <div className="eden-stat-box">
               <span className="eden-stat-label">{t('profile.statLastLogin')}</span>
-              <strong className="eden-stat-val">{t('profile.today')}</strong>
+              <strong className="eden-stat-val">
+                {playerStats
+                  ? (playerStats.online ? t('profile.today') : fmtDate(playerStats.lastLogin))
+                  : '—'}
+              </strong>
             </div>
             <div className="eden-stat-box">
               <span className="eden-stat-label">{t('profile.statProject')}</span>

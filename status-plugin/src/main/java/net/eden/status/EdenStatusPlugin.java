@@ -11,6 +11,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,15 +30,17 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-// Contabiliza players (entradas, picos, únicos) e serve o endpoint
-// HTTP /status que o Éden Launcher consulta para saber quantos players
-// estão online e se o servidor está ligado.
+// Contabiliza players (entradas, picos, únicos) e estatísticas individuais
+// por nick (tempo de jogo, mobs derrotados, mortes, primeira vez, último
+// login). Serve os endpoints HTTP /status e /player/<nick> que o Éden
+// Launcher consulta.
 public final class EdenStatusPlugin extends JavaPlugin implements Listener {
 
     private static final DateTimeFormatter DATE = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -52,8 +56,23 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
     private final Set<UUID> uniquePlayers = new HashSet<>();
     private final Map<String, int[]> daily = new LinkedHashMap<>(); // data -> [entradas, pico]
 
+    // Estatísticas por nick (chave = nick em minúsculo)
+    private final Map<String, PlayerStats> playerStats = new LinkedHashMap<>();
+    // Sessões abertas: uuid -> [timestamp da última contagem de tempo]
+    private final Map<UUID, long[]> sessions = new HashMap<>();
+
     private ServerSocket serverSocket;
     private volatile boolean running = false;
+
+    private static final class PlayerStats {
+        String nick = "";
+        long playtimeSec = 0;
+        int mobKills = 0;
+        int deaths = 0;
+        long firstJoin = 0;
+        long lastLogin = 0;
+        long lastSeen = 0;
+    }
 
     // ── Ciclo de vida ────────────────────────────────────────────────────────────
 
@@ -61,19 +80,23 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         FileConfiguration cfg = getConfig();
-        httpPort = cfg.getInt("http-port", 3001);
+        httpPort = cfg.getInt("http-port", 25617);
         showPlayerNames = cfg.getBoolean("show-player-names", true);
 
         loadStats();
         getServer().getPluginManager().registerEvents(this, this);
         startHttpServer();
-        getLogger().info("EdenStatus ativo — endpoint http://localhost:" + httpPort + "/status");
+        // Conta o tempo de jogo a cada 60s e persiste (à prova de crash)
+        Bukkit.getScheduler().runTaskTimer(this, this::flushAllSessions, 20L * 60L, 20L * 60L);
+        getLogger().info("EdenStatus ativo — endpoints http://localhost:" + httpPort
+            + "/status e /player/<nick>");
     }
 
     @Override
     public void onDisable() {
         running = false;
         closeSocket();
+        flushAllSessions();
         try {
             Files.createDirectories(getDataFolder().toPath());
             Files.writeString(statsFile(), buildStatsJson(), StandardCharsets.UTF_8);
@@ -81,11 +104,26 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
         }
     }
 
-    // ── Eventos: contabilizar entradas e picos ───────────────────────────────────
+    // ── Eventos: entradas, picos e estatísticas individuais ──────────────────────
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+        String nick = p.getName();
+        long now = System.currentTimeMillis();
+
+        // Estatísticas individuais
+        PlayerStats st = playerStats.computeIfAbsent(nick.toLowerCase(), (k) -> new PlayerStats());
+        st.nick = nick;
+        if (st.firstJoin == 0) {
+            long first = p.getFirstPlayed();
+            st.firstJoin = first > 0 ? first : now;
+        }
+        st.lastLogin = now;
+        st.lastSeen = now;
+        sessions.put(p.getUniqueId(), new long[]{now});
+
+        // Contadores gerais
         uniquePlayers.add(p.getUniqueId());
         totalJoins++;
 
@@ -110,7 +148,51 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        flushSession(e.getPlayer());
         saveStatsAsync();
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e) {
+        PlayerStats st = playerStats.get(e.getEntity().getName().toLowerCase());
+        if (st != null) st.deaths++;
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent e) {
+        Player killer = e.getEntity().getKiller();
+        if (killer == null) return;
+        if (e.getEntity() instanceof Player) return; // PvP não conta como mob
+        PlayerStats st = playerStats.get(killer.getName().toLowerCase());
+        if (st != null) st.mobKills++;
+    }
+
+    // ── Tempo de jogo ────────────────────────────────────────────────────────────
+
+    private void flushSession(Player p) {
+        long[] s = sessions.remove(p.getUniqueId());
+        if (s == null) return;
+        PlayerStats st = playerStats.get(p.getName().toLowerCase());
+        if (st == null) return;
+        long now = System.currentTimeMillis();
+        long delta = (now - s[0]) / 1000L;
+        if (delta > 0) st.playtimeSec += delta;
+        st.lastSeen = now;
+    }
+
+    private void flushAllSessions() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            long[] s = sessions.get(p.getUniqueId());
+            if (s == null) continue;
+            PlayerStats st = playerStats.get(p.getName().toLowerCase());
+            if (st == null) continue;
+            long now = System.currentTimeMillis();
+            long delta = (now - s[0]) / 1000L;
+            if (delta > 0) st.playtimeSec += delta;
+            st.lastSeen = now;
+            s[0] = now;
+        }
+        if (!sessions.isEmpty()) saveStatsAsync();
     }
 
     // ── Comando /edenstatus ──────────────────────────────────────────────────────
@@ -123,11 +205,28 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
                 return true;
             }
             reloadConfig();
-            httpPort = getConfig().getInt("http-port", 3001);
+            httpPort = getConfig().getInt("http-port", 25617);
             showPlayerNames = getConfig().getBoolean("show-player-names", true);
             sender.sendMessage("§aEdenStatus recarregado. §7(a porta exige reinício do servidor)");
             return true;
         }
+
+        // /edenstatus <nick> — estatísticas individuais
+        if (args.length == 1) {
+            PlayerStats st = playerStats.get(args[0].toLowerCase());
+            if (st == null) {
+                sender.sendMessage("§cNenhuma estatística para §f" + args[0]);
+                return true;
+            }
+            sender.sendMessage("§6[Éden Status — " + st.nick + "]");
+            sender.sendMessage("§eTempo em jogo: §f" + formatPlaytime(st.playtimeSec));
+            sender.sendMessage("§eMobs derrotados: §f" + st.mobKills);
+            sender.sendMessage("§eMortes: §f" + st.deaths);
+            sender.sendMessage("§ePrimeira vez: §f" + (st.firstJoin > 0 ? DATE.format(Instant.ofEpochMilli(st.firstJoin)) : "—"));
+            sender.sendMessage("§eÚltimo login: §f" + (st.lastLogin > 0 ? DATE.format(Instant.ofEpochMilli(st.lastLogin)) : "—"));
+            return true;
+        }
+
         String today = LocalDate.now().format(DATE);
         int[] d = daily.getOrDefault(today, new int[2]);
         sender.sendMessage("§6[Éden Status]");
@@ -140,7 +239,16 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
         return true;
     }
 
-    // ── Servidor HTTP (/status) ──────────────────────────────────────────────────
+    private String formatPlaytime(long sec) {
+        long d = sec / 86400;
+        long h = (sec % 86400) / 3600;
+        long m = (sec % 3600) / 60;
+        if (d > 0) return d + "d " + h + "h";
+        if (h > 0) return h + "h " + m + "m";
+        return m + "m";
+    }
+
+    // ── Servidor HTTP (/status e /player/<nick>) ─────────────────────────────────
 
     private void startHttpServer() {
         running = true;
@@ -187,8 +295,12 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
                 body = buildStatusJson().getBytes(StandardCharsets.UTF_8);
                 code = 200;
                 text = "OK";
+            } else if (path.startsWith("/player/") && path.length() > 8) {
+                body = buildPlayerStatsJson(path.substring(8)).getBytes(StandardCharsets.UTF_8);
+                code = 200;
+                text = "OK";
             } else {
-                body = "{\"online\":true,\"error\":\"rota nao encontrada\",\"rotas\":[\"/status\"]}"
+                body = "{\"online\":true,\"error\":\"rota nao encontrada\",\"rotas\":[\"/status\",\"/player/<nick>\"]}"
                     .getBytes(StandardCharsets.UTF_8);
                 code = 404;
                 text = "Not Found";
@@ -236,6 +348,29 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
         return gson.toJson(root);
     }
 
+    private String buildPlayerStatsJson(String nick) {
+        JsonObject o = new JsonObject();
+        PlayerStats st = playerStats.get(nick.toLowerCase());
+        boolean online = Bukkit.getPlayerExact(nick) != null;
+        if (st == null) {
+            o.addProperty("found", false);
+            o.addProperty("nick", nick);
+            o.addProperty("online", online);
+        } else {
+            o.addProperty("found", true);
+            o.addProperty("nick", st.nick);
+            o.addProperty("playtimeSec", st.playtimeSec);
+            o.addProperty("mobKills", st.mobKills);
+            o.addProperty("deaths", st.deaths);
+            o.addProperty("firstJoin", st.firstJoin);
+            o.addProperty("lastLogin", st.lastLogin);
+            o.addProperty("lastSeen", st.lastSeen);
+            o.addProperty("online", online);
+        }
+        o.addProperty("checkedAt", Instant.now().toString());
+        return gson.toJson(o);
+    }
+
     private String stripColor(String s) {
         return s == null ? "" : s.replaceAll("§.", "");
     }
@@ -264,6 +399,20 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
             day.add(en.getKey(), a);
         }
         root.add("daily", day);
+
+        JsonObject players = new JsonObject();
+        for (PlayerStats st : playerStats.values()) {
+            JsonObject o = new JsonObject();
+            o.addProperty("nick", st.nick);
+            o.addProperty("playtimeSec", st.playtimeSec);
+            o.addProperty("mobKills", st.mobKills);
+            o.addProperty("deaths", st.deaths);
+            o.addProperty("firstJoin", st.firstJoin);
+            o.addProperty("lastLogin", st.lastLogin);
+            o.addProperty("lastSeen", st.lastSeen);
+            players.add(st.nick.toLowerCase(), o);
+        }
+        root.add("players", players);
         return gson.toJson(root);
     }
 
@@ -299,6 +448,21 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
                 for (var entry : root.getAsJsonObject("daily").entrySet()) {
                     var a = entry.getValue().getAsJsonArray();
                     daily.put(entry.getKey(), new int[]{a.get(0).getAsInt(), a.get(1).getAsInt()});
+                }
+            }
+            playerStats.clear();
+            if (root.has("players")) {
+                for (var entry : root.getAsJsonObject("players").entrySet()) {
+                    JsonObject o = entry.getValue().getAsJsonObject();
+                    PlayerStats st = new PlayerStats();
+                    st.nick = o.has("nick") ? o.get("nick").getAsString() : entry.getKey();
+                    st.playtimeSec = o.has("playtimeSec") ? o.get("playtimeSec").getAsLong() : 0;
+                    st.mobKills = o.has("mobKills") ? o.get("mobKills").getAsInt() : 0;
+                    st.deaths = o.has("deaths") ? o.get("deaths").getAsInt() : 0;
+                    st.firstJoin = o.has("firstJoin") ? o.get("firstJoin").getAsLong() : 0;
+                    st.lastLogin = o.has("lastLogin") ? o.get("lastLogin").getAsLong() : 0;
+                    st.lastSeen = o.has("lastSeen") ? o.get("lastSeen").getAsLong() : 0;
+                    playerStats.put(entry.getKey(), st);
                 }
             }
         } catch (Exception e) {

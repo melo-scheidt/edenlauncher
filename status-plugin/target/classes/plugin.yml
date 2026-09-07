@@ -1,12 +1,12 @@
 name: EdenStatus
-version: 1.0.0
+version: 1.1.0
 main: net.eden.status.EdenStatusPlugin
 api-version: '1.20'
 description: Contabiliza players do servidor e expoe o status via HTTP para o Éden Launcher.
 authors: [EdenStudios]
 commands:
   edenstatus:
-    description: Mostra estatisticas de players do servidor.
+    description: Mostra estatisticas do servidor ou de um player (/edenstatus <nick>).
     aliases: [edenstats]
     permission: edenstatus.use
 permissions:
