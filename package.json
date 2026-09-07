@@ -1,6 +1,6 @@
 {
   "name": "eden-launcher",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "private": true,
   "description": "Éden Launcher",
   "author": "Éden Studios",
@@ -53,6 +53,7 @@
     "files": [
       "electron/**/*",
       "dist/**/*",
+      ".env",
       "!**/*.map"
     ],
     "asarUnpack": [

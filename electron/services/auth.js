@@ -40,6 +40,12 @@ function offlineUuid(nick) {
 
 function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim()); }
 
+// Nick válido para o Minecraft a partir de qualquer texto (remove pontos,
+// hífens etc. de prefixos de e-mail) — o nick do jogo vem da conta registrada.
+function sanitizeNick(s) {
+  return String(s || '').replace(/[^A-Za-z0-9_]/g, '').slice(0, 16) || 'Jogador';
+}
+
 function mapSupabaseError(msg) {
   const m = String(msg || '');
   if (m.includes('Invalid login credentials')) return 'E-mail ou senha incorretos';
@@ -97,7 +103,7 @@ async function loginAccount(nickname, password, email) {
 
   const sb = getSupabase();
   if (!sb) {
-    const nick = (nickname || '').trim() || (email || '').split('@')[0] || 'Jogador';
+    const nick = (nickname || '').trim() || sanitizeNick((email || '').split('@')[0]);
     return _buildSession(nick, 'player', null);
   }
 
@@ -105,7 +111,9 @@ async function loginAccount(nickname, password, email) {
   if (error) throw new Error(mapSupabaseError(error.message));
 
   const meta = data?.user?.user_metadata || {};
-  const nick = meta.nickname || (nickname || '').trim() || (email || '').split('@')[0] || 'Jogador';
+  // Nick vinculado à conta: usa o nickname registrado no cadastro;
+  // só recorre ao prefixo do e-mail se a conta não tiver nick salvo.
+  const nick = meta.nickname || (nickname || '').trim() || sanitizeNick((email || '').split('@')[0]);
 
   // accessToken = JWT do Supabase (pode ser validado pelo plugin do servidor)
   return _buildSession(nick, meta.role || 'player', data.session.access_token);
