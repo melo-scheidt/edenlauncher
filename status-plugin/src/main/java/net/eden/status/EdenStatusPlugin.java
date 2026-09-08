@@ -385,6 +385,12 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
         JsonObject o = new JsonObject();
         PlayerStats st = playerStats.get(nick.toLowerCase());
         boolean online = Bukkit.getPlayerExact(nick) != null;
+        // OP do servidor (persistido em ops.txt — vale para online e offline)
+        boolean op = false;
+        try {
+            op = Bukkit.getOfflinePlayer(nick).isOp();
+        } catch (Throwable ignored) {
+        }
         if (st == null) {
             o.addProperty("found", false);
             o.addProperty("nick", nick);
@@ -402,6 +408,7 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
             Double balance = getBalance(nick);
             if (balance != null) o.addProperty("balance", balance);
         }
+        o.addProperty("op", op);
         o.addProperty("checkedAt", Instant.now().toString());
         return gson.toJson(o);
     }
