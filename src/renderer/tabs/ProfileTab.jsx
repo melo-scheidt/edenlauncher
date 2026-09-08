@@ -161,7 +161,14 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
 
             <div className="eden-balance-col">
               <span className="eden-balance-label">{t('profile.balance')}</span>
-              <span className="eden-balance-amount">1.000 VP</span>
+              <span className="eden-balance-amount">
+                {playerStats && playerStats.balance != null
+                  ? playerStats.balance.toLocaleString('pt-BR', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : '—'}
+              </span>
             </div>
           </div>
 

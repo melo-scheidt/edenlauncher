@@ -16,6 +16,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import net.milkbowl.vault.economy.Economy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,6 +64,9 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
 
     private ServerSocket serverSocket;
     private volatile boolean running = false;
+
+    // Economia via Vault (EssentialsX etc.) — resolvido sob demanda
+    private Economy economy = null;
 
     private static final class PlayerStats {
         String nick = "";
@@ -224,6 +228,8 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
             sender.sendMessage("§eMortes: §f" + st.deaths);
             sender.sendMessage("§ePrimeira vez: §f" + (st.firstJoin > 0 ? DATE.format(Instant.ofEpochMilli(st.firstJoin)) : "—"));
             sender.sendMessage("§eÚltimo login: §f" + (st.lastLogin > 0 ? DATE.format(Instant.ofEpochMilli(st.lastLogin)) : "—"));
+            Double bal = getBalance(st.nick);
+            if (bal != null) sender.sendMessage("§eMoney: §f" + bal);
             return true;
         }
 
@@ -246,6 +252,33 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
         if (d > 0) return d + "d " + h + "h";
         if (h > 0) return h + "h " + m + "m";
         return m + "m";
+    }
+
+    // ── Economia (Vault/EssentialsX) ─────────────────────────────────────────────
+
+    private Economy getEconomy() {
+        if (economy != null) return economy;
+        try {
+            var reg = Bukkit.getServicesManager().getRegistration(Economy.class);
+            if (reg != null) economy = reg.getProvider();
+        } catch (Throwable ignored) {
+            // Vault não instalado — fica sem economia
+        }
+        return economy;
+    }
+
+    private Double getBalance(String nick) {
+        try {
+            Economy eco = getEconomy();
+            if (eco == null) return null;
+            Player online = Bukkit.getPlayerExact(nick);
+            double bal = online != null
+                ? eco.getBalance(online)
+                : eco.getBalance(Bukkit.getOfflinePlayer(nick));
+            return Math.round(bal * 100.0) / 100.0;
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 
     // ── Servidor HTTP (/status e /player/<nick>) ─────────────────────────────────
@@ -366,6 +399,8 @@ public final class EdenStatusPlugin extends JavaPlugin implements Listener {
             o.addProperty("lastLogin", st.lastLogin);
             o.addProperty("lastSeen", st.lastSeen);
             o.addProperty("online", online);
+            Double balance = getBalance(nick);
+            if (balance != null) o.addProperty("balance", balance);
         }
         o.addProperty("checkedAt", Instant.now().toString());
         return gson.toJson(o);
