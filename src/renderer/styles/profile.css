@@ -92,11 +92,6 @@
   text-transform: uppercase;
 }
 
-.eden-pass-status-text {
-  font-size: 10px;
-  color: var(--eden-text-mute);
-}
-
 .eden-user-display-name {
   font-family: var(--font-heading);
   font-size: 16px;

@@ -154,7 +154,6 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
                 <div className="eden-user-badge-row">
                   {/* OP no servidor tem prioridade sobre a role da conta */}
                   <RoleTag role={playerStats?.op ? 'admin' : profile?.role} size="lg" />
-                  <span className="eden-pass-status-text">{t('topbar.pass')}</span>
                 </div>
                 <h2 className="eden-user-display-name">{nick}</h2>
               </div>
