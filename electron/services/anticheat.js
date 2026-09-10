@@ -97,18 +97,32 @@ function scanProxyDlls(dirs) {
 // ── Watchdog de módulos enquanto o jogo roda ──────────────────────────────────
 
 // Módulos que podem aparecer depois do boot sem serem injeção (drivers de
-// vídeo, overlays legítimos, DLLs de sistema carregadas tardiamente)
+// vídeo, overlays legítimos, DLLs de sistema/JDK carregadas tardiamente e
+// bibliotecas nativas de mods — GLFW do LWJGL, Opus do voicechat etc.)
 const SAFE_MODULE_PATTERNS = [
   'nv', 'ati', 'amd', 'intel', 'razer', 'logi', 'corsair', 'steelseries',
   'steam', 'gameoverlay', 'discord', 'rtss', 'msvcp', 'vcruntime', 'ucrtbase',
   'dxgi', 'd3d', 'dcomp', 'd2d', 'dwrite', 'msctf', 'textinputframework',
-  'coremessaging', 'uiautomation', 'inputhost', 'wintab', 'ole32', 'oleaut',
-  'rpcrt', 'crypt32', 'wintrust', 'setupapi', 'devobj', 'cfgmgr', 'powrprof',
-  'dwmapi', 'uxtheme', 'shcore', 'wtsapi', 'secur32', 'sspicli', 'userenv',
-  'profapi', 'cryptbase', 'bcrypt', 'ncrypt', 'dbghelp', 'dbgcore', 'dnsapi',
-  'winhttp', 'webio', 'dhcpcsvc', 'msimg', 'gdiplus', 'shell32', 'shlwapi',
-  'imm32', 'javaw', 'java', 'jvm', 'lwjgl', 'jfx', 'prism', 'glass',
-  'decoration', 'awt', 'freetype', 'harfbuzz', 'fontmanager', 'sunmscapi',
+  'coremessaging', 'coreui', 'uiautomation', 'inputhost', 'wintab', 'ole32',
+  'oleaut', 'rpcrt', 'crypt32', 'wintrust', 'setupapi', 'devobj', 'cfgmgr',
+  'powrprof', 'dwmapi', 'uxtheme', 'shcore', 'wtsapi', 'secur32', 'sspicli',
+  'userenv', 'profapi', 'cryptbase', 'bcrypt', 'ncrypt', 'dbghelp', 'dbgcore',
+  'dnsapi', 'winhttp', 'webio', 'dhcpcsvc', 'msimg', 'gdiplus', 'shell32',
+  'shlwapi', 'imm32', 'javaw', 'java', 'jvm', 'lwjgl', 'glfw', 'opus',
+  'jfx', 'prism', 'glass', 'decoration', 'awt', 'freetype', 'harfbuzz',
+  'fontmanager', 'sunmscapi', 'ntasn1', 'extnet', 'wintypes', 'net', 'nio',
+  'zip', 'rasadhlp', 'fwpuclnt', 'nlaapi', 'cryptsp', 'winnsi', 'twinapi',
+  'api-ms-', 'ext-ms-', 'flashback', 'replay', 'ffmpeg', 'openal', 'jawt',
+  'sndapi', 'xinput', 'hid', 'winmm', 'ksuser', 'avrt', 'mmdevapi', 'audio',
+];
+
+// Padrões de DLLs de cheat/injector conhecidos — SOMENTE estes encerram o jogo
+const CHEAT_DLL_PATTERNS = [
+  'wurst', 'meteor', 'liquidbounce', 'sigma', 'inertia', 'rusherhack',
+  'impact', 'aristois', 'jigsaw', 'futureclient', 'future-client', 'xdolt',
+  'vape', 'novoline', 'collat', 'pyroclient', 'cheat', 'hackclient',
+  'injector', 'inject dll', 'mapper dll', 'keyboardhooker', 'clicker',
+  'autoclicker', 'aimbot', 'killaura',
 ];
 
 function listProcessModules(pid) {
@@ -142,8 +156,10 @@ function listProcessModules(pid) {
 }
 
 // Monitora o processo do Minecraft: captura a lista de módulos ~15s após o
-// spawn (baseline) e re-verifica a cada 20s. Qualquer DLL nova que não seja
-// da baseline nem da lista segura = injeção → encerra o jogo.
+// spawn (baseline) e re-verifica a cada 20s. Módulos novos desconhecidos são
+// apenas registrados (mods carregam natives a qualquer momento — GLFW, Opus
+// do voicechat, DLLs de rede do Windows etc.); o jogo só é encerrado quando
+// uma DLL da lista negra de cheats carrega no processo.
 function startInjectionWatchdog(child, onViolation) {
   let baseline = null;
   let stopped = false;
@@ -165,9 +181,14 @@ function startInjectionWatchdog(child, onViolation) {
     const foreign = mods.filter(
       (m) => !baseline.includes(m) && !SAFE_MODULE_PATTERNS.some((pat) => m.includes(pat))
     );
-    if (foreign.length) {
-      log.warn('[anticheat] Injeção detectada no processo do jogo:', foreign.join(', '));
-      onViolation(foreign);
+    if (!foreign.length) return;
+    const cheats = foreign.filter((m) =>
+      CHEAT_DLL_PATTERNS.some((pat) => m.includes(pat))
+    );
+    log.info('[anticheat] Módulos novos no processo do jogo (informativo):', foreign.join(', '));
+    if (cheats.length) {
+      log.warn('[anticheat] Cheat injetado detectado — encerrando o jogo:', cheats.join(', '));
+      onViolation(cheats);
       stop();
     }
   };
