@@ -29,6 +29,9 @@ const pickVersion = (v) => {
   return v || '1.21.5';
 };
 
+// Estatísticas do player logado (plugin EdenStatus no servidor)
+const PLAYER_STATS_URL = 'http://sp-22.magnohost.com.br:25617/player/';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [profile, setProfile] = useState(null);
@@ -187,6 +190,34 @@ export default function App() {
     };
   }, []);
 
+  // ── Estatísticas do player logado (op, saldo etc. — plugin no servidor) ────
+  const [playerStats, setPlayerStats] = useState(null);
+
+  useEffect(() => {
+    const nick = profile?.nickname;
+    if (!nick) return;
+    let cancelled = false;
+    setPlayerStats(null);
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${PLAYER_STATS_URL}${encodeURIComponent(nick)}`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data?.found) setPlayerStats(data);
+      } catch {
+        // endpoint fora do ar — mantém placeholders
+      }
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 60000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [profile?.nickname]);
+
   // ── Launch events: estado do jogo (JOGANDO) e erros ────────────────────────
   useEffect(() => {
     if (!window.eden?.launch?.onEvent) return;
@@ -275,6 +306,7 @@ export default function App() {
           activeSkin={activeSkin}
           onlinePlayers={serverStatus.players}
           maxPlayers={serverStatus.max}
+          playerStats={playerStats}
           onOpenVipModal={() => setVipModalOpen(true)}
         />
 
@@ -293,6 +325,7 @@ export default function App() {
                 profile={profile}
                 activeSkin={activeSkin}
                 onSkinChange={handleSkinChange}
+                playerStats={playerStats}
               />
             )}
             {activeTab === 'mods' && <ModsTab />}

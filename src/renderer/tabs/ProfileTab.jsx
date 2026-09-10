@@ -10,9 +10,6 @@ import '../styles/profile.css';
 // Loja oficial de VIP (MineCart)
 const VIP_SHOP_URL = 'https://edenrp.minecart.com.br';
 
-// Estatísticas do player (plugin EdenStatus no servidor)
-const PLAYER_STATS_URL = 'http://sp-22.magnohost.com.br:25617/player/';
-
 const fmtPlaytime = (sec) => {
   if (!Number.isFinite(sec) || sec < 0) return '—';
   const d = Math.floor(sec / 86400);
@@ -33,12 +30,11 @@ const DEFAULT_SAVED_SKINS = [
   { id: 'skin-steve', name: 'Clássico', url: 'https://minotar.net/skin/MHF_Steve', active: false },
 ];
 
-export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
+export default function ProfileTab({ profile, activeSkin, onSkinChange, playerStats = null }) {
   const { t } = useI18n();
   const [skinModel, setSkinModel] = useState('auto');
   const [savedSkins, setSavedSkins] = useState(DEFAULT_SAVED_SKINS);
   const [skinsLoaded, setSkinsLoaded] = useState(false);
-  const [playerStats, setPlayerStats] = useState(null);
 
   const nick = profile?.nickname || t('user.defaultNick');
   const isMicrosoft = profile?.type === 'microsoft';
@@ -47,25 +43,6 @@ export default function ProfileTab({ profile, activeSkin, onSkinChange }) {
   const defaultRawSkinUrl = isMicrosoft && uuid
     ? `https://minotar.net/skin/${uuid}`
     : `https://minotar.net/skin/${nick}`;
-
-  // Busca as estatísticas reais do nick no plugin do servidor
-  useEffect(() => {
-    let cancelled = false;
-    setPlayerStats(null);
-    (async () => {
-      try {
-        const res = await fetch(`${PLAYER_STATS_URL}${encodeURIComponent(nick)}`, {
-          signal: AbortSignal.timeout(5000),
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!cancelled && data?.found) setPlayerStats(data);
-      } catch {
-        // endpoint fora do ar — mantém placeholders
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [nick]);
 
   // Load persisted skins from the launcher store
   useEffect(() => {

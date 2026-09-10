@@ -19,7 +19,7 @@ function DiscordIcon({ size = 16, className = '' }) {
   );
 }
 
-export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onlinePlayers = 0, maxPlayers = 0, onOpenVipModal }) {
+export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onlinePlayers = 0, maxPlayers = 0, playerStats, onOpenVipModal }) {
   const [timeStr, setTimeStr] = useState('');
   const { lang, setLang, t } = useI18n();
 
@@ -116,7 +116,8 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
         <div className="eden-player-pill">
           <span className="eden-player-name">{nick}</span>
 
-          <RoleTag role={profile?.role} />
+          {/* OP no servidor tem prioridade sobre a role da conta */}
+          <RoleTag role={playerStats?.op ? 'admin' : profile?.role} />
 
           <div className="eden-player-avatar">
             <PlayerHead skinUrl={activeSkin} nickname={nick} size={34} />
