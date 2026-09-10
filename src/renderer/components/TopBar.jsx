@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Languages, Crown, Sun, Moon } from 'lucide-react';
+import { Languages, Sun, Moon } from 'lucide-react';
 import EdenLogo from './EdenLogo.jsx';
 import PlayerHead from './PlayerHead.jsx';
 import RoleTag from './RoleTag.jsx';
-import { VIP_TIERS } from '../lib/vips.js';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 
 function DiscordIcon({ size = 16, className = '' }) {
@@ -23,14 +22,6 @@ function DiscordIcon({ size = 16, className = '' }) {
 export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onlinePlayers = 0, maxPlayers = 0, onOpenVipModal }) {
   const [timeStr, setTimeStr] = useState('');
   const { lang, setLang, t } = useI18n();
-
-  // Find matching VIP tier (Cobre, Ferro, Diamante, Rubi)
-  const userVip = String(profile?.vip || profile?.role || 'diamante').toLowerCase().replace('vip_', '');
-  const activeVip = VIP_TIERS.find((v) => v.id === userVip) || VIP_TIERS.find((v) => v.id === 'diamante');
-  const vipName = activeVip ? activeVip.tierName : 'Diamante';
-  const vipColor = activeVip ? activeVip.color : '#00f5d4';
-  const vipBorder = activeVip ? activeVip.border : 'rgba(0, 245, 212, 0.4)';
-  const vipBg = activeVip ? activeVip.bg : 'rgba(0, 245, 212, 0.12)';
 
   useEffect(() => {
     const updateTime = () => {
@@ -123,23 +114,9 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
       {/* ── Right: VIP & Player Summary ── */}
       <div className="eden-topbar-right">
         <div className="eden-player-pill">
-          <div
-            className="eden-pass-badge eden-vip-badge-interactive"
-            onClick={onOpenVipModal}
-            title="Clique para ver os 4 planos VIP: Cobre, Ferro, Diamante e Rubi"
-            style={{
-              borderColor: vipBorder,
-              background: vipBg,
-              cursor: onOpenVipModal ? 'pointer' : 'default',
-            }}
-          >
-            <Crown size={13} className="eden-pass-icon" style={{ color: vipColor }} />
-            <span>VIP: <strong style={{ color: vipColor }}>{vipName}</strong></span>
-          </div>
-
           <span className="eden-player-name">{nick}</span>
 
-          <RoleTag role={profile?.role || activeVip?.id} />
+          <RoleTag role={profile?.role} />
 
           <div className="eden-player-avatar">
             <PlayerHead skinUrl={activeSkin} nickname={nick} size={34} />
