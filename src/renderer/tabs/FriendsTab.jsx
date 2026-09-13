@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFriends } from '../hooks/useFriends.jsx';
-import { useToast } from '../hooks/useToast.jsx';
+import { toast } from '../hooks/useToast.jsx';
 import '../styles/friends.css';
 
 export default function FriendsTab({ profile }) {
