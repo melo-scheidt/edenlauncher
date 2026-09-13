@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, Check, X } from 'lucide-react';
+import { Plus, Check, X, MessageSquare, Ban, User } from 'lucide-react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFriends } from '../hooks/useFriends.jsx';
 import { toast } from '../hooks/useToast.jsx';
+import FriendChatModal from '../components/FriendChatModal.jsx';
 import '../styles/friends.css';
 
 // Códigos vindos do main (friends:*) -> chaves i18n
@@ -14,6 +15,7 @@ const ERR_MAP = {
   FRIENDS_PENDING_OUT: 'friends.errPendingOut',
   FRIENDS_PENDING_IN: 'friends.errPendingIn',
   FRIENDS_BLOCKED_BY_ME: 'friends.errBlockedMe',
+  FRIENDS_BLOCKED_BY_ME_SEND: 'friends.errBlockedMe',
   FRIENDS_BLOCKED_BY_THEM: 'friends.errBlockedThem',
   FRIENDS_BLOCKED_SEND: 'friends.errBlockedSend',
   FRIENDS_NOT_FRIENDS: 'friends.errNotFriends',
@@ -24,6 +26,7 @@ export default function FriendsTab({ profile }) {
   const { t } = useI18n();
   const [view, setView] = useState('friends'); // 'friends' | 'requests' | 'blocked'
   const [nickInput, setNickInput] = useState('');
+  const [activeChatFriend, setActiveChatFriend] = useState(null);
 
   const {
     status,
@@ -34,10 +37,12 @@ export default function FriendsTab({ profile }) {
     pendingIn,
     pendingOut,
     blocked,
+    unread,
     load,
     request,
     respond,
     cancel,
+    block,
     unblock,
   } = useFriends(profile?.nickname || '');
 
@@ -53,6 +58,20 @@ export default function FriendsTab({ profile }) {
     if (res?.ok) {
       setNickInput('');
       toast.success(t('friends.reqSent', { nick }));
+      load();
+    } else {
+      toast.error(errMsg(res?.error, { nick }));
+    }
+  };
+
+  const handleBlock = async (userId, nick) => {
+    if (!window.confirm(t('friends.blockConfirm', { nick }))) return;
+    const res = await block(userId);
+    if (res?.ok) {
+      toast.success(`${nick} foi bloqueado.`);
+      if (activeChatFriend?.userId === userId) {
+        setActiveChatFriend(null);
+      }
       load();
     } else {
       toast.error(errMsg(res?.error, { nick }));
@@ -168,7 +187,7 @@ export default function FriendsTab({ profile }) {
             onClick={handleAdd}
             disabled={!nickInput.trim()}
           >
-            <Plus size={14} className="friends-add-icon" /> {t('friends.addBtn')}
+            <Plus size={15} className="friends-add-icon" /> {t('friends.addBtn')}
           </button>
         </div>
       </div>
@@ -219,13 +238,46 @@ export default function FriendsTab({ profile }) {
               <p className="friends-empty-list">{t('friends.emptyFriends')}</p>
             )}
             <ul className="friends-list">
-              {(friends || []).map((f) => (
-                <li key={f.id} className="friends-list-item">
-                  <div className="friends-list-info">
-                    <span className="friends-list-nick">{f.nick}</span>
-                  </div>
-                </li>
-              ))}
+              {(friends || []).map((f) => {
+                const unreadCount = unread?.[f.userId] || 0;
+                return (
+                  <li key={f.id} className="friends-list-item">
+                    <div className="friends-list-info">
+                      <div className="friends-item-avatar">
+                        <User size={16} />
+                      </div>
+                      <span className="friends-list-nick">{f.nick}</span>
+                    </div>
+
+                    <div className="friends-list-actions">
+                      <button
+                        type="button"
+                        className="friends-btn-chat"
+                        onClick={() => setActiveChatFriend(f)}
+                        title={t('friends.message')}
+                      >
+                        <MessageSquare size={14} />
+                        <span>{t('friends.message')}</span>
+                        {unreadCount > 0 && (
+                          <span className="friends-unread-badge">
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                          </span>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        className="friends-btn-block"
+                        onClick={() => handleBlock(f.userId, f.nick)}
+                        title={t('friends.block')}
+                      >
+                        <Ban size={14} />
+                        <span>{t('friends.block')}</span>
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -313,6 +365,18 @@ export default function FriendsTab({ profile }) {
           </div>
         )}
       </div>
+
+      {activeChatFriend && (
+        <FriendChatModal
+          friend={activeChatFriend}
+          myUserId={me}
+          onClose={() => {
+            setActiveChatFriend(null);
+            load();
+          }}
+          onBlock={handleBlock}
+        />
+      )}
     </section>
   );
 }

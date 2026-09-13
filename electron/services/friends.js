@@ -224,7 +224,7 @@ async function resolveNick(nick) {
   const { data, error } = await sb
     .from('profiles')
     .select('id,nickname')
-    .eq('nickname_lower', clean.toLowerCase())
+    .or(`nickname_lower.eq.${clean.toLowerCase()},nickname.ilike.${clean}`)
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw coded('FRIENDS_NICK_NOT_FOUND');

@@ -15,9 +15,89 @@
 
 .friends-add-wrapper { display: flex; gap: 8px; align-items: center; }
 .friends-add-wrapper Input { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
-.friends-add-btn { padding: 0 16px; background: var(--eden-green); color: #fff; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-.friends-add-btn:hover { background: var(--eden-green-bright); }
-.friends-add-btn:disabled { background: var(--eden-text-mute); cursor: not-allowed; }
+.friends-add-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #fff;
+  border: 1px solid var(--eden-green-medium);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.2s ease;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.35), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* Shimmer sweep */
+.friends-add-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+}
+
+.friends-add-btn:hover::before {
+  left: 130%;
+}
+
+/* Glow ring on hover */
+.friends-add-btn::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--eden-green-bright), var(--eden-green-medium));
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.18s ease;
+  filter: blur(6px);
+}
+
+.friends-add-btn:hover {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  border-color: var(--eden-green-bright);
+  box-shadow: 0 6px 20px rgba(82, 183, 136, 0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+}
+
+.friends-add-btn:hover::after { opacity: 0.6; }
+
+.friends-add-btn:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow: 0 2px 8px rgba(45, 106, 79, 0.3);
+}
+
+.friends-add-btn:disabled {
+  background: rgba(30, 35, 40, 0.5);
+  border-color: rgba(255,255,255,0.07);
+  color: var(--eden-text-mute);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+.friends-add-btn:disabled::before,
+.friends-add-btn:disabled::after { display: none; }
+
+.friends-add-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.friends-add-btn:not(:disabled):hover .friends-add-icon {
+  transform: rotate(90deg) scale(1.15);
+}
 
 /* ── Navigation ───────────────────────────────────────────────────────────── */
 .friends-nav { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
@@ -33,42 +113,404 @@
 .friends-empty-text { font-size: 13px; }
 
 /* ── Friends List ────────────────────────────────────────────────────────── */
-.friends-list { display: grid; gap: 12px; }
-.friends-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; background: var(--eden-bg); }
-.friends-list-item:hover { background: var(--eden-bg-hover); }
-.friends-list-nick { font-weight: 600; color: var eden-text; }
-.friends-list-status { font-size: 11px; color: var(--eden-text-mute); }
-.friends-list-actions { margin-left: auto; }
+.friends-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.friends-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--eden-border);
+  transition: all 0.2s ease;
+}
+.friends-list-item:hover {
+  background: rgba(82, 183, 136, 0.07);
+  border-color: rgba(82, 183, 136, 0.28);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.friends-list-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.friends-item-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--eden-green-dark), rgba(45, 106, 79, 0.4));
+  border: 1px solid var(--eden-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--eden-green-bright);
+  flex-shrink: 0;
+}
+.friends-list-nick {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--eden-text);
+  letter-spacing: 0.2px;
+}
+
+.friends-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botão de Chat / Conversa */
+.friends-btn-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(27, 67, 50, 0.8), rgba(45, 106, 79, 0.6));
+  border: 1px solid rgba(82, 183, 136, 0.35);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.friends-btn-chat:hover {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  border-color: var(--eden-green-bright);
+  box-shadow: 0 0 12px rgba(82, 183, 136, 0.35);
+  transform: translateY(-1px);
+}
+.friends-btn-chat:active {
+  transform: translateY(0px) scale(0.97);
+}
+
+.friends-unread-badge {
+  background: #e76f51;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 2px;
+}
+
+/* Botão de Bloquear */
+.friends-btn-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(231, 111, 81, 0.08);
+  border: 1px solid rgba(231, 111, 81, 0.25);
+  border-radius: 8px;
+  color: #e76f51;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.friends-btn-block:hover {
+  background: rgba(231, 111, 81, 0.22);
+  border-color: rgba(231, 111, 81, 0.55);
+  color: #ff8b70;
+  box-shadow: 0 0 10px rgba(231, 111, 81, 0.25);
+  transform: translateY(-1px);
+}
+.friends-btn-block:active {
+  transform: translateY(0px) scale(0.97);
+}
+
 .friends-action-btn { padding: 4px 8px; border: none; background: transparent; color: var(--eden-text-mute); font-size: 11px; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
-.friends-action-btn small { font-size: 10px; }
 .friends-action-btn:hover { color: var(--eden-text); }
-.friends-action-btn.accept { color: var(--eden-green); }
+.friends-action-btn.accept { color: var(--eden-green-bright); }
 .friends-action-btn.cancel { color: var(--eden-error); }
 
 /* ── Requests Grid ──────────────────────────────────────────────────────── */
 .friends-requests-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
 .friends-request-column h3 { font-size: 12px; color: var(--eden-text-mute); margin-bottom: 8px; }
-.friends-request-item { padding: 8px; border-radius: 8px; background: var(--eden-bg); margin-bottom: 6px; }
-.friends-requester-info { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-.friends-requester-nick { font-weight: 600; color: var(--eden-text); font-size: 12px; }
-.friends-request-actions { display: flex; gap: 4px; }
-.friends-request-btn { padding: 4px 8px; border: none; background: transparent; color: var(--eden-text-mute); font-size: 11px; cursor: pointer; border-radius: 4px; }
-.friends-request-btn:hover { color: var(--eden-text); }
+.friends-request-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--eden-border); margin-bottom: 6px; }
+.friends-requester-info { display: flex; align-items: center; gap: 8px; }
+.friends-requester-nick { font-weight: 600; color: var(--eden-text); font-size: 13px; }
+.friends-request-actions { display: flex; gap: 6px; }
 
 /* ── Blocked List ───────────────────────────────────────────────────────── */
-.friends-blocked-list { display: grid; gap: 8px; }
-.friends-blocked-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: var(--eden-bg); color: var(--eden-text); font-size: 12px; }
+.friends-blocked-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.friends-blocked-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--eden-border); color: var(--eden-text); font-size: 13px; }
 .friends-blocked-item .friends-blocked-nick { font-weight: 600; }
-.friends-action-btn.unblock { color: var(--eden-error); }
+.friends-action-btn.unblock { color: var(--eden-error); display: flex; align-items: center; justify-content: center; }
 
-/* ── Message Send Area ──────────────────────────────────────────────────── */
-.friends-message-wrapper { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--eden-border); }
-.friends-message-wrapper Input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
-.friends-message-wrapper Input:focus { outline: none; border-color: var(--eden-green); }
-
-/* ── Input nativo + info da lista (0.6.1) ─────────────────────────────────── */
+/* ── Input nativo + info da lista ────────────────────────────────────────── */
 .friends-input { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
 .friends-input::placeholder { color: var(--eden-text-mute); }
 .friends-input:focus { outline: none; border-color: var(--eden-green); }
-.friends-list-info { display: flex; align-items: center; gap: 8px; }
 .friends-add-icon { vertical-align: -2px; }
+
+/* ── Friend Chat Modal ──────────────────────────────────────────────────── */
+.friend-chat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.friend-chat-modal {
+  width: 520px;
+  max-width: 92vw;
+  height: 560px;
+  max-height: 86vh;
+  background: #1e2228;
+  border: 1px solid var(--eden-border-strong);
+  border-radius: 18px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 24px rgba(82, 183, 136, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.friend-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--eden-border);
+}
+.friend-chat-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.friend-chat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  border: 1px solid var(--eden-green-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.friend-chat-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.friend-chat-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--eden-text);
+}
+.friend-chat-subtitle {
+  font-size: 11px;
+  color: var(--eden-text-mute);
+}
+
+.friend-chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.friend-chat-btn-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(231, 111, 81, 0.1);
+  border: 1px solid rgba(231, 111, 81, 0.3);
+  border-radius: 8px;
+  color: #e76f51;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.friend-chat-btn-block:hover {
+  background: rgba(231, 111, 81, 0.25);
+  border-color: #e76f51;
+  color: #ff8b70;
+}
+.friend-chat-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--eden-text-mute);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.friend-chat-close-btn:hover {
+  color: var(--eden-text);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.friend-chat-body {
+  flex: 1;
+  padding: 16px 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.friend-chat-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--eden-text-mute);
+  font-size: 13px;
+}
+.friend-chat-loading .spin {
+  animation: spin 1s linear infinite;
+  color: var(--eden-green-bright);
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.friend-chat-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--eden-text-mute);
+  text-align: center;
+  padding: 30px 20px;
+}
+.friend-chat-empty-icon {
+  color: var(--eden-green-bright);
+  opacity: 0.6;
+}
+
+.friend-chat-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.friend-chat-bubble-row {
+  display: flex;
+  width: 100%;
+}
+.friend-chat-bubble-row.outgoing {
+  justify-content: flex-end;
+}
+.friend-chat-bubble-row.incoming {
+  justify-content: flex-start;
+}
+
+.friend-chat-bubble {
+  max-width: 76%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  word-break: break-word;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.friend-chat-bubble-row.outgoing .friend-chat-bubble {
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  border: 1px solid var(--eden-green-medium);
+}
+
+.friend-chat-bubble-row.incoming .friend-chat-bubble {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--eden-text);
+  border-bottom-left-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.friend-chat-bubble-time {
+  font-size: 10px;
+  margin-top: 4px;
+  text-align: right;
+  opacity: 0.65;
+}
+
+.friend-chat-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid var(--eden-border);
+}
+
+.friend-chat-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--eden-border);
+  background: rgba(15, 18, 22, 0.7);
+  color: var(--eden-text);
+  font-size: 13px;
+  transition: border-color 0.2s;
+}
+.friend-chat-input:focus {
+  outline: none;
+  border-color: var(--eden-green-bright);
+}
+.friend-chat-input::placeholder {
+  color: var(--eden-text-mute);
+}
+
+.friend-chat-send-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, var(--eden-green-dark), var(--eden-green-primary));
+  border: 1px solid var(--eden-green-medium);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(45, 106, 79, 0.3);
+}
+.friend-chat-send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--eden-green-primary), var(--eden-green-medium));
+  border-color: var(--eden-green-bright);
+  box-shadow: 0 4px 16px rgba(82, 183, 136, 0.4);
+  transform: translateY(-1px);
+}
+.friend-chat-send-btn:active:not(:disabled) {
+  transform: translateY(0px) scale(0.97);
+}
+.friend-chat-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.friend-chat-send-btn .spin {
+  animation: spin 1s linear infinite;
+}
