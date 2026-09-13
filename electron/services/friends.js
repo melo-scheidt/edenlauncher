@@ -106,10 +106,10 @@ async function reset() {
   lastProfileUpsert = '';
 }
 
-async function currentUser(sb) {
+async function currentUser(sb, token) {
   try {
-    const r = await sb.auth.getUser();
-    return r?.user || null;
+    const r = token ? await sb.auth.getUser(token) : await sb.auth.getUser();
+    return r?.data?.user || r?.user || null;
   } catch {
     return null;
   }
@@ -124,19 +124,59 @@ async function ensureAuthed() {
   if (authedToken !== session.accessToken) {
     await reset();
     try {
-      await sb.auth.setSession({
-        access_token: session.accessToken,
-      });
+      if (session.refreshToken) {
+        const { data, error } = await sb.auth.setSession({
+          access_token: session.accessToken,
+          refresh_token: session.refreshToken,
+        });
+        if (error) throw error;
+        if (data?.session) {
+          session.accessToken = data.session.access_token;
+          session.refreshToken = data.session.refresh_token;
+          auth.saveSession(session);
+        }
+      } else {
+        await sb.auth.setSession({
+          access_token: session.accessToken,
+        });
+      }
     } catch (e) {
-      throw coded('FRIENDS_TOKEN');
+      if (session.refreshToken) {
+        const refreshed = await auth.refreshUserSession();
+        if (refreshed?.session) {
+          session = refreshed.session;
+        } else {
+          throw coded('FRIENDS_TOKEN');
+        }
+      } else {
+        throw coded('FRIENDS_TOKEN');
+      }
     }
     authedToken = session.accessToken;
   }
 
-  let user = await currentUser(sb);
+  let user = await currentUser(sb, session.accessToken);
   if (!user) {
-    authedToken = null;
-    throw coded('FRIENDS_TOKEN');
+    if (session.refreshToken) {
+      const refreshed = await auth.refreshUserSession();
+      if (refreshed?.session && refreshed?.user) {
+        session = refreshed.session;
+        authedToken = session.accessToken;
+        user = refreshed.user;
+      } else {
+        authedToken = null;
+        throw coded('FRIENDS_TOKEN');
+      }
+    } else {
+      authedToken = null;
+      throw coded('FRIENDS_TOKEN');
+    }
+  }
+
+  if (sb.realtime && typeof sb.realtime.setAuth === 'function') {
+    try {
+      sb.realtime.setAuth(session.accessToken);
+    } catch {}
   }
 
   // garante meu perfil público (para outros me acharem pelo nick)

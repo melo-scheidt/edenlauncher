@@ -58,7 +58,7 @@ async function registerAccount(nickname, password) {
 
   const sb = getSupabase();
   if (!sb) {
-    return _buildSession(nick, 'player', null);
+    return _buildSession(nick, 'player', null, null);
   }
 
   const { data, error } = await sb.auth.signUp({
@@ -72,7 +72,7 @@ async function registerAccount(nickname, password) {
     throw new Error('REGISTRO_PENDENTE');
   }
 
-  return _buildSession(nick, 'player', data.session.access_token);
+  return _buildSession(nick, 'player', data.session.access_token, data.session.refresh_token);
 }
 
 // ── Login (nick + senha) ──────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ async function loginAccount(nickname, password) {
 
   const sb = getSupabase();
   if (!sb) {
-    return _buildSession(nick, 'player', null);
+    return _buildSession(nick, 'player', null, null);
   }
 
   const { data, error } = await sb.auth.signInWithPassword({ email: synthEmail(nick), password });
@@ -94,21 +94,50 @@ async function loginAccount(nickname, password) {
   const finalNick = meta.nickname || nick;
 
   // accessToken = JWT do Supabase (pode ser validado pelo plugin do servidor)
-  return _buildSession(finalNick, meta.role || 'player', data.session.access_token);
+  return _buildSession(finalNick, meta.role || 'player', data.session.access_token, data.session.refresh_token);
 }
 
-function _buildSession(nick, role, accessToken = null) {
+// ── Renovação de Sessão ───────────────────────────────────────────────────────
+async function refreshUserSession() {
+  const session = loadSession();
+  if (!session?.refreshToken) return null;
+  const sb = getSupabase();
+  if (!sb) return null;
+
+  try {
+    const { data, error } = await sb.auth.refreshSession({ refresh_token: session.refreshToken });
+    if (error || !data?.session) return null;
+
+    session.accessToken = data.session.access_token;
+    session.refreshToken = data.session.refresh_token;
+    saveSession(session);
+    return { session, user: data.user };
+  } catch {
+    return null;
+  }
+}
+
+function _buildSession(nick, role, accessToken = null, refreshToken = null) {
   // Gera um token válido — necessário para evitar o modo demo.
   // O Minecraft entra em demo quando recebe accessToken '0' ou inválido.
   const session = {
-    type:        'offline',
-    nickname:    nick,
-    uuid:        offlineUuid(nick),
-    accessToken: accessToken || crypto.randomBytes(32).toString('hex'),
-    role:        role || 'player',
+    type:         'offline',
+    nickname:     nick,
+    uuid:         offlineUuid(nick),
+    accessToken:  accessToken || crypto.randomBytes(32).toString('hex'),
+    refreshToken: refreshToken || null,
+    role:         role || 'player',
   };
   saveSession(session);
   return session;
 }
 
-module.exports = { registerAccount, loginAccount, loadSession, clearSession, offlineUuid };
+module.exports = {
+  registerAccount,
+  loginAccount,
+  refreshUserSession,
+  saveSession,
+  loadSession,
+  clearSession,
+  offlineUuid,
+};
