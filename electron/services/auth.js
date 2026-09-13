@@ -74,7 +74,7 @@ async function registerAccount(nickname, password) {
     throw new Error('REGISTRO_PENDENTE');
   }
 
-  return _buildSession(nick, 'player', data.session.access_token);
+  return _buildSession(nick, 'player', data.session.access_token, data.session.refresh_token, data.session.expires_at);
 }
 
 // ── Login (nick + senha) ──────────────────────────────────────────────────────
@@ -96,10 +96,10 @@ async function loginAccount(nickname, password) {
   const finalNick = meta.nickname || nick;
 
   // accessToken = JWT do Supabase (pode ser validado pelo plugin do servidor)
-  return _buildSession(finalNick, meta.role || 'player', data.session.access_token);
+  return _buildSession(finalNick, meta.role || 'player', data.session.access_token, data.session.refresh_token, data.session.expires_at);
 }
 
-function _buildSession(nick, role, accessToken = null) {
+function _buildSession(nick, role, accessToken = null, refreshToken = null, expiresAt = 0) {
   // Gera um token válido — necessário para evitar o modo demo.
   // O Minecraft entra em demo quando recebe accessToken '0' ou inválido.
   const session = {
@@ -107,11 +107,25 @@ function _buildSession(nick, role, accessToken = null) {
     nickname:    nick,
     uuid:        offlineUuid(nick),
     accessToken: accessToken || crypto.randomBytes(32).toString('hex'),
-    expiresAt:   0,
+    // refreshToken permite renovar o JWT sem pedir a senha de novo
+    // (usado pelo sistema de amigos; sessões offline não têm).
+    refreshToken: refreshToken || null,
+    expiresAt:   expiresAt || 0,
     role:        role || 'player',
   };
   saveSession(session);
   return session;
 }
 
-module.exports = { registerAccount, loginAccount, loadSession, clearSession, offlineUuid };
+// Atualiza só os tokens (preserva nick/uuid/role) após um refresh.
+function updateSessionTokens(accessToken, refreshToken, expiresAt) {
+  const s = loadSession();
+  if (!s) return null;
+  s.accessToken = accessToken;
+  if (refreshToken) s.refreshToken = refreshToken;
+  if (expiresAt) s.expiresAt = expiresAt;
+  saveSession(s);
+  return s;
+}
+
+module.exports = { registerAccount, loginAccount, loadSession, clearSession, offlineUuid, updateSessionTokens };

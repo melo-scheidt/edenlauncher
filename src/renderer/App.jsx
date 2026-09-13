@@ -219,6 +219,31 @@ export default function App() {
     };
   }, [profile?.nickname]);
 
+  // ── Badge de amigos (solicitações + não lidas) ──────────────────────────
+  const [friendBadge, setFriendBadge] = useState(0);
+
+  useEffect(() => {
+    if (!profile?.nickname || !window.eden?.friends) {
+      setFriendBadge(0);
+      return;
+    }
+    let cancelled = false;
+    const refresh = async () => {
+      try {
+        const r = await window.eden.friends.list();
+        if (cancelled || !r?.ok) return;
+        const unreadTotal = Object.values(r.unread || {}).reduce((a, c) => a + c, 0);
+        setFriendBadge((r.pendingIn || []).length + unreadTotal);
+      } catch { /* mantém o badge anterior */ }
+    };
+    refresh();
+    const unsub = window.eden.friends.onEvent?.(() => refresh());
+    return () => {
+      cancelled = true;
+      if (typeof unsub === 'function') unsub();
+    };
+  }, [profile?.nickname]);
+
   // ── Launch events: estado do jogo (JOGANDO) e erros ────────────────────────
   useEffect(() => {
     if (!window.eden?.launch?.onEvent) return;
@@ -292,6 +317,7 @@ export default function App() {
       {/* Floating Pill Sidebar */}
       <Sidebar
         active={activeTab}
+        badges={friendBadge > 0 ? { friends: friendBadge } : undefined}
         onSelect={(id) => {
           if (id === 'logout') handleLogout();
           else setActiveTab(id);

@@ -17,7 +17,11 @@ function getClient() {
       globalThis.WebSocket = require('ws');
     }
     const { createClient } = require('@supabase/supabase-js');
-    supabase = createClient(url, key);
+    // Sessão manual (o launcher guarda os tokens no próprio authFile):
+    // sem persistência e sem auto-refresh — o friends.js renova sob demanda.
+    supabase = createClient(url, key, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
   } catch (e) {
     console.warn('[supabase] Falha ao iniciar cliente:', e.message);
     return null;

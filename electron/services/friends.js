@@ -106,10 +106,19 @@ async function reset() {
   lastProfileUpsert = '';
 }
 
+async function currentUser(sb) {
+  try {
+    const r = await sb.auth.getUser();
+    return r?.user || null;
+  } catch {
+    return null;
+  }
+}
+
 async function ensureAuthed() {
   const sb = sbClient.getClient();
   if (!sb) throw coded('FRIENDS_OFFLINE');
-  const session = auth.loadSession();
+  let session = auth.loadSession();
   if (!session?.accessToken) throw coded('FRIENDS_NO_SESSION');
 
   if (authedToken !== session.accessToken) {
@@ -125,12 +134,30 @@ async function ensureAuthed() {
     authedToken = session.accessToken;
   }
 
-  let user;
-  try {
-    const r = await sb.auth.getUser();
-    if (r.error || !r.user) throw r.error || new Error('sem usuário');
-    user = r.user;
-  } catch (e) {
+  let user = await currentUser(sb);
+  if (!user && session.refreshToken) {
+    // JWT expirado (vale ~1h) — renova com o refresh token guardado no login,
+    // sem pedir a senha de novo.
+    try {
+      const { data, error } = await sb.auth.refreshSession({ refresh_token: session.refreshToken });
+      if (error || !data?.session) throw error || new Error('refresh vazio');
+      session =
+        auth.updateSessionTokens(
+          data.session.access_token,
+          data.session.refresh_token,
+          data.session.expires_at
+        ) || session;
+      await sb.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+      authedToken = data.session.access_token;
+      user = await currentUser(sb);
+    } catch (e) {
+      log.warn('[friends] refresh de sessão falhou:', e.message);
+    }
+  }
+  if (!user) {
     authedToken = null;
     throw coded('FRIENDS_TOKEN');
   }

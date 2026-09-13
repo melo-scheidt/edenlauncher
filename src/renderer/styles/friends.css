@@ -65,3 +65,10 @@
 .friends-message-wrapper { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--eden-border); }
 .friends-message-wrapper Input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
 .friends-message-wrapper Input:focus { outline: none; border-color: var(--eden-green); }
+
+/* ── Input nativo + info da lista (0.6.1) ─────────────────────────────────── */
+.friends-input { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
+.friends-input::placeholder { color: var(--eden-text-mute); }
+.friends-input:focus { outline: none; border-color: var(--eden-green); }
+.friends-list-info { display: flex; align-items: center; gap: 8px; }
+.friends-add-icon { vertical-align: -2px; }

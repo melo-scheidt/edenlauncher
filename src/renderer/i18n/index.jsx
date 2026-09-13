@@ -25,6 +25,7 @@ const S = {
 
   // ── Amigos ─────────────────────────────────────────────────────────────
   'friends.title': ['Amigos', 'Amigos'],
+  'friends.loading': ['Carregando amigos...', 'A carregar amigos...'],
   'friends.subtitle': [
     'Adicione amigos pelo nick, converse e gerencie solicitações.',
     'Adicione amigos pelo nick, converse e gira pedidos.',

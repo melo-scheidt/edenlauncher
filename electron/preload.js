@@ -50,7 +50,11 @@ contextBridge.exposeInMainWorld('eden', {
     send:      (userId, body)      => ipcRenderer.invoke('friends:send', userId, body),
     messages:  (userId, limit)     => ipcRenderer.invoke('friends:messages', userId, limit),
     markRead:  (userId)            => ipcRenderer.invoke('friends:mark-read', userId),
-    onEvent:   (cb)                => ipcRenderer.on('friends:event', (_, e) => cb(e)),
+    onEvent:   (cb) => {
+      const wrapper = (_, e) => cb(e);
+      ipcRenderer.on('friends:event', wrapper);
+      return () => ipcRenderer.removeListener('friends:event', wrapper);
+    },
   },
 
   modpack: {

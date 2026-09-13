@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 
-// O hook usa o window.eden.friends bridge definido no preload.js
-// Este bridge expõe os métodos do friends.js service via IPCRenderer
+// Hook da aba Amigos — conversa com o main process via window.eden.friends
+// (bridge IPC definido no preload). Realtime: reinscreve a lista a cada
+// evento emitido pelo friends.js (mudanças, pedidos, mensagens, presença).
 
 function useFriends(nickname) {
   const [me, setMe] = useState(null);
@@ -11,58 +12,52 @@ function useFriends(nickname) {
   const [blocked, setBlocked] = useState([]);
   const [unread, setUnread] = useState({});
   const [status, setStatus] = useState({ available: false, loggedIn: false });
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(null);
 
-  // Carregar dados iniciais via IPC
   const load = useCallback(async () => {
     if (!nickname || !window.eden?.friends) return;
     try {
-      // Usa o método list() exposto pelo bridge no preload
+      const st = await window.eden.friends.status();
+      setStatus({ available: !!st?.available, loggedIn: !!st?.loggedIn });
+      if (!st?.available) return;
       const result = await window.eden.friends.list();
-      if (!result?.me) return;
-
-      setMe(result.me);
-      setFriends((result.friends || []).filter((f) => f.status === 'accepted'));
-      setPendingIn((result.pendingIn || []).filter((f) => f.direction === 'in'));
-      setPendingOut((result.pendingOut || []).filter((f) => f.direction === 'out'));
-      setBlocked((result.blocked || []).filter((f) => f.status === 'blocked'));
-
-      // Contadores de não-lidos
-      const unreadCounts = {};
-      if (result.me) {
-        const msgs = await window.eden.friends.messages(result.me, 200);
-        (msgs?.messages || []).forEach((m) => {
-          if (!m.read_at) {
-            unreadCounts[m.sender_id] = (unreadCounts[m.sender_id] || 0) + 1;
-          }
-        });
+      if (!result?.ok) {
+        setLoadError(result?.error || 'FRIENDS_GENERIC');
+        return;
       }
-      setUnread(unreadCounts);
+      setLoadError(null);
+      setMe(result.me);
+      setFriends(result.friends || []);
+      setPendingIn(result.pendingIn || []);
+      setPendingOut(result.pendingOut || []);
+      setBlocked(result.blocked || []);
+      setUnread(result.unread || {});
     } catch (e) {
       console.warn('[useFriends] load error:', e);
+      setLoadError('FRIENDS_GENERIC');
+    } finally {
+      setLoaded(true);
     }
   }, [nickname]);
 
-  // Efeito: carregar na montagem e subscrever eventos do realtime
   useEffect(() => {
-    if (!nickname) return;
+    setLoaded(false);
+    setLoadError(null);
     load();
-
-    // Inscrever-se em eventos de mudança amigos (emitidos pelo main process)
-    const handler = (e) => {
+    if (!window.eden?.friends?.onEvent) return undefined;
+    const unsub = window.eden.friends.onEvent(() => {
       load().catch(() => {});
-    };
-    if (window.eden?.friends?.onEvent) {
-      window.eden.friends.onEvent(handler);
-    }
+    });
     return () => {
-      if (window.eden?.friends?.offEvent) {
-        window.eden.friends.offEvent(handler);
-      }
+      if (typeof unsub === 'function') unsub();
     };
   }, [nickname, load]);
 
   return {
     status,
+    loaded,
+    loadError,
     me,
     friends,
     pendingIn,
@@ -70,7 +65,6 @@ function useFriends(nickname) {
     blocked,
     unread,
     load,
-    // Delegar os demais métodos ao window.eden.friends bridge
     request: (...args) => window.eden.friends?.request?.(...args),
     respond: (...args) => window.eden.friends?.respond?.(...args),
     cancel: (...args) => window.eden.friends?.cancel?.(...args),
