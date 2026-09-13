@@ -38,6 +38,21 @@ contextBridge.exposeInMainWorld('eden', {
     logout:   ()           => ipcRenderer.invoke('auth:logout'),
   },
 
+  friends: {
+    status:    ()                  => ipcRenderer.invoke('friends:status'),
+    list:      ()                  => ipcRenderer.invoke('friends:list'),
+    resolve:   (nick)              => ipcRenderer.invoke('friends:resolve', nick),
+    request:   (nick)              => ipcRenderer.invoke('friends:request', nick),
+    respond:   (id, accept)        => ipcRenderer.invoke('friends:respond', id, accept),
+    cancel:    (id)                => ipcRenderer.invoke('friends:cancel', id),
+    block:     (userId)            => ipcRenderer.invoke('friends:block', userId),
+    unblock:   (userId)            => ipcRenderer.invoke('friends:unblock', userId),
+    send:      (userId, body)      => ipcRenderer.invoke('friends:send', userId, body),
+    messages:  (userId, limit)     => ipcRenderer.invoke('friends:messages', userId, limit),
+    markRead:  (userId)            => ipcRenderer.invoke('friends:mark-read', userId),
+    onEvent:   (cb)                => ipcRenderer.on('friends:event', (_, e) => cb(e)),
+  },
+
   modpack: {
     fetchManifest: ()  => ipcRenderer.invoke('modpack:fetch-manifest'),
     // Alias both names for backwards compatibility

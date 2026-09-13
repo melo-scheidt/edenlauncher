@@ -21,6 +21,8 @@ const modpack = require('./services/modpack');
 const launcher = require('./services/launcher');
 const skins = require('./services/skins');
 const serverStatus = require('./services/serverStatus');
+const friends = require('./services/friends');
+friends.setEmitter((evt) => sendToMain('friends:event', evt));
 
 // Configurar log
 log.transports.file.resolvePathFn = () => path.join(paths.logsDir(), 'launcher.log');
@@ -251,7 +253,29 @@ ipcMain.handle('auth:register', async (_e, nick, pass) => {
   catch (e) { return { ok: false, error: e.message }; }
 });
 ipcMain.handle('auth:current', () => auth.loadSession());
-ipcMain.handle('auth:logout',  () => { auth.clearSession(); return true; });
+ipcMain.handle('auth:logout',  () => { auth.clearSession(); friends.reset().catch(() => {}); return true; });
+
+// ── IPC: Amigos ───────────────────────────────────────────────────────────────
+const friendsOk = (fn) => async (...args) => {
+  try {
+    return { ok: true, ...(await fn(...args)) };
+  } catch (e) {
+    log.warn('[friends]', e.code || e.message);
+    return { ok: false, error: e.code || e.message };
+  }
+};
+
+ipcMain.handle('friends:status',   friendsOk(() => friends.status()));
+ipcMain.handle('friends:list',     friendsOk(() => friends.list()));
+ipcMain.handle('friends:resolve',  friendsOk((_e, nick) => friends.resolveNick(nick)));
+ipcMain.handle('friends:request',  friendsOk((_e, nick) => friends.request(nick)));
+ipcMain.handle('friends:respond',  friendsOk((_e, id, accept) => friends.respond(id, accept)));
+ipcMain.handle('friends:cancel',   friendsOk((_e, id) => friends.cancel(id)));
+ipcMain.handle('friends:block',    friendsOk((_e, userId) => friends.block(userId)));
+ipcMain.handle('friends:unblock',  friendsOk((_e, userId) => friends.unblock(userId)));
+ipcMain.handle('friends:send',     friendsOk((_e, userId, body) => friends.send(userId, body)));
+ipcMain.handle('friends:messages', friendsOk((_e, userId, limit) => friends.messages(userId, limit)));
+ipcMain.handle('friends:mark-read', friendsOk((_e, userId) => friends.markRead(userId)));
 
 // ── IPC: Modpack ──────────────────────────────────────────────────────────────
 ipcMain.handle('modpack:fetch-manifest', async () => {

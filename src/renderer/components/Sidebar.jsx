@@ -1,14 +1,15 @@
 import React from 'react';
-import { User, Gamepad2, Layers, Map as MapIcon, Settings, LogOut } from 'lucide-react';
+import { User, Gamepad2, Layers, Map as MapIcon, Users, Settings, LogOut } from 'lucide-react';
 import { useI18n } from '../i18n/index.jsx';
 
-export default function Sidebar({ active, onSelect }) {
+export default function Sidebar({ active, onSelect, badges }) {
   const { t } = useI18n();
   const tabs = [
     { id: 'profile', labelKey: 'nav.profile', icon: User },
     { id: 'home', labelKey: 'nav.home', icon: Gamepad2 },
     { id: 'mods', labelKey: 'nav.mods', icon: Layers },
     { id: 'map', labelKey: 'nav.map', icon: MapIcon },
+    { id: 'friends', labelKey: 'nav.friends', icon: Users },
     { id: 'settings', labelKey: 'nav.settings', icon: Settings },
   ];
 
@@ -19,6 +20,7 @@ export default function Sidebar({ active, onSelect }) {
           const Icon = tab.icon;
           const isActive = active === tab.id;
           const label = t(tab.labelKey);
+          const badge = badges?.[tab.id] > 0 ? badges[tab.id] : 0;
           return (
             <button
               key={tab.id}
@@ -30,6 +32,9 @@ export default function Sidebar({ active, onSelect }) {
             >
               <div className="eden-nav-icon-wrap">
                 <Icon size={20} strokeWidth={2.2} />
+                {badge > 0 && (
+                  <span className="eden-nav-badge">{badge > 99 ? '99+' : badge}</span>
+                )}
               </div>
               <span className="eden-nav-label">{label}</span>
             </button>

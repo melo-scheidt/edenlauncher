@@ -7,27 +7,8 @@ const crypto = require('crypto');
 const paths  = require('./paths');
 const config = require('../config');
 
-// ── Supabase ──────────────────────────────────────────────────────────────────
-let supabase = null;
-
-function getSupabase() {
-  if (supabase) return supabase;
-  const url = process.env.EDEN_SUPABASE_URL || config.SUPABASE_URL;
-  const key = process.env.EDEN_SUPABASE_ANON_KEY || config.SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
-  try {
-    // Electron 31 roda Node 20 no main (sem WebSocket nativo) — polyfill exigido pelo supabase-js
-    if (typeof globalThis.WebSocket === 'undefined') {
-      globalThis.WebSocket = require('ws');
-    }
-    const { createClient } = require('@supabase/supabase-js');
-    supabase = createClient(url, key);
-  } catch (e) {
-    console.warn('[auth] Falha ao iniciar Supabase:', e.message);
-    return null;
-  }
-  return supabase;
-}
+// ── Supabase (cliente compartilhado) ───────────────────────────────────────────
+const { getClient: getSupabase } = require('./supabaseClient');
 
 // ── Utilitários ───────────────────────────────────────────────────────────────
 function offlineUuid(nick) {

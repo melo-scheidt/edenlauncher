@@ -6,6 +6,7 @@ import LoginScreen from './components/LoginScreen.jsx';
 import CRTOverlay from './components/CRTOverlay.jsx';
 import UpdateModal from './components/UpdateModal.jsx';
 import VipModal from './components/VipModal.jsx';
+import FriendsTab from './tabs/FriendsTab.jsx';
 import { useI18n } from './i18n/index.jsx';
 import HomeTab from './tabs/HomeTab.jsx';
 import ProfileTab from './tabs/ProfileTab.jsx';
@@ -336,6 +337,7 @@ export default function App() {
                 onThemeChange={applyTheme}
               />
             )}
+            {activeTab === 'friends' && <FriendsTab profile={profile} />}
           </div>
         </main>
       </div>

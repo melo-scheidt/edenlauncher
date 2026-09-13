@@ -1,0 +1,67 @@
+/* friends.css - Estilos abrangentes para o tab de Amigos */
+
+/* ── Tab Panel ────────────────────────────────────────────────────────────── */
+.friends-tab { padding: 20px; }
+
+.friends-header { text-align: center; margin-bottom: 24px; }
+.friends-header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.friends-header p { color: var(--eden-text-mute); font-size: 13px; }
+
+/* ── Controls ─────────────────────────────────────────────────────────────── */
+.friends-controls { margin-bottom: 20px; }
+.friends-search-wrapper { margin-bottom: 12px; }
+.friends-search-wrapper Input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
+.friends-search-wrapper Input::placeholder { color: var(--eden-text-mute); }
+
+.friends-add-wrapper { display: flex; gap: 8px; align-items: center; }
+.friends-add-wrapper Input { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
+.friends-add-btn { padding: 0 16px; background: var(--eden-green); color: #fff; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.friends-add-btn:hover { background: var(--eden-green-bright); }
+.friends-add-btn:disabled { background: var(--eden-text-mute); cursor: not-allowed; }
+
+/* ── Navigation ───────────────────────────────────────────────────────────── */
+.friends-nav { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+.friends-tab-btn { padding: 8px 16px; border: 1px solid var(--eden-border); background: transparent; color: var(--eden-text); border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.friends-tab-btn.active { color: var(--eden-green); border-color: var(--eden-green); }
+.friends-tab-btn:hover:not(.active) { color: var(--eden-text); }
+.friends-tab-btn .friends-badge { margin-left: 4px; font-size: 10px; min-width: 14px; text-align: center; }
+
+/* ── Tabs Content ───────────────────────────────────────────────────────── */
+.friends-tabs-content { }
+.friends-friends-panel, .friends-requests-panel, .friends-blocked-panel { }
+.friends-empty { text-align: center; color: var(--eden-text-mute); margin: 40px 0; }
+.friends-empty-text { font-size: 13px; }
+
+/* ── Friends List ────────────────────────────────────────────────────────── */
+.friends-list { display: grid; gap: 12px; }
+.friends-list-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; background: var(--eden-bg); }
+.friends-list-item:hover { background: var(--eden-bg-hover); }
+.friends-list-nick { font-weight: 600; color: var eden-text; }
+.friends-list-status { font-size: 11px; color: var(--eden-text-mute); }
+.friends-list-actions { margin-left: auto; }
+.friends-action-btn { padding: 4px 8px; border: none; background: transparent; color: var(--eden-text-mute); font-size: 11px; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+.friends-action-btn small { font-size: 10px; }
+.friends-action-btn:hover { color: var(--eden-text); }
+.friends-action-btn.accept { color: var(--eden-green); }
+.friends-action-btn.cancel { color: var(--eden-error); }
+
+/* ── Requests Grid ──────────────────────────────────────────────────────── */
+.friends-requests-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.friends-request-column h3 { font-size: 12px; color: var(--eden-text-mute); margin-bottom: 8px; }
+.friends-request-item { padding: 8px; border-radius: 8px; background: var(--eden-bg); margin-bottom: 6px; }
+.friends-requester-info { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.friends-requester-nick { font-weight: 600; color: var(--eden-text); font-size: 12px; }
+.friends-request-actions { display: flex; gap: 4px; }
+.friends-request-btn { padding: 4px 8px; border: none; background: transparent; color: var(--eden-text-mute); font-size: 11px; cursor: pointer; border-radius: 4px; }
+.friends-request-btn:hover { color: var(--eden-text); }
+
+/* ── Blocked List ───────────────────────────────────────────────────────── */
+.friends-blocked-list { display: grid; gap: 8px; }
+.friends-blocked-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: var(--eden-bg); color: var(--eden-text); font-size: 12px; }
+.friends-blocked-item .friends-blocked-nick { font-weight: 600; }
+.friends-action-btn.unblock { color: var(--eden-error); }
+
+/* ── Message Send Area ──────────────────────────────────────────────────── */
+.friends-message-wrapper { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--eden-border); }
+.friends-message-wrapper Input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--eden-border); background: var(--eden-bg); color: var(--eden-text); font-size: 13px; }
+.friends-message-wrapper Input:focus { outline: none; border-color: var(--eden-green); }
