@@ -126,7 +126,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: w, height: h, minWidth: 1100, minHeight: 720,
     show: false, backgroundColor: '#0A0A0A',
-    title: 'Éden Launcher', autoHideMenuBar: true,
+    title: 'Havenwood RP launcher', autoHideMenuBar: true,
     maximizable: false, fullscreenable: false,
     icon: path.join(__dirname, '..', 'icon', 'icon.png'),
     webPreferences: {

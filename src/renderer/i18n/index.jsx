@@ -11,7 +11,7 @@ const IDX = Object.fromEntries(LANGUAGES.map((l, i) => [l.code, i]));
 // Ordem das traduções: [pt-BR, pt-PT]
 const S = {
   // ── Geral ──────────────────────────────────────────────────────────────
-  'app.name': ['Havenwood RP', 'Havenwood RP'],
+  'app.name': ['Havenwood RP launcher', 'Havenwood RP launcher'],
   'user.defaultNick': ['Aventureiro', 'Aventureiro'],
 
   // ── Navegação ──────────────────────────────────────────────────────────

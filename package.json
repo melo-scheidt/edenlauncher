@@ -1,8 +1,8 @@
 {
   "name": "eden-launcher",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "private": true,
-  "description": "Éden Launcher",
+  "description": "Havenwood RP launcher",
   "author": "Éden Studios",
   "main": "electron/main.js",
   "scripts": {
@@ -45,7 +45,7 @@
   },
   "build": {
     "appId": "com.eden.launcher",
-    "productName": "Éden Launcher",
+    "productName": "Havenwood RP launcher",
     "artifactName": "eden-launcher-setup-${version}.${ext}",
     "directories": {
       "output": "dist-app",

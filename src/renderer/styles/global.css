@@ -96,9 +96,9 @@
 
 /* Tipografia e Base */
 :root {
-  --font-display: 'Cinzel', 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-heading: 'Cinzel', 'Outfit', 'Inter', system-ui, sans-serif;
-  --font-body: 'Cinzel', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
