@@ -3,7 +3,6 @@ import EdenCanvas from './components/EdenCanvas.jsx';
 import TopBar from './components/TopBar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
-import CRTOverlay from './components/CRTOverlay.jsx';
 import UpdateModal from './components/UpdateModal.jsx';
 import VipModal from './components/VipModal.jsx';
 import FriendsTab from './tabs/FriendsTab.jsx';
@@ -290,7 +289,6 @@ export default function App() {
     return (
       <div className="app-shell">
         <EdenCanvas theme={theme} />
-        <CRTOverlay />
         <LoginScreen onLogin={handleLogin} />
         {update?.info && (
           <UpdateModal
@@ -312,7 +310,6 @@ export default function App() {
   return (
     <div className="app-shell">
       <EdenCanvas theme={theme} />
-      <CRTOverlay />
 
       {/* Floating Pill Sidebar */}
       <Sidebar

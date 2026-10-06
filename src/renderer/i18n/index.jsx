@@ -90,15 +90,15 @@ const S = {
 
   // ── Splash ─────────────────────────────────────────────────────────────
   'splash.phase1': ['Carregando recursos...', 'A carregar recursos...'],
-  'splash.phase2': ['Verificando ambiente Éden...', 'A verificar ambiente Éden...'],
+  'splash.phase2': ['Verificando arquivos do jogo...', 'A verificar ficheiros do jogo...'],
   'splash.phase3': ['Conectando aos servidores...', 'A ligar aos servidores...'],
   'splash.phase4': ['Pronto para iniciar.', 'Pronto para iniciar.'],
 
   // ── Login ─────────────────────────────────────────────────────────────
   'login.welcome': ['Bem-vindo!', 'Bem-vindo!'],
   'login.heroDesc': [
-    'Autentique-se para mergulhar na verdadeira experiência de sobrevivência!',
-    'Autentique-se para mergulhar na verdadeira experiência de sobrevivência!',
+    'Entre com seu nickname para acessar o launcher e jogar.',
+    'Entre com o seu nickname para aceder ao launcher e jogar.',
   ],
   'login.email': ['E-mail', 'E-mail'],
   'login.nickname': ['Nickname', 'Nickname'],
@@ -117,15 +117,15 @@ const S = {
   'login.registerOk': ['Conta criada com sucesso! Entrando...', 'Conta criada com sucesso! A entrar...'],
   'login.registerConfirm': ['Conta criada! Confirme seu e-mail e faça login.', 'Conta criada! Confirme o seu e-mail e inicie sessão.'],
   'login.registerPending': [
-    'Registro pendente: a confirmação de conta está ativa no servidor. Contate a administração do Éden.',
-    'Registo pendente: a confirmação de conta está ativa no servidor. Contacte a administração do Éden.',
+    'Registro pendente: a confirmação de conta está ativa no servidor. Contate a administração do Havenwood RP.',
+    'Registo pendente: a confirmação de conta está ativa no servidor. Contacte a administração do Havenwood RP.',
   ],
   'login.errGeneric': ['Não foi possível autenticar', 'Não foi possível autenticar'],
   'login.errConnect': ['Erro ao conectar ao servidor de autenticação', 'Erro ao ligar ao servidor de autenticação'],
   'login.skinError': ['Erro ao selecionar skin: {msg}', 'Erro ao selecionar skin: {msg}'],
 
   // ── TopBar ────────────────────────────────────────────────────────────
-  'topbar.online': ['online do servidor', 'online do servidor'],
+  'topbar.online': ['jogadores online', 'jogadores online'],
   'topbar.lang': ['Idioma: {name} — clique para alternar', 'Idioma: {name} — clique para alternar'],
   'topbar.themeDark': ['Mudar para Modo Escuro', 'Mudar para Modo Escuro'],
   'topbar.themeLight': ['Mudar para Modo Claro', 'Mudar para Modo Claro'],
@@ -136,8 +136,8 @@ const S = {
   'home.modsCount': ['Mods: {n}', 'Mods: {n}'],
   'home.tagRP': ['RP', 'RP'],
   'home.heroDesc': [
-    'Explore um universo com infinitas possibilidades de vidas novas e experiências únicas.',
-    'Explore um universo com infinitas possibilidades de vidas novas e experiências únicas.',
+    'Servidor oficial de Roleplay no Minecraft. Crie seu personagem e viva sua história.',
+    'Servidor oficial de Roleplay no Minecraft. Crie a sua personagem e viva a sua história.',
   ],
   'home.checking': ['VERIFICANDO...', 'A VERIFICAR...'],
   'home.launching': ['INICIANDO...', 'A INICIAR...'],
@@ -219,13 +219,13 @@ const S = {
   'settings.resetBtn': ['Restaurar configurações padrão', 'Restaurar definições padrão'],
   'settings.uninstallLauncher': ['Desinstalar o Launcher', 'Desinstalar o Launcher'],
   'settings.uninstallLauncherDesc': [
-    'Remove o launcher Éden do seu computador. Seus mundos e arquivos do jogo não são apagados.',
-    'Remove o launcher Éden do seu computador. Os seus mundos e ficheiros do jogo não são apagados.',
+    'Remove o Havenwood RP do seu computador. Seus mundos e arquivos do jogo não são apagados.',
+    'Remove o Havenwood RP do seu computador. Os seus mundos e ficheiros do jogo não são apagados.',
   ],
   'settings.uninstallBtn': ['Desinstalar launcher', 'Desinstalar launcher'],
   'settings.uninstallConfirm': [
-    'Tem certeza que deseja desinstalar o Éden Launcher? Esta ação não pode ser desfeita.',
-    'Tem a certeza que deseja desinstalar o Éden Launcher? Esta ação não pode ser anulada.',
+    'Tem certeza que deseja desinstalar o Havenwood RP? Esta ação não pode ser desfeita.',
+    'Tem a certeza que deseja desinstalar o Havenwood RP? Esta ação não pode ser anulada.',
   ],
   'settings.uninstallUnavailable': [
     'A desinstalação está disponível apenas na versão instalada do launcher.',
@@ -253,7 +253,7 @@ const S = {
 
   // ── Suporte ───────────────────────────────────────────────────────────
   'support.title': ['Atalhos & Suporte', 'Atalhos & Suporte'],
-  'support.subtitle': ['Conecte-se com a comunidade Éden', 'Ligue-se à comunidade Éden'],
+  'support.subtitle': ['Conecte-se com a comunidade Havenwood RP', 'Ligue-se à comunidade Havenwood RP'],
   'support.logViewer': ['Visualizador de Logs', 'Visualizador de Logs'],
   'support.openFolder': ['Abrir pasta', 'Abrir pasta'],
   'support.copy': ['Copiar logs', 'Copiar logs'],
@@ -284,8 +284,8 @@ const S = {
   ],
   'mods.emptyTitle': ['Nenhum mod opcional encontrado', 'Nenhum mod opcional encontrado'],
   'mods.emptyDesc': [
-    'Os mods oficiais do Éden aparecerão aqui para você ativar ou desativar.',
-    'Os mods oficiais do Éden aparecerão aqui para ativar ou desativar.',
+    'Os mods oficiais aparecerão aqui para você ativar ou desativar.',
+    'Os mods oficiais aparecerão aqui para ativar ou desativar.',
   ],
   'mods.refresh': ['Atualizar', 'Atualizar'],
   'mods.unavailable': ['Indisponível', 'Indisponível'],
@@ -295,7 +295,7 @@ const S = {
     'O mod Iris está desativado — ative-o no separador Mods Opcionais para os shaders funcionarem.',
   ],
   'mods.genericDesc': ['Mod cliente instalado.', 'Mod cliente instalado.'],
-  'mods.shaderOfficial': ['Shader pack oficial do Éden.', 'Shader pack oficial do Éden.'],
+  'mods.shaderOfficial': ['Shader pack oficial do servidor.', 'Shader pack oficial do servidor.'],
   'mods.shaderInstalled': ['Shader pack instalado.', 'Shader pack instalado.'],
   'mods.toggleOn': ['Ativar mod', 'Ativar mod'],
   'mods.toggleOff': ['Desativar mod', 'Desativar mod'],
@@ -339,8 +339,8 @@ const S = {
   'update.ready': ['Atualização pronta!', 'Atualização pronta!'],
   'update.error': ['Falha ao baixar a atualização', 'Falha ao transferir a atualização'],
   'update.descAvailable': [
-    'Uma nova versão {v} do Éden Launcher está disponível e já está sendo baixada. O launcher será liberado após a atualização.',
-    'Uma nova versão {v} do Éden Launcher está disponível e já está a ser transferida. O launcher será liberado após a atualização.',
+    'Uma nova versão {v} do Havenwood RP está disponível e já está sendo baixada. O launcher será liberado após a atualização.',
+    'Uma nova versão {v} do Havenwood RP está disponível e já está a ser transferida. O launcher será liberado após a atualização.',
   ],
   'update.descReady': [
     'A versão {v} foi baixada e está pronta. Reinicie o launcher para aplicá-la.',

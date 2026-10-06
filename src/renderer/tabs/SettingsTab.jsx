@@ -133,7 +133,7 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
 
           {/* Footer Info Bottom Left */}
           <div className="eden-settings-footer-info">
-            <span className="eden-footer-app-name">Éden App 1.0 Beta</span>
+            <span className="eden-footer-app-name">Havenwood RP</span>
             <span className="eden-footer-os-info">
               {systemInfo?.platform === 'win32' ? t('settings.osWin') : t('settings.osOther')}
             </span>

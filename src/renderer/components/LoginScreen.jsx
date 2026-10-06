@@ -112,7 +112,7 @@ export default function LoginScreen({ onLogin }) {
         <div className="eden-login-card">
           {/* Brand Header */}
           <div className="eden-card-brand">
-            <EdenLogo size="large" showBeta={true} showText={true} />
+            <EdenLogo size="large" showBeta={false} showText={true} />
           </div>
 
           {/* Feedback Messages */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import edenIcon from '../assets/icon.png';
 
-export default function EdenLogo({ size = 'medium', showBeta = true, showText = true, className = '' }) {
+export default function EdenLogo({ size = 'medium', showBeta = false, showText = true, className = '' }) {
   const iconDimensions = {
     small: 32,
     medium: 44,
@@ -15,7 +15,7 @@ export default function EdenLogo({ size = 'medium', showBeta = true, showText = 
       <div className="eden-crest-badge" style={{ width: iconDimensions, height: iconDimensions }}>
         <img
           src={edenIcon}
-          alt="Éden"
+          alt="Havenwood RP"
           className="eden-crest-img"
           draggable={false}
         />
