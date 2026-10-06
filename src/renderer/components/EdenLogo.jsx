@@ -29,7 +29,7 @@ export default function EdenLogo({ size = 'medium', showBeta = true, showText = 
               <span className="eden-beta-pill">BETA</span>
             </div>
           )}
-          <div className="eden-brand-title">ÉDEN</div>
+          <div className="eden-brand-title">Havenwood RP</div>
         </div>
       )}
     </div>

@@ -9,7 +9,7 @@ export default function Header({ profile }) {
       <div className="brand">
         <div className="brand-mark">N</div>
         <div className="brand-text">
-          <h1 className="eden-gradient-text">ÉDEN&nbsp;MC·RP</h1>
+          <h1 className="eden-gradient-text">Havenwood&nbsp;RP</h1>
           <small>LAUNCHER · PHASE 1</small>
         </div>
       </div>

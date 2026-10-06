@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Play, RotateCw, Sparkles, Tag, Gift, Award, Compass, Flame, ShieldAlert, Check, Trash2, Crown } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { getValue } from '../lib/store.js';
 import { useI18n } from '../i18n/index.jsx';
 import '../styles/home.css';
@@ -11,13 +11,6 @@ const SETTINGS_DEFAULTS = {
   vsync: true,
   launchArgs: '-XX:+UseG1GC -XX:+ParallelRefProcEnabled',
 };
-
-const PROMO_CARDS = [
-  { id: 'p1', badgeKey: 'promo.p1.badge', badgeColor: '#52b788', titleKey: 'promo.p1.title', subKey: 'promo.p1.sub', timeKey: 'promo.p1.time', imageType: 'cupom' },
-  { id: 'p2', badgeKey: 'promo.p2.badge', badgeColor: '#e9c46a', titleKey: 'promo.p2.title', subKey: 'promo.p2.sub', timeKey: 'promo.p2.time', imageType: 'evento' },
-  { id: 'p3', badgeKey: 'promo.p3.badge', badgeColor: '#40916c', titleKey: 'promo.p3.title', subKey: 'promo.p3.sub', timeKey: 'promo.p3.time', imageType: 'update' },
-  { id: 'p4', badgeKey: 'promo.p4.badge', badgeColor: '#00f5d4', titleKey: 'promo.p4.title', subKey: 'promo.p4.sub', timeKey: 'promo.p4.time', imageType: 'vip' },
-];
 
 export default function HomeTab({ profile, onLaunch, gameRunning, serverStatus = { online: false, players: 0, max: 0, version: '1.21.5' } }) {
   const { t } = useI18n();
@@ -143,7 +136,7 @@ export default function HomeTab({ profile, onLaunch, gameRunning, serverStatus =
       <section className="eden-home-hero">
         <div className="eden-hero-branding">
           <h1 className="eden-hero-title">
-            ÉDEN <span className="eden-hero-plus">+</span>
+            Havenwood RP
           </h1>
 
           {/* Badges Row */}
@@ -201,33 +194,6 @@ export default function HomeTab({ profile, onLaunch, gameRunning, serverStatus =
               </button>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* ── Bottom Carousel Section (Screenshot 2 Match) ── */}
-      <section className="eden-home-carousel-section">
-        <div className="eden-carousel-container">
-          {PROMO_CARDS.map((card) => (
-            <div key={card.id} className="eden-promo-card">
-              <div className="eden-promo-thumb">
-                <div className={`eden-thumb-art eden-thumb-art--${card.imageType}`}>
-                  {card.imageType === 'cupom' && <Gift size={28} />}
-                  {card.imageType === 'evento' && <Flame size={28} />}
-                  {card.imageType === 'update' && <Compass size={28} />}
-                  {(card.imageType === 'vip' || card.imageType === 'passe') && <Crown size={28} />}
-                </div>
-                <div className="eden-promo-badge-tag" style={{ color: card.badgeColor }}>
-                  {t(card.badgeKey)}
-                </div>
-              </div>
-
-              <div className="eden-promo-info">
-                <h3 className="eden-promo-title">{t(card.titleKey)}</h3>
-                <p className="eden-promo-desc">{t(card.subKey)}</p>
-                <span className="eden-promo-time">{t(card.timeKey)}</span>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
     </div>
