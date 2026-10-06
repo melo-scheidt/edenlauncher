@@ -96,9 +96,9 @@
 
 /* Tipografia e Base */
 :root {
-  --font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-display: 'Cinzel', 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-heading: 'Cinzel', 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-body: 'Cinzel', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
