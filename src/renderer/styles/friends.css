@@ -293,6 +293,11 @@
   align-items: center;
   gap: 12px;
 }
+.friend-chat-avatar,
+.friends-item-avatar {
+  position: relative;
+}
+
 .friend-chat-avatar {
   width: 36px;
   height: 36px;
@@ -303,6 +308,27 @@
   align-items: center;
   justify-content: center;
   color: #fff;
+}
+
+.friend-avatar-status-badge {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--eden-panel, #121824);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.friend-avatar-status-badge.online {
+  background-color: #52b788;
+  box-shadow: 0 0 6px rgba(82, 183, 136, 0.7);
+}
+
+.friend-avatar-status-badge.offline {
+  background-color: #71717a;
 }
 .friend-chat-header-text {
   display: flex;
@@ -317,6 +343,21 @@
 .friend-chat-subtitle {
   font-size: 11px;
   color: var(--eden-text-mute);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.friend-chat-status--online {
+  color: var(--eden-green-bright, #52b788);
+  font-weight: 500;
+}
+.friend-chat-status--typing {
+  color: var(--eden-cyan, #00f5d4);
+  font-style: italic;
+  font-weight: 500;
+}
+.friend-chat-status--offline {
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .friend-chat-header-actions {
@@ -513,4 +554,113 @@
 }
 .friend-chat-send-btn .spin {
   animation: spin 1s linear infinite;
+}
+
+/* ================== ANEXO DE MÍDIA (ATÉ 5MB) ================== */
+.friend-chat-attach-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--eden-border);
+  color: var(--eden-text-mute);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.friend-chat-attach-btn:hover:not(:disabled) {
+  background: rgba(82, 183, 136, 0.15);
+  border-color: var(--eden-green-bright);
+  color: var(--eden-green-bright);
+  transform: translateY(-1px);
+}
+
+.friend-chat-attach-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.friend-chat-media-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  margin: 0 18px 8px 18px;
+  background: rgba(27, 67, 50, 0.4);
+  border: 1px solid rgba(82, 183, 136, 0.35);
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.friend-chat-media-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--eden-text);
+  overflow: hidden;
+}
+
+.friend-chat-media-icon {
+  color: var(--eden-green-bright);
+  flex-shrink: 0;
+}
+
+.friend-chat-media-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.friend-chat-media-size {
+  color: var(--eden-text-mute);
+  font-size: 11px;
+}
+
+.friend-chat-media-remove-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.friend-chat-media-remove-btn:hover {
+  color: #e76f51;
+  background: rgba(231, 111, 81, 0.15);
+}
+
+.friend-chat-media-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.friend-chat-img-container {
+  display: flex;
+  margin-top: 4px;
+}
+
+.friend-chat-bubble-img {
+  max-width: 260px;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.friend-chat-bubble-img:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
 }

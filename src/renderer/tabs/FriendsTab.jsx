@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, Check, X, MessageSquare, Ban, User } from 'lucide-react';
+import { Plus, Check, X, MessageSquare, Ban } from 'lucide-react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFriends } from '../hooks/useFriends.jsx';
 import { toast } from '../hooks/useToast.jsx';
 import FriendChatModal from '../components/FriendChatModal.jsx';
+import PlayerHead from '../components/PlayerHead.jsx';
 import '../styles/friends.css';
 
 // Códigos vindos do main (friends:*) -> chaves i18n
@@ -244,7 +245,8 @@ export default function FriendsTab({ profile }) {
                   <li key={f.id} className="friends-list-item">
                     <div className="friends-list-info">
                       <div className="friends-item-avatar">
-                        <User size={16} />
+                        <PlayerHead nickname={f.nick} skinUrl={f.skinUrl} size={28} />
+                        <span className={`friend-avatar-status-badge ${f.online !== false && f.status !== 'offline' ? 'online' : 'offline'}`} />
                       </div>
                       <span className="friends-list-nick">{f.nick}</span>
                     </div>

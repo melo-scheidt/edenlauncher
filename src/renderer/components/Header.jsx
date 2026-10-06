@@ -1,9 +1,9 @@
 import React from 'react';
+import PlayerHead from './PlayerHead.jsx';
 
 // Top header with the Éden brand on the left and a small player pill
 // preview on the right (mirrors what's edited in HomeTab).
 export default function Header({ profile }) {
-  const initials = (profile.nickname || 'N').slice(0, 1).toUpperCase();
   return (
     <header className="app-header">
       <div className="brand">
@@ -19,10 +19,12 @@ export default function Header({ profile }) {
           ● Modo Offline
         </span>
         <div className="player-pill">
-          <div className="avatar-mini">{initials}</div>
+          <div className="avatar-mini">
+            <PlayerHead nickname={profile?.nickname} size={28} />
+          </div>
           <div>
-            <div className="nick">{profile.nickname}</div>
-            <div className="uuid">{profile.uuid.slice(0, 8)}…{profile.uuid.slice(-4)}</div>
+            <div className="nick">{profile?.nickname}</div>
+            <div className="uuid">{profile?.uuid?.slice(0, 8)}…{profile?.uuid?.slice(-4)}</div>
           </div>
         </div>
       </div>
