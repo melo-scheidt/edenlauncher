@@ -148,6 +148,7 @@ const S = {
   'home.uninstalling': ['DESINSTALANDO...', 'A DESINSTALAR...'],
   'home.uninstall': ['DESINSTALAR', 'DESINSTALAR'],
   'home.uninstallTip': ['Desinstalar jogo e modpack', 'Desinstalar jogo e modpack'],
+  'home.noNotifications': ['Nenhuma notificação no momento', 'Nenhuma notificação no momento'],
   'promo.p1.badge': ['CUPOM EXCLUSIVO', 'CUPOM EXCLUSIVO'],
   'promo.p1.title': ['Cupom de Boas-vindas', 'Cupom de Boas-vindas'],
   'promo.p1.sub': ['Use EDEN2026 e receba 500 VP + Kit Inicial exclusivo!', 'Use EDEN2026 e receba 500 VP + Kit Inicial exclusivo!'],

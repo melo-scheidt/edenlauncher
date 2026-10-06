@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Play } from 'lucide-react';
+import { Play, BellOff } from 'lucide-react';
 import { getValue } from '../lib/store.js';
 import { useI18n } from '../i18n/index.jsx';
 import '../styles/home.css';
@@ -194,6 +194,14 @@ export default function HomeTab({ profile, onLaunch, gameRunning, serverStatus =
               </button>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* ── Notification Container Section (Empty State) ── */}
+      <section className="eden-home-carousel-section">
+        <div className="eden-empty-notifications">
+          <BellOff size={22} className="eden-empty-icon" />
+          <span>{t('home.noNotifications')}</span>
         </div>
       </section>
     </div>
