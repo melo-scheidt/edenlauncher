@@ -86,15 +86,18 @@
 }
 
 .eden-nav-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   font-family: var(--font-heading);
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   text-transform: lowercase;
   color: var(--eden-text-mute);
   transition: color 0.2s ease;
   white-space: nowrap;
-  max-width: 100%;
   text-align: center;
 }
 

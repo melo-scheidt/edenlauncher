@@ -21,6 +21,15 @@ export default function EdenCanvas({ theme = 'dark' }) {
       />
       {/* Blur + tint overlay */}
       <div className={`eden-blur-overlay ${isLight ? 'eden-blur-overlay--light' : 'eden-blur-overlay--dark'}`} />
+
+      {/* Efeito TV de Tubo (CRT Effect) */}
+      <div className="crt-overlay">
+        <div className="crt-scanlines" />
+        <div className="crt-scanline-bar" />
+        <div className="crt-vignette" />
+        <div className="crt-phosphor" />
+        <div className="crt-flicker" />
+      </div>
     </div>
   );
 }
