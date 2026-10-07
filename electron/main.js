@@ -211,11 +211,25 @@ ipcMain.handle('logs:read', () => {
   return fs.existsSync(f) ? fs.readFileSync(f, 'utf-8') : '(sem logs ainda)';
 });
 ipcMain.handle('shell:open-external', (_e, url) => shell.openExternal(url));
-ipcMain.handle('app:get-info', () => ({
-  version: app.getVersion(), platform: process.platform, arch: process.arch,
-  totalMemGB: +(os.totalmem() / 1e9).toFixed(1),
-  userData: app.getPath('userData'), logsDir: paths.logsDir(),
-}));
+ipcMain.handle('app:get-info', () => {
+  const bytes = os.totalmem();
+  const rawGB = bytes / (1024 * 1024 * 1024);
+  let totalMemGB = Math.round(rawGB);
+  if (rawGB > 14 && rawGB <= 16) totalMemGB = 16;
+  else if (rawGB > 30 && rawGB <= 32) totalMemGB = 32;
+  else if (rawGB > 62 && rawGB <= 64) totalMemGB = 64;
+  else if (rawGB > 124 && rawGB <= 128) totalMemGB = 128;
+
+  return {
+    version: app.getVersion(),
+    platform: process.platform,
+    arch: process.arch,
+    totalMemGB: Math.max(2, totalMemGB),
+    rawMemGB: +rawGB.toFixed(1),
+    userData: app.getPath('userData'),
+    logsDir: paths.logsDir(),
+  };
+});
 ipcMain.handle('app:resize', (_e, width, height) => {
   if (mainWindow && !mainWindow.isMaximized()) {
     mainWindow.setSize(width, height);

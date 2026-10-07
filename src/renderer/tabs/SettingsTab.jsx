@@ -86,9 +86,9 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
     }
   };
 
-  const ramMax = systemInfo
-    ? Math.min(32, Math.max(8, Math.floor(systemInfo.totalMemGB)))
-    : 16;
+  const detectedRam = systemInfo?.totalMemGB || (typeof navigator !== 'undefined' && navigator.deviceMemory ? navigator.deviceMemory : 16);
+  const ramMax = Math.max(2, Math.round(detectedRam));
+  const currentRamGb = Math.min(settings.ramGb, ramMax);
 
   return (
     <div className="eden-settings-page eden-fade-in">
@@ -217,12 +217,12 @@ export default function SettingsTab({ currentTheme, onThemeChange }) {
                       min={2}
                       max={ramMax}
                       step={1}
-                      value={settings.ramGb}
+                      value={currentRamGb}
                       onChange={(e) => update({ ramGb: Number(e.target.value) })}
                       className="eden-range-slider"
                     />
                     <div className="eden-ram-badge">
-                      <strong>{settings.ramGb}</strong> GB
+                      <strong>{currentRamGb}</strong> GB
                     </div>
                   </div>
                   <div className="eden-ram-ticks-row">
