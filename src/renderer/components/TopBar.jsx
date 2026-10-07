@@ -114,13 +114,19 @@ export default function TopBar({ profile, theme, onToggleTheme, activeSkin, onli
       {/* ── Right: VIP & Player Summary ── */}
       <div className="eden-topbar-right">
         <div className="eden-player-pill">
-          <span className="eden-player-name">{nick}</span>
+          <div className="eden-player-info-col">
+            <span className="eden-player-name">{nick}</span>
+            <span className="eden-player-status-text">online</span>
+          </div>
 
           {/* OP no servidor tem prioridade sobre a role da conta */}
           <RoleTag role={playerStats?.op ? 'admin' : profile?.role} />
 
-          <div className="eden-player-avatar">
-            <PlayerHead skinUrl={activeSkin} nickname={nick} size={34} />
+          <div className="eden-player-avatar-wrap">
+            <div className="eden-player-avatar">
+              <PlayerHead skinUrl={activeSkin} nickname={nick} size={34} />
+            </div>
+            <span className="eden-avatar-status-dot" />
           </div>
         </div>
       </div>
