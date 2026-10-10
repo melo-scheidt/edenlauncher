@@ -1,6 +1,0 @@
-/* Ícones do pacote (sprite.svg) — usados via <SpriteIcon name="..." />.
-   Os símbolos usam currentColor, então herdam a cor do texto como o lucide. */
-.sprite-icon {
-  display: block;
-  flex-shrink: 0;
-}

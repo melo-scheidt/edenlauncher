@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import EdenCanvas from './components/EdenCanvas.jsx';
-import { SpriteDefs } from './components/SpriteIcon.jsx';
 import TopBar from './components/TopBar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
@@ -289,7 +288,6 @@ export default function App() {
   if (!profile) {
     return (
       <div className="app-shell">
-        <SpriteDefs />
         <EdenCanvas theme={theme} />
         <LoginScreen onLogin={handleLogin} />
         {update?.info && (
@@ -311,7 +309,6 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <SpriteDefs />
       <EdenCanvas theme={theme} />
 
       {/* Floating Pill Sidebar */}
