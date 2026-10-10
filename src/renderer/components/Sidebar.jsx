@@ -1,23 +1,22 @@
 import React from 'react';
-import { User, Gamepad2, Layers, Map as MapIcon, Users, Settings, LogOut } from 'lucide-react';
+import SpriteIcon from './SpriteIcon.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 export default function Sidebar({ active, onSelect, badges }) {
   const { t } = useI18n();
   const tabs = [
-    { id: 'profile', labelKey: 'nav.profile', icon: User },
-    { id: 'home', labelKey: 'nav.home', icon: Gamepad2 },
-    { id: 'mods', labelKey: 'nav.mods', icon: Layers },
-    { id: 'map', labelKey: 'nav.map', icon: MapIcon },
-    { id: 'friends', labelKey: 'nav.friends', icon: Users },
-    { id: 'settings', labelKey: 'nav.settings', icon: Settings },
+    { id: 'profile', labelKey: 'nav.profile', icon: 'usuario' },
+    { id: 'home', labelKey: 'nav.home', icon: 'inicio' },
+    { id: 'mods', labelKey: 'nav.mods', icon: 'modos' },
+    { id: 'map', labelKey: 'nav.map', icon: 'mapa' },
+    { id: 'friends', labelKey: 'nav.friends', icon: 'usuarios' },
+    { id: 'settings', labelKey: 'nav.settings', icon: 'configuracoes' },
   ];
 
   return (
     <aside className="eden-sidebar-pill">
       <nav className="eden-sidebar-nav">
         {tabs.map((tab) => {
-          const Icon = tab.icon;
           const isActive = active === tab.id;
           const label = t(tab.labelKey);
           const badge = badges?.[tab.id] > 0 ? badges[tab.id] : 0;
@@ -31,7 +30,7 @@ export default function Sidebar({ active, onSelect, badges }) {
               title={label}
             >
               <div className="eden-nav-icon-wrap">
-                <Icon size={20} strokeWidth={2.2} />
+                <SpriteIcon name={tab.icon} size={20} />
                 {badge > 0 && (
                   <span className="eden-nav-badge">{badge > 99 ? '99+' : badge}</span>
                 )}
@@ -51,7 +50,7 @@ export default function Sidebar({ active, onSelect, badges }) {
           title={t('nav.logout')}
         >
           <div className="eden-nav-icon-wrap">
-            <LogOut size={18} strokeWidth={2.2} />
+            <SpriteIcon name="sair" size={18} />
           </div>
           <span className="eden-nav-label">{t('nav.logout')}</span>
         </button>

@@ -1,12 +1,6 @@
-.icon-sprite {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-.icon-sprite use {
+/* Ícones do pacote (sprite.svg) — usados via <SpriteIcon name="..." />.
+   Os símbolos usam currentColor, então herdam a cor do texto como o lucide. */
+.sprite-icon {
   display: block;
-  width: 1em;
-  height: 1em;
-  fill: currentColor;
+  flex-shrink: 0;
 }

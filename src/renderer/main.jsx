@@ -4,6 +4,7 @@ import App from './App.jsx';
 import SplashApp from './SplashApp.jsx';
 import { LanguageProvider } from './i18n/index.jsx';
 import './styles/global.css';
+import './assets/sprite.css';
 
 // We use the URL hash to decide which "app" to mount, so that a single Vite
 // build can serve both the splash window and the main launcher window.
